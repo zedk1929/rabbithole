@@ -39,7 +39,7 @@ class ServerManager: ObservableObject {
 
     func checkHealth(completion: @escaping (Bool) -> Void) {
         var request = URLRequest(url: healthURL)
-        request.timeoutInterval = 1.5
+        request.timeoutInterval = 6.0
 
         URLSession.shared.dataTask(with: request) { _, response, error in
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {

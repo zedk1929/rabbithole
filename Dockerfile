@@ -11,9 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv binary
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Copy project manifest, lockfile, README, and source code
+# Copy project manifest, lockfile, README, data, and source code
 COPY pyproject.toml uv.lock README.md ./
 COPY src/ ./src/
+COPY data/ ./data/
 COPY run.py ./
 
 # Install python dependencies and application
