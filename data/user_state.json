@@ -1,0 +1,1768 @@
+{
+  "watch_later": [
+    {
+      "video_id": "2Tw0AKt91pQ",
+      "title": "The Math Behind Bach's Crab Canon",
+      "channel": "Aman Trivedi",
+      "thumbnail": "https://i.ytimg.com/vi/2Tw0AKt91pQ/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC8xg=&rs=AOn4CLD57TwuwWE4XNiCGWE3eE4xqkA4fg",
+      "duration_seconds": 480,
+      "recommendation_context": "Supported as adjacent discovery: lateral branch into Music and Topology.",
+      "source_domain": "Music and Topology",
+      "source_category": "math",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-11-02T22:50:57.145Z"
+    },
+    {
+      "video_id": "5DO1wygRtPY",
+      "title": "17th Century Maritime Celestial Navigation",
+      "channel": "JYF Museums",
+      "thumbnail": "https://i.ytimg.com/vi/5DO1wygRtPY/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD5YWZr5nwAXXc865T9y6LpdKv-dw",
+      "duration_seconds": 1119,
+      "recommendation_context": "Supported as high-quality wildcard discovery in Historical Navigation Science outside current categories.",
+      "source_domain": "Historical Navigation Science",
+      "source_category": "Historical Navigation Science",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-11-02T21:13:07.038Z"
+    },
+    {
+      "video_id": "BocuAg-AsiE",
+      "title": "I helped design a keyboard! \ud83c\udf6b MOCHI EDITION CandyBar Build",
+      "channel": "Mochi Crafts",
+      "thumbnail": "https://i.ytimg.com/vi/BocuAg-AsiE/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCGMfbc6G5rLhEFe0ek25Kdyi9NkA",
+      "duration_seconds": 616,
+      "recommendation_context": "A creative artisan build video focusing on custom keyboard design, aligning with craft and interactive hardware appreciation.",
+      "source_domain": "Maker Crafts",
+      "source_category": null,
+      "is_discovery": true,
+      "discovery_connection": "Explores the maker space adjacent to design and technical hobbies through a purely visual and satisfying creative lens.",
+      "saved_at": "2026-10-30T07:41:55.490Z"
+    },
+    {
+      "video_id": "iTpuiVs_0po",
+      "title": "Ocarina of Time Speedrunner Accidentally finds Massive Glitch",
+      "channel": "LunaticJ",
+      "thumbnail": "https://i.ytimg.com/vi/iTpuiVs_0po/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBPxS5ZsoHbZo1KL7j6b5zu9VBY-A",
+      "duration_seconds": 990,
+      "recommendation_context": "Bridges video game design, technical depth, and serendipitous discoveries in code behavior.",
+      "source_domain": "Videogames",
+      "source_category": "videogames",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T07:37:01.968Z"
+    },
+    {
+      "video_id": "T2chW74C-_U",
+      "title": "College Basketball buzzer beaters that get increasingly more clutch",
+      "channel": "Play Wave",
+      "thumbnail": "https://i.ytimg.com/vi/T2chW74C-_U/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC-wT6WgqC_LspyaIcTYPu2IrBpGw",
+      "duration_seconds": 441,
+      "recommendation_context": "Connects directly to the user's active interest in basketball through dramatic highlights.",
+      "source_domain": "Sports Highlights",
+      "source_category": "basketball",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T07:36:57.905Z"
+    },
+    {
+      "video_id": "QQZMjmag_ZY",
+      "title": "PhysLight in Gazebo  Predictive Physical Lighting in Real Time - NVIDIA On Demand",
+      "channel": "Tritoon710",
+      "thumbnail": "https://i.ytimg.com/vi/QQZMjmag_ZY/hq720.jpg?sqp=-oaymwE2CNAFEJQDSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARh_IEMoKDAP&rs=AOn4CLBwuo7NfpxxJ7Qx37vAXhy8W8ld5Q",
+      "duration_seconds": 1253,
+      "recommendation_context": "Bridges technical computer graphics rendering with physical lighting parameters, appealing to both videogame design and math-oriented backgrounds.",
+      "source_domain": "movies",
+      "source_category": "movies",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T07:14:34.366Z"
+    },
+    {
+      "video_id": "9XcLoEVnjrA",
+      "title": "The Key Components of a Rhythm Game",
+      "channel": "Itooh Gamedev",
+      "thumbnail": "https://i.ytimg.com/vi/9XcLoEVnjrA/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC8YUqAnihFwB8Zrg1RcbmIOrdRzw",
+      "duration_seconds": 815,
+      "recommendation_context": "Bridges the user's dual interests in music math and videogame design by analyzing the core systems of rhythm games.",
+      "source_domain": "Music Theory and Gaming",
+      "source_category": "math",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T06:57:27.182Z"
+    },
+    {
+      "video_id": "TmtUQ4q6pes",
+      "title": "The Creepy Clockwork Robots Of The 17th Century | Mechanical Marvels | Real History",
+      "channel": "Real History",
+      "thumbnail": "https://i.ytimg.com/vi/TmtUQ4q6pes/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBQYxsMvsyd5TyQKYhUMck4ARjbiQ",
+      "duration_seconds": 3571,
+      "recommendation_context": "Explores the mechanical complexity and historical context of 17th-century automata, tying into artisan craftsmanship and early computational engineering.",
+      "source_domain": "Historical Horology",
+      "source_category": null,
+      "is_discovery": true,
+      "discovery_connection": "Explores the mechanical complexity and historical context of 17th-century automata, tying into artisan craftsmanship and early computational engineering.",
+      "saved_at": "2026-10-30T06:57:15.050Z"
+    },
+    {
+      "video_id": "k2L45QJyF_o",
+      "title": "How One Navigator's Star Math Guided 5,000 D-Day Boats in Total Darkness",
+      "channel": "Warline Archives",
+      "thumbnail": "https://i.ytimg.com/vi/k2L45QJyF_o/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCVC-VARMdDKrSs2bAYGi1DMLO3Gw",
+      "duration_seconds": 2756,
+      "recommendation_context": "An exceptional archival deep dive combining wartime operations, navigational mathematics, and historical problem-solving under extreme constraints.",
+      "source_domain": "Historical Navigation Science",
+      "source_category": null,
+      "is_discovery": true,
+      "discovery_connection": "An exceptional archival deep dive combining wartime operations, navigational mathematics, and historical problem-solving under extreme constraints.",
+      "saved_at": "2026-10-30T06:55:51.784Z"
+    },
+    {
+      "video_id": "Secl36GlxHI",
+      "title": "Topology, Gluing Diagrams, and Game Design | Nathan Dalaklis",
+      "channel": "CHALK",
+      "thumbnail": "https://i.ytimg.com/vi/Secl36GlxHI/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBFf7uWIMbOue-k4_i7OYNz-MAN1g",
+      "duration_seconds": 416,
+      "recommendation_context": "Bridges advanced mathematical topology with practical game design mechanics, directly aligning with user interests in math and game architecture.",
+      "source_domain": "Videogame Architecture",
+      "source_category": "videogame design",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T06:53:41.949Z"
+    },
+    {
+      "video_id": "xk_BsNZ2H8Q",
+      "title": "The World's First Financial Bubble? Tulip Mania! | European History | Extra History Complete",
+      "channel": "Extra History",
+      "thumbnail": "https://i.ytimg.com/vi/xk_BsNZ2H8Q/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBiAvDx7sAoM_Z0OOAGB_R70AJ8mw",
+      "duration_seconds": 2531,
+      "recommendation_context": "Combines economic history and narrative storytelling to examine early market bubbles.",
+      "source_domain": "Economic History",
+      "source_category": "videogames",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T06:52:12.381Z"
+    },
+    {
+      "video_id": "PF2nmSLjPG8",
+      "title": "How To Make Illuminated Manuscripts Using Traditional Techniques | History In The Making",
+      "channel": "Discovery UK",
+      "thumbnail": "https://i.ytimg.com/vi/PF2nmSLjPG8/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAQ9pV3aQjPPbfgKs4YleCugaKGHw",
+      "duration_seconds": 599,
+      "recommendation_context": "Explores traditional art and artisan craft through the creation of medieval illuminated manuscripts.",
+      "source_domain": "Historical Art Conservation",
+      "source_category": null,
+      "is_discovery": true,
+      "discovery_connection": "Explores traditional art and artisan craft through the creation of medieval illuminated manuscripts.",
+      "saved_at": "2026-10-30T06:48:08.918Z"
+    },
+    {
+      "video_id": "mhr3REshTss",
+      "title": "Science-Based Companion Planting Combinations That WORK",
+      "channel": "Epic Gardening",
+      "thumbnail": "https://i.ytimg.com/vi/mhr3REshTss/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBW_BSEDDBC1wp7E_jUzBPp51LwWw",
+      "duration_seconds": 670,
+      "recommendation_context": "Directly aligns with gardening interests by focusing on science-backed companion planting strategies.",
+      "source_domain": "Gardening & Systems Design",
+      "source_category": "videogame design",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:17:20.936Z"
+    },
+    {
+      "video_id": "UBspW-TZd8k",
+      "title": "The Million Dollar Economy of a Virtual Universe",
+      "channel": "Ominous Dev",
+      "thumbnail": "https://i.ytimg.com/vi/UBspW-TZd8k/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDrY0hCz-vmLJleE0Tq85ooF5URNQ",
+      "duration_seconds": 628,
+      "recommendation_context": "Directly intersects economics, quantitative analysis, and complex virtual world design via Eve Online.",
+      "source_domain": "Economics & Videogames",
+      "source_category": null,
+      "is_discovery": true,
+      "discovery_connection": "Directly intersects economics, quantitative analysis, and complex virtual world design via Eve Online.",
+      "saved_at": "2026-10-30T05:17:14.253Z"
+    },
+    {
+      "video_id": "Zrf1cou_yVo",
+      "title": "How Video Game Economies are Designed",
+      "channel": "Game Maker's Toolkit",
+      "thumbnail": "https://i.ytimg.com/vi/Zrf1cou_yVo/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDVS_PYx4vyrHveWnBus74wm1Qbiw",
+      "duration_seconds": 972,
+      "recommendation_context": "Combines game design mechanics with economic balancing and resource management systems.",
+      "source_domain": "Economics & Videogames",
+      "source_category": null,
+      "is_discovery": true,
+      "discovery_connection": "Combines game design mechanics with economic balancing and resource management systems.",
+      "saved_at": "2026-10-30T05:17:07.386Z"
+    },
+    {
+      "video_id": "YAoJORuP-Bo",
+      "title": "The Physics of Basketball  Kinematics, Dynamics, and Aerodynamics",
+      "channel": "P1 Knowledge",
+      "thumbnail": "https://i.ytimg.com/vi/YAoJORuP-Bo/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAnMEaCrnxCO_jnZgNhJvT0abtVPQ",
+      "duration_seconds": 2814,
+      "recommendation_context": "Directly combines sports analytics and physics, matching active interests in basketball and science.",
+      "source_domain": "Sports Analytics Physics",
+      "source_category": "basketball",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:17:01.905Z"
+    },
+    {
+      "video_id": "7uo-Lpw3nTE",
+      "title": "Learn The Gap Theory in 4 Minutes",
+      "channel": "The Film Room",
+      "thumbnail": "https://i.ytimg.com/vi/7uo-Lpw3nTE/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCvYfhiwwwdQDv0WRxIdasbLgd9-A",
+      "duration_seconds": 591,
+      "recommendation_context": "Applies precise tactical spatial concepts to basketball, directly satisfying sports analytics and game design crossover interests.",
+      "source_domain": "Sports Analytics & Math",
+      "source_category": "basketball",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:06:34.422Z"
+    },
+    {
+      "video_id": "6a4jUt7QciQ",
+      "title": "The History of Mr. Do! Arcade documentary",
+      "channel": "PatmanQC - History of arcade game documentaries",
+      "thumbnail": "https://i.ytimg.com/vi/6a4jUt7QciQ/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDk9xQT-XNoPN70HaTGCjjZnYjl6g&usqp=CBQ",
+      "duration_seconds": 774,
+      "recommendation_context": "Appeals directly to videogame design and vintage arcade history by exploring classic game mechanics and deep archival lore.",
+      "source_domain": "Videogame Design",
+      "source_category": "videogames",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:05:46.357Z"
+    },
+    {
+      "video_id": "a9c4jrgfhsk",
+      "title": "Portal Speedrunners Discover \"Singularity Warp\" After 18 Years",
+      "channel": "Marblr",
+      "thumbnail": "https://i.ytimg.com/vi/a9c4jrgfhsk/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBxNrubdzIHIwRvkIIjbJp2FueUSQ",
+      "duration_seconds": 3434,
+      "recommendation_context": "An exhaustive, highly technical breakdown of a monumental game engine exploit discovered decades after release, perfect for a curious explorer in game design.",
+      "source_domain": "Computer Science Humor & Glitch Mechanics",
+      "source_category": "videogame design",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:03:40.207Z"
+    },
+    {
+      "video_id": "KPoeNZZ6H4s",
+      "title": "Giving Personality to Procedural Animations using Math",
+      "channel": "t3ssel8r",
+      "thumbnail": "https://i.ytimg.com/vi/KPoeNZZ6H4s/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDTm6LQajkoE5jvp9V-tr6ddxNyHw",
+      "duration_seconds": 930,
+      "recommendation_context": "Combines math, physics, and videogame design by showing how procedural animations can be infused with personality through mathematical functions.",
+      "source_domain": "Technical Art & Animation",
+      "source_category": "videogame design",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:03:33.757Z"
+    },
+    {
+      "video_id": "wLHXn8IlAiA",
+      "title": "BSP Trees: The Magic Behind Collision Detection in Quake",
+      "channel": "Matt's Ramblings",
+      "thumbnail": "https://i.ytimg.com/vi/wLHXn8IlAiA/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC9xg=&rs=AOn4CLADrq4vXaX23ACOEcE2GTrkxp4NSg",
+      "duration_seconds": 533,
+      "recommendation_context": "Bridges computer science, mathematics, and classic videogame architecture by explaining Binary Space Partitioning trees.",
+      "source_domain": "Game Engine Architecture",
+      "source_category": "videogame design",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:03:28.457Z"
+    },
+    {
+      "video_id": "hYMZsMMlubg",
+      "title": "Why Doom is Awesome: Binary Space Partitioning",
+      "channel": "ShreddedNerd",
+      "thumbnail": "https://i.ytimg.com/vi/hYMZsMMlubg/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC9xg=&rs=AOn4CLC3GhI-EUpuJM8mBv6Y3ww3FAqE0w",
+      "duration_seconds": 1585,
+      "recommendation_context": "A rigorous technical exploration of engine architecture in classic first-person shooters, blending math and game design history.",
+      "source_domain": "Game Engine Architecture",
+      "source_category": "videogame design",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-30T05:03:24.507Z"
+    },
+    {
+      "video_id": "KZeIEiBrT_w",
+      "title": "The Strange Math That Predicts (Almost) Anything",
+      "channel": "Veritasium",
+      "thumbnail": "https://i.ytimg.com/vi/KZeIEiBrT_w/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDPFp9L1zB0ibYqnYKnjmSP-hUW3A",
+      "duration_seconds": 1952,
+      "recommendation_context": "Explores the historical mathematical conflict that birthed modern prediction algorithms, satisfying both math history and quantitative curiosity.",
+      "source_domain": "History of Probability",
+      "source_category": "math",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-29T18:20:20.624Z"
+    },
+    {
+      "video_id": "vv5WtDiHtC0",
+      "title": "Real-Time Algorithmic Music: Live Coding with Pd and Pdida",
+      "channel": "rolando rampoldi",
+      "thumbnail": "https://i.ytimg.com/vi/vv5WtDiHtC0/hqdefault.jpg?sqp=-oaymwE2COADEI4CSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgBoASAAuADigIMCAAQARhlIGUoZTAP&rs=AOn4CLCn_X-d3jjJCEfMvMJtYPHcNUWd-w",
+      "duration_seconds": 525,
+      "recommendation_context": "Explores real-time algorithmic generation, providing a satisfying technical craft demonstration for music and code enthusiasts.",
+      "source_domain": "Computational Art and Music",
+      "source_category": "math",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-29T18:19:49.257Z"
+    },
+    {
+      "video_id": "yGQb9KkvQ1Q",
+      "title": "Basketball AI: Player Tracking, Team Detection, and Number Recognition with Python",
+      "channel": "Roboflow",
+      "thumbnail": "https://i.ytimg.com/vi/yGQb9KkvQ1Q/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBHR-GWCCxZVCC2hLGqCSf4zxC78A",
+      "duration_seconds": 2227,
+      "recommendation_context": "A technical deep dive into basketball computer vision, player tracking, and team detection using Python pipelines.",
+      "source_domain": "Sports Analytics Engineering",
+      "source_category": "math",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-29T18:19:14.241Z"
+    },
+    {
+      "video_id": "OP935oRhVHo",
+      "title": "How to Become a Sports Data Analyst in 2026 (starting from 0)",
+      "channel": "Avery Smith | Data Analyst",
+      "thumbnail": "https://i.ytimg.com/vi/OP935oRhVHo/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDheOKVNhdtLXiSsYk9G8vd0leotw",
+      "duration_seconds": 2586,
+      "recommendation_context": "Surfaced from channel Avery Smith | Data Analyst. Based on metadata: Metadata connects to search topic concepts (analytics, sports). Offers a blend of depth and creative engagement.",
+      "source_domain": "Sports & Analytics Intersection",
+      "source_category": "sports analytics",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-29T18:15:53.873Z"
+    },
+    {
+      "video_id": "S-pnuoPpmbI",
+      "title": "Baseball Statistics Explained (OPS, WAR, FIP, etc.)",
+      "channel": "5th and Goal Sports",
+      "thumbnail": "https://i.ytimg.com/vi/S-pnuoPpmbI/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC8xg=&rs=AOn4CLBu-gek7GbfqeX7IQTVK8i7-3XA0g",
+      "duration_seconds": 883,
+      "recommendation_context": "Surfaced from channel 5th and Goal Sports. Based on metadata: Metadata connects to search topic concepts (baseball). Offers a blend of depth and creative engagement.",
+      "source_domain": "Quantitative Analytics & Sabermetrics",
+      "source_category": "videogames",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-29T17:41:14.113Z"
+    },
+    {
+      "video_id": "6IPXSqOhykg",
+      "title": "How the NBA continues to make scoring easier",
+      "channel": "Thinking Basketball",
+      "thumbnail": "https://i.ytimg.com/vi/6IPXSqOhykg/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC9xg=&rs=AOn4CLDw5u5_ZKDAtbvf2BKdJfoekUIehg",
+      "duration_seconds": 1744,
+      "recommendation_context": "A premier analytical dive into quantitative trends, rule evolution, and macro-strategy shifts in professional basketball.",
+      "source_domain": "Sports History",
+      "source_category": "basketball",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-29T17:41:02.064Z"
+    },
+    {
+      "video_id": "Z9732sxpl48",
+      "title": "How to Build the PERFECT Baseball Lineup Using Stats",
+      "channel": "Simple Sabermetrics",
+      "thumbnail": "https://i.ytimg.com/vi/Z9732sxpl48/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC8xg=&rs=AOn4CLA2ARTmXjksGr7ENF7idZB02EU9AA",
+      "duration_seconds": 581,
+      "recommendation_context": "Surfaced from channel Simple Sabermetrics. Based on metadata: Metadata directly connects to music concept ('pitch'). Offers a blend of depth and creative engagement.",
+      "source_domain": "Quantitative Analytics & Sabermetrics",
+      "source_category": "videogames",
+      "is_discovery": false,
+      "discovery_connection": null,
+      "saved_at": "2026-10-29T17:40:35.197Z"
+    }
+  ],
+  "preferences": {
+    "interests": "Driven by an urge to reverse-engineer both digital systems and physical mechanics, this viewer loves dissecting the underlying rules of games, math, and code. They constantly seek out the invisible logic governing complex environments, whether through rigorous problem-solving or tactical competitive analysis.",
+    "experience_type": "mix",
+    "feed_mode": "entertainment",
+    "recency_preference": "any",
+    "serendipity_level": 3,
+    "familiar_topics": "",
+    "explore_topics": "",
+    "avoid_topics": "",
+    "learning_goal": "",
+    "depth_level": "curious_explorer",
+    "avoid_sensationalism": true,
+    "seen_video_ids": [
+      "ROP45rjvOHg",
+      "Yel8Yw44xFs",
+      "8vk5z9VAaBQ",
+      "4z3KmoCwoSY",
+      "cUzklzVXJwo",
+      "jIMihpDmBpY",
+      "U3lKYGIPsNE",
+      "eub0VHQXTjg",
+      "yzGqp3R4Mx4",
+      "1IPuocld0Dw",
+      "VUKPNsQO7OE",
+      "8kdc194MMd0",
+      "KphzyKao05Q",
+      "olakF9Xbisc",
+      "BTbMbkgMOT8",
+      "WUAD_KYHEcI",
+      "11dOALOLK9g",
+      "PQrmBHgk0ps",
+      "A0ZFq0-UPAo",
+      "2lkxXfMFu2Y"
+    ],
+    "refresh_index": 1,
+    "completed_video_ids": [
+      "62tIvfP9A2w",
+      "d0nERTFo-Sk"
+    ],
+    "watched_channels": {
+      "Coach Josh - Versatile Basketball Training": 360.00199999999995,
+      "Vox": 717.0009999999997,
+      "Radical Discourse": 350.00199999999995,
+      "IndieGamerRetro": 42.004999999999995
+    },
+    "watched_topics": [
+      "Sports Analytics Physics",
+      "music math analogy",
+      "Music & Economics"
+    ],
+    "disliked_video_ids": [
+      "4z3KmoCwoSY",
+      "4eGyrthiKp0",
+      "rIHK9rkFMBw",
+      "O6RePVr3nnE",
+      "vMVNhXoMUQw",
+      "oCEzjAxoRGs",
+      "3cMKSqC1i4g",
+      "ZTo-XDw_esk",
+      "U6s4tn_AuLE",
+      "u7B3JChw1uI",
+      "q334s9_HMqE",
+      "9jF8R0Huq0U",
+      "EElOwG_RVLg",
+      "IMuvGvMNst4",
+      "PAO9T0OY13E",
+      "9cP_iveqNOs",
+      "cQYk-NBNe9U",
+      "bYMdzZsdUVE",
+      "A0LCJL1VqPo"
+    ],
+    "disliked_records": [
+      {
+        "video_id": "4z3KmoCwoSY",
+        "title": "10 Historical Pirate Moments That Were Beyond Stupid",
+        "channel": "History Reloaded",
+        "thumbnail": "https://i.ytimg.com/vi/4z3KmoCwoSY/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC8xg=&rs=AOn4CLBAQnaZdtC0xvV8U2fBt_igwSPk_A",
+        "recommendation_context": "Surfaced from channel History Reloaded. Based on metadata: Metadata connects to learned taste profile subject 'Historical Navigation Science' via domain 'Historical Navigation Science'. Offers an engaging entertainment showcase (compelling_story).",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Historical Navigation Science",
+        "date": "2026-11-03T01:29:19.527Z"
+      },
+      {
+        "video_id": "4eGyrthiKp0",
+        "title": "Last Sprunki Phase Standing! - 160 Sprunki Phase 1 - 8 - Elimination Marble Race #3",
+        "channel": "Tiger's Marbles",
+        "thumbnail": "https://i.ytimg.com/vi/4eGyrthiKp0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCd4dyk0PhPkeTihPNQeWS0WsUAgw",
+        "recommendation_context": "Engages playful simulation and tournament-style elimination mechanics.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Competitive Entertainment",
+        "date": "2026-11-02T23:12:58.170Z"
+      },
+      {
+        "video_id": "rIHK9rkFMBw",
+        "title": "Mariam al-Astrulabi: The Woman Who Mapped the Stars | the World\u2019s First GPS",
+        "channel": "DF_DifferentFacts",
+        "thumbnail": "https://i.ytimg.com/vi/rIHK9rkFMBw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBsC8f_bxO_o9LkvgfG-xtAF-C20Q",
+        "recommendation_context": "Metadata connects to learned taste profile subject 'Historical Navigation Science' via domain 'Historical Navigation Science'.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Historical Navigation Science",
+        "date": "2026-11-02T20:51:36.123Z"
+      },
+      {
+        "video_id": "O6RePVr3nnE",
+        "title": "7 Natural Cooling Methods Every Old House Used Before AC",
+        "channel": "Richard One",
+        "thumbnail": "https://i.ytimg.com/vi/O6RePVr3nnE/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLABOL5-xxooJIq4YCxf2ocKbX3NeQ",
+        "recommendation_context": "Supported as high-quality wildcard discovery in Traditional Architecture outside current categories.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Traditional Architecture",
+        "date": "2026-11-02T20:51:27.506Z"
+      },
+      {
+        "video_id": "vMVNhXoMUQw",
+        "title": "The Astrolabe | The Ancient GPS That Changed History",
+        "channel": "Space Knowhow - Exploring the Universe Together",
+        "thumbnail": "https://i.ytimg.com/vi/vMVNhXoMUQw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD8LqNjT8uZjugIHsKY1kzuuqHWcA",
+        "recommendation_context": "Metadata connects to learned taste profile subject 'Historical Navigation Science' via domain 'Historical Navigation Science'.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Historical Navigation Science",
+        "date": "2026-11-02T20:51:16.072Z"
+      },
+      {
+        "video_id": "oCEzjAxoRGs",
+        "title": "The Debate the Astrolabe Still Starts: Was It Scientific or Sacred? \ud83d\ude32\u2728 | The Islamic War of Ideas |",
+        "channel": "Histrotook",
+        "thumbnail": "https://i.ytimg.com/vi/oCEzjAxoRGs/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCoR2gAZaWAL3PV55ORKS2863rQzg",
+        "recommendation_context": "Metadata connects to learned taste profile subject 'Historical Navigation Science' via domain 'Historical Navigation Science'.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Historical Navigation Science",
+        "date": "2026-11-02T20:51:02.756Z"
+      },
+      {
+        "video_id": "3cMKSqC1i4g",
+        "title": "Marble Race: Epic Friendly Tournament with 16 Countries! \ud83c\udf0d",
+        "channel": "Fubeca's Marble Runs",
+        "thumbnail": "https://i.ytimg.com/vi/3cMKSqC1i4g/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDnQ4Pxrbdf5_paxsdGDoSrOEG1LA",
+        "recommendation_context": "Presents a playful sports tournament simulation format using whimsical physics.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Micro Sports Entertainment",
+        "date": "2026-10-30T07:55:17.268Z"
+      },
+      {
+        "video_id": "ZTo-XDw_esk",
+        "title": "\ud83d\udd2e Bundesliga Marble Run: 18 Clubs - 1 Champion",
+        "channel": "Bundesliga",
+        "thumbnail": "https://i.ytimg.com/vi/ZTo-XDw_esk/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAQxZ3hn4S9ElJ1Vvygkjtthgk4nQ",
+        "recommendation_context": "Blends sports league structures with playful physics simulation.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Micro Sports Entertainment",
+        "date": "2026-10-30T07:55:10.871Z"
+      },
+      {
+        "video_id": "U6s4tn_AuLE",
+        "title": "Which MARBLE will win Marbula One S6? (F1 marble race)",
+        "channel": "Jelle's Marble Runs",
+        "thumbnail": "https://i.ytimg.com/vi/U6s4tn_AuLE/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDNE5Vgcz0FIvGGykefLu2HW5wB-A",
+        "recommendation_context": "A whimsical sports-analytics-style spectacle simulating professional racing dynamics using marbles, appealing to sports fandom and probability.",
+        "chosen_reason": "Too shallow",
+        "source_domain": "Unique Competitions",
+        "date": "2026-10-30T07:39:14.437Z"
+      },
+      {
+        "video_id": "u7B3JChw1uI",
+        "title": "Dokis Rob a Bank\ud83d\udcb8(DDLC Voiced Animation)",
+        "channel": "Querxes",
+        "thumbnail": "https://i.ytimg.com/vi/u7B3JChw1uI/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBmF9dtDyhYhKvW2xe02dYbrfqT1g",
+        "recommendation_context": "Combines videogame character lore with humorous fan-made animation narratives.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Narrative Lore",
+        "date": "2026-10-30T07:37:54.702Z"
+      },
+      {
+        "video_id": "q334s9_HMqE",
+        "title": "100 Countries, 1 Champion! \ud83c\udfc6 Marble Race Tournament | Season 1",
+        "channel": "Marbles Madness 3D",
+        "thumbnail": "https://i.ytimg.com/vi/q334s9_HMqE/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBEudCmPUDUM1ZD2SwCZuc8heEvdA",
+        "recommendation_context": "A playful physics-engine simulation combining global nations with sports tournament formats.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Competitive Entertainment",
+        "date": "2026-10-30T07:37:41.720Z"
+      },
+      {
+        "video_id": "9jF8R0Huq0U",
+        "title": "FIFA World Cup 2026 Marble Race in Algodoo",
+        "channel": "Riley Marbles",
+        "thumbnail": "https://i.ytimg.com/vi/9jF8R0Huq0U/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCrFWCC2x545I8Sd5Z5S_m9y-W6Rw",
+        "recommendation_context": "Leverages the upcoming World Cup theme in an algorithmic physics sandbox.",
+        "chosen_reason": "Too shallow",
+        "source_domain": "Competitive Entertainment",
+        "date": "2026-10-30T07:37:36.488Z"
+      },
+      {
+        "video_id": "EElOwG_RVLg",
+        "title": "Extraordinary Antique Automata & Animated Music Boxes | Rare Mechanical Wonders",
+        "channel": "The Automata of Lut\u00e8ce Cr\u00e9ations",
+        "thumbnail": "https://i.ytimg.com/vi/EElOwG_RVLg/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC8xg=&rs=AOn4CLAClLlT-G_NHSo_N_NswajN0_OusA",
+        "recommendation_context": "Showcases intricate mechanical craft and artistic engineering through antique automata and music boxes.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Historical Engineering",
+        "date": "2026-10-30T07:32:19.371Z"
+      },
+      {
+        "video_id": "IMuvGvMNst4",
+        "title": "Build This Roman Concrete Mix: Self-Heals Cracks and Gets STRONGER Over Time (3 Ingredients)",
+        "channel": "Medieval Wisdom",
+        "thumbnail": "https://i.ytimg.com/vi/IMuvGvMNst4/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD2nIZtHToWc1dleXZo0LEipS4g7Q",
+        "recommendation_context": "Blends historical material science, chemistry, and artisan construction techniques.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Materials Science History",
+        "date": "2026-10-30T07:10:16.078Z"
+      },
+      {
+        "video_id": "PAO9T0OY13E",
+        "title": "Grow BIGGER Harvests with These 10 Onion Companion Plants",
+        "channel": "Green Life Zen",
+        "thumbnail": "https://i.ytimg.com/vi/PAO9T0OY13E/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCAfKsCSVIa8gbvl7We5QWwxYL0cQ",
+        "recommendation_context": "Focuses on optimizing a specific crop (onions) through targeted plant pairings.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "botany horticulture",
+        "date": "2026-10-30T06:56:18.449Z"
+      },
+      {
+        "video_id": "9cP_iveqNOs",
+        "title": "Probability Theory Began in Gamblers' Letters - Math History Chapter 13",
+        "channel": "Learning to Understand",
+        "thumbnail": "https://i.ytimg.com/vi/9cP_iveqNOs/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBc3dVoPE3GQHYa9UIgGAKo4KdrNw",
+        "recommendation_context": "Explores the historical letters between Pascal and Fermat that founded probability theory, blending math history with gambling roots.",
+        "chosen_reason": "Don\u2019t like this format",
+        "source_domain": "History of Probability",
+        "date": "2026-10-29T18:19:41.339Z"
+      },
+      {
+        "video_id": "cQYk-NBNe9U",
+        "title": "MINECRAFT Creations And Crafts That Are Next Level \u25b6 14",
+        "channel": "Quantastic",
+        "thumbnail": "https://i.ytimg.com/vi/cQYk-NBNe9U/hq720.jpg?sqp=-oaymwEgCNAFEJQDSFXyq4qpAxIIARUAAIhCGAFwAcABBrgC8xg=&rs=AOn4CLAffKtVEfB9jQJif-6nLaYJSiTerw",
+        "recommendation_context": "Surfaced from channel Quantastic. Based on metadata: Metadata supports entertaining presentation connecting to 'videogames and videogame design, basketball, sports analytics, math, economics, quant research, art, movies, music, gardening' (art). Offers an engaging, entertaining, or comedic perspective.",
+        "chosen_reason": "Too shallow",
+        "source_domain": "Creative Videogames Showcase",
+        "date": "2026-10-29T17:39:47.582Z"
+      },
+      {
+        "video_id": "bYMdzZsdUVE",
+        "title": "Miniature Basketball Set Tutorial",
+        "channel": "Craftish",
+        "thumbnail": "https://i.ytimg.com/vi/bYMdzZsdUVE/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLABg7Guxja1iRwjwUlBr2aNiptg4Q",
+        "recommendation_context": "A straightforward craft tutorial focused on building a miniature basketball setup from scratch.",
+        "chosen_reason": "Bad recommendation",
+        "source_domain": "Art and Craftsmanship",
+        "date": "2026-10-29T08:57:05.044Z"
+      },
+      {
+        "video_id": "A0LCJL1VqPo",
+        "title": "Keyboard Case Maker",
+        "channel": "Trend Core",
+        "thumbnail": "https://i.ytimg.com/vi/A0LCJL1VqPo/hq720.jpg?sqp=-oaymwE2CNAFEJQDSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARh_IC0oKTAP&rs=AOn4CLDbvGAbCxVlE-xSbnRjCXw8DJKXyA",
+        "recommendation_context": "Appeals to artisan craft and physical design, offering a satisfying maker-focused perspective.",
+        "chosen_reason": "Not interested in this topic",
+        "source_domain": "Artisan Craftsmanship",
+        "date": "2026-10-29T08:54:42.612Z"
+      }
+    ],
+    "active_category": null,
+    "categories": [
+      "Kinetic Sports Entertainment",
+      "Sports Highlights",
+      "Videogames",
+      "Competitive Entertainment",
+      "Narrative Lore",
+      "Unique Competitions",
+      "Maker Crafts",
+      "Micro Sports Entertainment",
+      "Historical Navigation Science",
+      "Traditional Architecture",
+      "Music and Topology",
+      "Game Theory & Cryptography",
+      "Applied Mathematics & Topology",
+      "Competitive Strategy & Mechanics"
+    ],
+    "dismissed_categories": [],
+    "emerging_interests": [
+      "Historical Navigation Science",
+      "Maker Crafts"
+    ],
+    "watch_later_video_ids": [
+      "2Tw0AKt91pQ",
+      "5DO1wygRtPY",
+      "BocuAg-AsiE",
+      "iTpuiVs_0po",
+      "T2chW74C-_U",
+      "QQZMjmag_ZY",
+      "9XcLoEVnjrA",
+      "TmtUQ4q6pes",
+      "k2L45QJyF_o",
+      "Secl36GlxHI",
+      "xk_BsNZ2H8Q",
+      "PF2nmSLjPG8",
+      "mhr3REshTss",
+      "UBspW-TZd8k",
+      "Zrf1cou_yVo",
+      "YAoJORuP-Bo",
+      "7uo-Lpw3nTE",
+      "6a4jUt7QciQ",
+      "a9c4jrgfhsk",
+      "KPoeNZZ6H4s",
+      "wLHXn8IlAiA",
+      "hYMZsMMlubg",
+      "KZeIEiBrT_w",
+      "vv5WtDiHtC0",
+      "yGQb9KkvQ1Q",
+      "OP935oRhVHo",
+      "S-pnuoPpmbI",
+      "6IPXSqOhykg",
+      "Z9732sxpl48"
+    ],
+    "followed_creators": [
+      {
+        "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+        "name": "Veritasium",
+        "followed_at": "2026-10-29T18:20:17.956Z",
+        "thumbnail": "https://i.ytimg.com/vi/KZeIEiBrT_w/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDPFp9L1zB0ibYqnYKnjmSP-hUW3A"
+      },
+      {
+        "channel_id": "UCsooa4yRKGN_zEE8iknghZA",
+        "name": "TED-Ed",
+        "followed_at": "2026-10-29T18:32:11.607Z",
+        "thumbnail": "https://i.ytimg.com/vi/xFqecEtdGZ0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCnkYolyKXcZvD7QowCkIp9hfklgw"
+      },
+      {
+        "channel_id": "UCYO_jab_esuFRV4b17AJtAw",
+        "name": "3Blue1Brown",
+        "followed_at": "2026-11-02T19:57:35.291Z",
+        "thumbnail": "https://i.ytimg.com/vi/spUNpyF58BY/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA285MHBCzcX-r0C9LNNWzWmE2n4A"
+      },
+      {
+        "name": "AlphaPhoenix",
+        "added_at": "2026-11-03T00:27:39.839Z",
+        "source": "youtube_sync"
+      },
+      {
+        "name": "ElectroBOOM",
+        "added_at": "2026-11-03T00:27:39.839Z",
+        "source": "youtube_sync"
+      },
+      {
+        "name": "2maniac",
+        "added_at": "2026-11-03T00:27:39.839Z",
+        "source": "youtube_sync"
+      },
+      {
+        "name": "A Guy Called Henry",
+        "added_at": "2026-11-03T00:27:39.839Z",
+        "source": "youtube_sync"
+      },
+      {
+        "name": "Cracking The Cryptic",
+        "added_at": "2026-11-03T00:46:57.243Z",
+        "source": "youtube_sync"
+      }
+    ],
+    "living_taste_profile": {
+      "subject_affinities": {
+        "Kinetic Sports Entertainment": 0.9,
+        "Sports Highlights": 3,
+        "Videogames": 3,
+        "Competitive Entertainment": 0,
+        "Narrative Lore": 0,
+        "Unique Competitions": 0,
+        "Maker Crafts": 3,
+        "Micro Sports Entertainment": 0,
+        "Historical Navigation Science": 3,
+        "Traditional Architecture": 0,
+        "Music and Topology": 3
+      },
+      "subject_evidence_counts": {
+        "Kinetic Sports Entertainment": 1,
+        "Sports Highlights": 1,
+        "Videogames": 1,
+        "Maker Crafts": 1,
+        "Historical Navigation Science": 1,
+        "Music and Topology": 1
+      },
+      "preferred_qualities": {
+        "visual explanation": 0.7,
+        "storytelling": 5.5,
+        "technical depth": 0,
+        "artisan craft": 2.4,
+        "humor": 4.8,
+        "unusual connections": 9.6
+      },
+      "preferred_entertainment_formats": {
+        "compelling_story": 5.5,
+        "creative_projects": 2.4,
+        "comedy": 4.8
+      },
+      "followed_creators": [
+        "3Blue1Brown"
+      ],
+      "disliked_patterns": [
+        "Bad recommendation",
+        "Too shallow"
+      ],
+      "recent_signals": [
+        {
+          "video_id": "4z3KmoCwoSY",
+          "title": "10 Historical Pirate Moments That Were Beyond Stupid",
+          "channel": "History Reloaded",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-03T01:29:20.976Z"
+        },
+        {
+          "video_id": "4eGyrthiKp0",
+          "title": "Last Sprunki Phase Standing! - 160 Sprunki Phase 1 - 8 - Elimination Marble Race #3",
+          "channel": "Tiger's Marbles",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T23:12:59.536Z"
+        },
+        {
+          "video_id": "4eGyrthiKp0",
+          "title": "Last Sprunki Phase Standing! - 160 Sprunki Phase 1 - 8 - Elimination Marble Race #3",
+          "channel": "Tiger's Marbles",
+          "domain": "Competitive Entertainment",
+          "qualities": [
+            "challenges",
+            "technical depth",
+            "humor",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T23:12:58.172Z"
+        },
+        {
+          "video_id": "2Tw0AKt91pQ",
+          "title": "The Math Behind Bach's Crab Canon",
+          "channel": "Aman Trivedi",
+          "domain": "Music and Topology",
+          "qualities": [
+            "storytelling",
+            "unusual connections"
+          ],
+          "action": "watch_later",
+          "weight": 3,
+          "timestamp": "2026-11-02T22:50:57.147Z"
+        },
+        {
+          "video_id": "5DO1wygRtPY",
+          "title": "17th Century Maritime Celestial Navigation",
+          "channel": "JYF Museums",
+          "domain": "Historical Navigation Science",
+          "qualities": [
+            "humor",
+            "unusual connections"
+          ],
+          "action": "watch_later",
+          "weight": 3,
+          "timestamp": "2026-11-02T21:13:07.040Z"
+        },
+        {
+          "video_id": "rIHK9rkFMBw",
+          "title": "Mariam al-Astrulabi: The Woman Who Mapped the Stars | the World\u2019s First GPS",
+          "channel": "DF_DifferentFacts",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:37.206Z"
+        },
+        {
+          "video_id": "rIHK9rkFMBw",
+          "title": "Mariam al-Astrulabi: The Woman Who Mapped the Stars | the World\u2019s First GPS",
+          "channel": "DF_DifferentFacts",
+          "domain": "Historical Navigation Science",
+          "qualities": [
+            "storytelling",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:36.124Z"
+        },
+        {
+          "video_id": "O6RePVr3nnE",
+          "title": "7 Natural Cooling Methods Every Old House Used Before AC",
+          "channel": "Richard One",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:28.691Z"
+        },
+        {
+          "video_id": "O6RePVr3nnE",
+          "title": "7 Natural Cooling Methods Every Old House Used Before AC",
+          "channel": "Richard One",
+          "domain": "Traditional Architecture",
+          "qualities": [
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:27.506Z"
+        },
+        {
+          "video_id": "vMVNhXoMUQw",
+          "title": "The Astrolabe | The Ancient GPS That Changed History",
+          "channel": "Space Knowhow - Exploring the Universe Together",
+          "domain": null,
+          "qualities": [
+            "storytelling"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:17.656Z"
+        },
+        {
+          "video_id": "vMVNhXoMUQw",
+          "title": "The Astrolabe | The Ancient GPS That Changed History",
+          "channel": "Space Knowhow - Exploring the Universe Together",
+          "domain": "Historical Navigation Science",
+          "qualities": [
+            "storytelling",
+            "artisan craft",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:16.073Z"
+        },
+        {
+          "video_id": "oCEzjAxoRGs",
+          "title": "The Debate the Astrolabe Still Starts: Was It Scientific or Sacred? \ud83d\ude32\u2728 | The Islamic War of Ideas |",
+          "channel": "Histrotook",
+          "domain": null,
+          "qualities": [
+            "technical depth"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:04.039Z"
+        },
+        {
+          "video_id": "oCEzjAxoRGs",
+          "title": "The Debate the Astrolabe Still Starts: Was It Scientific or Sacred? \ud83d\ude32\u2728 | The Islamic War of Ideas |",
+          "channel": "Histrotook",
+          "domain": "Historical Navigation Science",
+          "qualities": [
+            "technical depth",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-11-02T20:51:02.757Z"
+        },
+        {
+          "video_id": "UCYO_jab_esuFRV4b17AJtAw",
+          "title": "3Blue1Brown",
+          "channel": "3Blue1Brown",
+          "domain": null,
+          "qualities": [],
+          "action": "followed",
+          "weight": 3.5,
+          "timestamp": "2026-11-02T19:57:35.293Z"
+        },
+        {
+          "video_id": "3cMKSqC1i4g",
+          "title": "Marble Race: Epic Friendly Tournament with 16 Countries! \ud83c\udf0d",
+          "channel": "Fubeca's Marble Runs",
+          "domain": null,
+          "qualities": [
+            "storytelling",
+            "humor"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:55:18.270Z"
+        },
+        {
+          "video_id": "3cMKSqC1i4g",
+          "title": "Marble Race: Epic Friendly Tournament with 16 Countries! \ud83c\udf0d",
+          "channel": "Fubeca's Marble Runs",
+          "domain": "Micro Sports Entertainment",
+          "qualities": [
+            "spectacle",
+            "storytelling",
+            "technical depth",
+            "humor",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:55:17.269Z"
+        },
+        {
+          "video_id": "ZTo-XDw_esk",
+          "title": "\ud83d\udd2e Bundesliga Marble Run: 18 Clubs - 1 Champion",
+          "channel": "Bundesliga",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:55:12.368Z"
+        },
+        {
+          "video_id": "ZTo-XDw_esk",
+          "title": "\ud83d\udd2e Bundesliga Marble Run: 18 Clubs - 1 Champion",
+          "channel": "Bundesliga",
+          "domain": "Micro Sports Entertainment",
+          "qualities": [
+            "spectacle",
+            "technical depth",
+            "humor",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:55:10.873Z"
+        },
+        {
+          "video_id": "BocuAg-AsiE",
+          "title": "I helped design a keyboard! \ud83c\udf6b MOCHI EDITION CandyBar Build",
+          "channel": "Mochi Crafts",
+          "domain": "Maker Crafts",
+          "qualities": [
+            "artisan craft",
+            "humor",
+            "unusual connections"
+          ],
+          "action": "watch_later",
+          "weight": 3,
+          "timestamp": "2026-10-30T07:41:55.492Z"
+        },
+        {
+          "video_id": "U6s4tn_AuLE",
+          "title": "Which MARBLE will win Marbula One S6? (F1 marble race)",
+          "channel": "Jelle's Marble Runs",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:39:15.435Z"
+        },
+        {
+          "video_id": "U6s4tn_AuLE",
+          "title": "Which MARBLE will win Marbula One S6? (F1 marble race)",
+          "channel": "Jelle's Marble Runs",
+          "domain": "Unique Competitions",
+          "qualities": [
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:39:14.438Z"
+        },
+        {
+          "video_id": "u7B3JChw1uI",
+          "title": "Dokis Rob a Bank\ud83d\udcb8(DDLC Voiced Animation)",
+          "channel": "Querxes",
+          "domain": null,
+          "qualities": [
+            "visual explanation"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:37:56.635Z"
+        },
+        {
+          "video_id": "u7B3JChw1uI",
+          "title": "Dokis Rob a Bank\ud83d\udcb8(DDLC Voiced Animation)",
+          "channel": "Querxes",
+          "domain": "Narrative Lore",
+          "qualities": [
+            "visual explanation",
+            "storytelling",
+            "humor"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:37:54.703Z"
+        },
+        {
+          "video_id": "q334s9_HMqE",
+          "title": "100 Countries, 1 Champion! \ud83c\udfc6 Marble Race Tournament | Season 1",
+          "channel": "Marbles Madness 3D",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:37:42.852Z"
+        },
+        {
+          "video_id": "q334s9_HMqE",
+          "title": "100 Countries, 1 Champion! \ud83c\udfc6 Marble Race Tournament | Season 1",
+          "channel": "Marbles Madness 3D",
+          "domain": "Competitive Entertainment",
+          "qualities": [
+            "technical depth",
+            "humor",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:37:41.724Z"
+        },
+        {
+          "video_id": "9jF8R0Huq0U",
+          "title": "FIFA World Cup 2026 Marble Race in Algodoo",
+          "channel": "Riley Marbles",
+          "domain": null,
+          "qualities": [],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:37:37.753Z"
+        },
+        {
+          "video_id": "9jF8R0Huq0U",
+          "title": "FIFA World Cup 2026 Marble Race in Algodoo",
+          "channel": "Riley Marbles",
+          "domain": "Competitive Entertainment",
+          "qualities": [
+            "technical depth",
+            "unusual connections"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:37:36.492Z"
+        },
+        {
+          "video_id": "iTpuiVs_0po",
+          "title": "Ocarina of Time Speedrunner Accidentally finds Massive Glitch",
+          "channel": "LunaticJ",
+          "domain": "Videogames",
+          "qualities": [
+            "unusual connections"
+          ],
+          "action": "watch_later",
+          "weight": 3,
+          "timestamp": "2026-10-30T07:37:01.968Z"
+        },
+        {
+          "video_id": "T2chW74C-_U",
+          "title": "College Basketball buzzer beaters that get increasingly more clutch",
+          "channel": "Play Wave",
+          "domain": "Sports Highlights",
+          "qualities": [
+            "storytelling"
+          ],
+          "action": "watch_later",
+          "weight": 3,
+          "timestamp": "2026-10-30T07:36:57.907Z"
+        },
+        {
+          "video_id": "creator_MoreBalls",
+          "title": "*EPIC* Elimination Race!  | #marbles #marblerun #marblerace #asmr #sensory",
+          "channel": "MoreBalls",
+          "domain": "Kinetic Sports Entertainment",
+          "qualities": [
+            "visual explanation",
+            "storytelling"
+          ],
+          "action": "substantial_watch",
+          "weight": 1,
+          "timestamp": "2026-10-30T07:34:31.882Z"
+        },
+        {
+          "video_id": "EElOwG_RVLg",
+          "title": "Extraordinary Antique Automata & Animated Music Boxes | Rare Mechanical Wonders",
+          "channel": "The Automata of Lut\u00e8ce Cr\u00e9ations",
+          "domain": null,
+          "qualities": [
+            "visual explanation"
+          ],
+          "action": "disliked",
+          "weight": -2,
+          "timestamp": "2026-10-30T07:32:21.753Z"
+        }
+      ],
+      "last_updated_at": "2026-11-03T01:29:20.976Z"
+    },
+    "curiosity_archetypes": [
+      "mechanist",
+      "visual_synthesizer",
+      "game_theorist"
+    ],
+    "intellectual_vibes": [
+      "first_principles",
+      "technical_depth",
+      "deep_tactical"
+    ],
+    "curiosity_statement": "Driven by an urge to reverse-engineer both digital systems and physical mechanics, this viewer loves dissecting the underlying rules of games, math, and code. They constantly seek out the invisible logic governing complex environments, whether through rigorous problem-solving or tactical competitive analysis.",
+    "youtube_connected": true,
+    "youtube_synced_channel_count": 60,
+    "youtube_sync_mode": "browser_chrome",
+    "min_duration_minutes": 6,
+    "max_duration_minutes": 180,
+    "seed_topic": null,
+    "recent_queries": [],
+    "recent_shown_video_ids": [
+      "ROP45rjvOHg",
+      "Yel8Yw44xFs",
+      "8vk5z9VAaBQ",
+      "4z3KmoCwoSY",
+      "cUzklzVXJwo",
+      "jIMihpDmBpY",
+      "U3lKYGIPsNE",
+      "eub0VHQXTjg",
+      "yzGqp3R4Mx4",
+      "1IPuocld0Dw"
+    ]
+  },
+  "living_taste_profile": {
+    "subject_affinities": {
+      "Kinetic Sports Entertainment": 0.9,
+      "Sports Highlights": 3,
+      "Videogames": 3,
+      "Competitive Entertainment": 0,
+      "Narrative Lore": 0,
+      "Unique Competitions": 0,
+      "Maker Crafts": 3,
+      "Micro Sports Entertainment": 0,
+      "Historical Navigation Science": 3,
+      "Traditional Architecture": 0,
+      "Music and Topology": 3
+    },
+    "subject_evidence_counts": {
+      "Kinetic Sports Entertainment": 1,
+      "Sports Highlights": 1,
+      "Videogames": 1,
+      "Maker Crafts": 1,
+      "Historical Navigation Science": 1,
+      "Music and Topology": 1
+    },
+    "preferred_qualities": {
+      "visual explanation": 0.7,
+      "storytelling": 5.5,
+      "technical depth": 0,
+      "artisan craft": 2.4,
+      "humor": 4.8,
+      "unusual connections": 9.6
+    },
+    "preferred_entertainment_formats": {
+      "compelling_story": 5.5,
+      "creative_projects": 2.4,
+      "comedy": 4.8
+    },
+    "followed_creators": [
+      "3Blue1Brown"
+    ],
+    "disliked_patterns": [
+      "Bad recommendation",
+      "Too shallow"
+    ],
+    "recent_signals": [
+      {
+        "video_id": "4z3KmoCwoSY",
+        "title": "10 Historical Pirate Moments That Were Beyond Stupid",
+        "channel": "History Reloaded",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-03T01:29:20.976Z"
+      },
+      {
+        "video_id": "4eGyrthiKp0",
+        "title": "Last Sprunki Phase Standing! - 160 Sprunki Phase 1 - 8 - Elimination Marble Race #3",
+        "channel": "Tiger's Marbles",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T23:12:59.536Z"
+      },
+      {
+        "video_id": "4eGyrthiKp0",
+        "title": "Last Sprunki Phase Standing! - 160 Sprunki Phase 1 - 8 - Elimination Marble Race #3",
+        "channel": "Tiger's Marbles",
+        "domain": "Competitive Entertainment",
+        "qualities": [
+          "challenges",
+          "technical depth",
+          "humor",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T23:12:58.172Z"
+      },
+      {
+        "video_id": "2Tw0AKt91pQ",
+        "title": "The Math Behind Bach's Crab Canon",
+        "channel": "Aman Trivedi",
+        "domain": "Music and Topology",
+        "qualities": [
+          "storytelling",
+          "unusual connections"
+        ],
+        "action": "watch_later",
+        "weight": 3,
+        "timestamp": "2026-11-02T22:50:57.147Z"
+      },
+      {
+        "video_id": "5DO1wygRtPY",
+        "title": "17th Century Maritime Celestial Navigation",
+        "channel": "JYF Museums",
+        "domain": "Historical Navigation Science",
+        "qualities": [
+          "humor",
+          "unusual connections"
+        ],
+        "action": "watch_later",
+        "weight": 3,
+        "timestamp": "2026-11-02T21:13:07.040Z"
+      },
+      {
+        "video_id": "rIHK9rkFMBw",
+        "title": "Mariam al-Astrulabi: The Woman Who Mapped the Stars | the World\u2019s First GPS",
+        "channel": "DF_DifferentFacts",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:37.206Z"
+      },
+      {
+        "video_id": "rIHK9rkFMBw",
+        "title": "Mariam al-Astrulabi: The Woman Who Mapped the Stars | the World\u2019s First GPS",
+        "channel": "DF_DifferentFacts",
+        "domain": "Historical Navigation Science",
+        "qualities": [
+          "storytelling",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:36.124Z"
+      },
+      {
+        "video_id": "O6RePVr3nnE",
+        "title": "7 Natural Cooling Methods Every Old House Used Before AC",
+        "channel": "Richard One",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:28.691Z"
+      },
+      {
+        "video_id": "O6RePVr3nnE",
+        "title": "7 Natural Cooling Methods Every Old House Used Before AC",
+        "channel": "Richard One",
+        "domain": "Traditional Architecture",
+        "qualities": [
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:27.506Z"
+      },
+      {
+        "video_id": "vMVNhXoMUQw",
+        "title": "The Astrolabe | The Ancient GPS That Changed History",
+        "channel": "Space Knowhow - Exploring the Universe Together",
+        "domain": null,
+        "qualities": [
+          "storytelling"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:17.656Z"
+      },
+      {
+        "video_id": "vMVNhXoMUQw",
+        "title": "The Astrolabe | The Ancient GPS That Changed History",
+        "channel": "Space Knowhow - Exploring the Universe Together",
+        "domain": "Historical Navigation Science",
+        "qualities": [
+          "storytelling",
+          "artisan craft",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:16.073Z"
+      },
+      {
+        "video_id": "oCEzjAxoRGs",
+        "title": "The Debate the Astrolabe Still Starts: Was It Scientific or Sacred? \ud83d\ude32\u2728 | The Islamic War of Ideas |",
+        "channel": "Histrotook",
+        "domain": null,
+        "qualities": [
+          "technical depth"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:04.039Z"
+      },
+      {
+        "video_id": "oCEzjAxoRGs",
+        "title": "The Debate the Astrolabe Still Starts: Was It Scientific or Sacred? \ud83d\ude32\u2728 | The Islamic War of Ideas |",
+        "channel": "Histrotook",
+        "domain": "Historical Navigation Science",
+        "qualities": [
+          "technical depth",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-11-02T20:51:02.757Z"
+      },
+      {
+        "video_id": "UCYO_jab_esuFRV4b17AJtAw",
+        "title": "3Blue1Brown",
+        "channel": "3Blue1Brown",
+        "domain": null,
+        "qualities": [],
+        "action": "followed",
+        "weight": 3.5,
+        "timestamp": "2026-11-02T19:57:35.293Z"
+      },
+      {
+        "video_id": "3cMKSqC1i4g",
+        "title": "Marble Race: Epic Friendly Tournament with 16 Countries! \ud83c\udf0d",
+        "channel": "Fubeca's Marble Runs",
+        "domain": null,
+        "qualities": [
+          "storytelling",
+          "humor"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:55:18.270Z"
+      },
+      {
+        "video_id": "3cMKSqC1i4g",
+        "title": "Marble Race: Epic Friendly Tournament with 16 Countries! \ud83c\udf0d",
+        "channel": "Fubeca's Marble Runs",
+        "domain": "Micro Sports Entertainment",
+        "qualities": [
+          "spectacle",
+          "storytelling",
+          "technical depth",
+          "humor",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:55:17.269Z"
+      },
+      {
+        "video_id": "ZTo-XDw_esk",
+        "title": "\ud83d\udd2e Bundesliga Marble Run: 18 Clubs - 1 Champion",
+        "channel": "Bundesliga",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:55:12.368Z"
+      },
+      {
+        "video_id": "ZTo-XDw_esk",
+        "title": "\ud83d\udd2e Bundesliga Marble Run: 18 Clubs - 1 Champion",
+        "channel": "Bundesliga",
+        "domain": "Micro Sports Entertainment",
+        "qualities": [
+          "spectacle",
+          "technical depth",
+          "humor",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:55:10.873Z"
+      },
+      {
+        "video_id": "BocuAg-AsiE",
+        "title": "I helped design a keyboard! \ud83c\udf6b MOCHI EDITION CandyBar Build",
+        "channel": "Mochi Crafts",
+        "domain": "Maker Crafts",
+        "qualities": [
+          "artisan craft",
+          "humor",
+          "unusual connections"
+        ],
+        "action": "watch_later",
+        "weight": 3,
+        "timestamp": "2026-10-30T07:41:55.492Z"
+      },
+      {
+        "video_id": "U6s4tn_AuLE",
+        "title": "Which MARBLE will win Marbula One S6? (F1 marble race)",
+        "channel": "Jelle's Marble Runs",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:39:15.435Z"
+      },
+      {
+        "video_id": "U6s4tn_AuLE",
+        "title": "Which MARBLE will win Marbula One S6? (F1 marble race)",
+        "channel": "Jelle's Marble Runs",
+        "domain": "Unique Competitions",
+        "qualities": [
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:39:14.438Z"
+      },
+      {
+        "video_id": "u7B3JChw1uI",
+        "title": "Dokis Rob a Bank\ud83d\udcb8(DDLC Voiced Animation)",
+        "channel": "Querxes",
+        "domain": null,
+        "qualities": [
+          "visual explanation"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:37:56.635Z"
+      },
+      {
+        "video_id": "u7B3JChw1uI",
+        "title": "Dokis Rob a Bank\ud83d\udcb8(DDLC Voiced Animation)",
+        "channel": "Querxes",
+        "domain": "Narrative Lore",
+        "qualities": [
+          "visual explanation",
+          "storytelling",
+          "humor"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:37:54.703Z"
+      },
+      {
+        "video_id": "q334s9_HMqE",
+        "title": "100 Countries, 1 Champion! \ud83c\udfc6 Marble Race Tournament | Season 1",
+        "channel": "Marbles Madness 3D",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:37:42.852Z"
+      },
+      {
+        "video_id": "q334s9_HMqE",
+        "title": "100 Countries, 1 Champion! \ud83c\udfc6 Marble Race Tournament | Season 1",
+        "channel": "Marbles Madness 3D",
+        "domain": "Competitive Entertainment",
+        "qualities": [
+          "technical depth",
+          "humor",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:37:41.724Z"
+      },
+      {
+        "video_id": "9jF8R0Huq0U",
+        "title": "FIFA World Cup 2026 Marble Race in Algodoo",
+        "channel": "Riley Marbles",
+        "domain": null,
+        "qualities": [],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:37:37.753Z"
+      },
+      {
+        "video_id": "9jF8R0Huq0U",
+        "title": "FIFA World Cup 2026 Marble Race in Algodoo",
+        "channel": "Riley Marbles",
+        "domain": "Competitive Entertainment",
+        "qualities": [
+          "technical depth",
+          "unusual connections"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:37:36.492Z"
+      },
+      {
+        "video_id": "iTpuiVs_0po",
+        "title": "Ocarina of Time Speedrunner Accidentally finds Massive Glitch",
+        "channel": "LunaticJ",
+        "domain": "Videogames",
+        "qualities": [
+          "unusual connections"
+        ],
+        "action": "watch_later",
+        "weight": 3,
+        "timestamp": "2026-10-30T07:37:01.968Z"
+      },
+      {
+        "video_id": "T2chW74C-_U",
+        "title": "College Basketball buzzer beaters that get increasingly more clutch",
+        "channel": "Play Wave",
+        "domain": "Sports Highlights",
+        "qualities": [
+          "storytelling"
+        ],
+        "action": "watch_later",
+        "weight": 3,
+        "timestamp": "2026-10-30T07:36:57.907Z"
+      },
+      {
+        "video_id": "creator_MoreBalls",
+        "title": "*EPIC* Elimination Race!  | #marbles #marblerun #marblerace #asmr #sensory",
+        "channel": "MoreBalls",
+        "domain": "Kinetic Sports Entertainment",
+        "qualities": [
+          "visual explanation",
+          "storytelling"
+        ],
+        "action": "substantial_watch",
+        "weight": 1,
+        "timestamp": "2026-10-30T07:34:31.882Z"
+      },
+      {
+        "video_id": "EElOwG_RVLg",
+        "title": "Extraordinary Antique Automata & Animated Music Boxes | Rare Mechanical Wonders",
+        "channel": "The Automata of Lut\u00e8ce Cr\u00e9ations",
+        "domain": null,
+        "qualities": [
+          "visual explanation"
+        ],
+        "action": "disliked",
+        "weight": -2,
+        "timestamp": "2026-10-30T07:32:21.753Z"
+      }
+    ],
+    "last_updated_at": "2026-11-03T01:29:20.976Z"
+  },
+  "followed_creators": [
+    {
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "name": "Veritasium",
+      "followed_at": "2026-10-29T18:20:17.956Z",
+      "thumbnail": "https://i.ytimg.com/vi/KZeIEiBrT_w/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDPFp9L1zB0ibYqnYKnjmSP-hUW3A"
+    },
+    {
+      "channel_id": "UCsooa4yRKGN_zEE8iknghZA",
+      "name": "TED-Ed",
+      "followed_at": "2026-10-29T18:32:11.607Z",
+      "thumbnail": "https://i.ytimg.com/vi/xFqecEtdGZ0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCnkYolyKXcZvD7QowCkIp9hfklgw"
+    },
+    {
+      "channel_id": "UCYO_jab_esuFRV4b17AJtAw",
+      "name": "3Blue1Brown",
+      "followed_at": "2026-11-02T19:57:35.291Z",
+      "thumbnail": "https://i.ytimg.com/vi/spUNpyF58BY/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA285MHBCzcX-r0C9LNNWzWmE2n4A"
+    },
+    {
+      "name": "AlphaPhoenix",
+      "added_at": "2026-11-03T00:27:39.839Z",
+      "source": "youtube_sync"
+    },
+    {
+      "name": "ElectroBOOM",
+      "added_at": "2026-11-03T00:27:39.839Z",
+      "source": "youtube_sync"
+    },
+    {
+      "name": "2maniac",
+      "added_at": "2026-11-03T00:27:39.839Z",
+      "source": "youtube_sync"
+    },
+    {
+      "name": "A Guy Called Henry",
+      "added_at": "2026-11-03T00:27:39.839Z",
+      "source": "youtube_sync"
+    },
+    {
+      "name": "Cracking The Cryptic",
+      "added_at": "2026-11-03T00:46:57.243Z",
+      "source": "youtube_sync"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat_yt_0_1793666817247",
+      "name": "Kinetic Sports Entertainment",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_1_1793666817247",
+      "name": "Sports Highlights",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_2_1793666817247",
+      "name": "Videogames",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_3_1793666817247",
+      "name": "Competitive Entertainment",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_4_1793666817247",
+      "name": "Narrative Lore",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_5_1793666817247",
+      "name": "Unique Competitions",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_6_1793666817247",
+      "name": "Maker Crafts",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_7_1793666817247",
+      "name": "Micro Sports Entertainment",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_8_1793666817247",
+      "name": "Historical Navigation Science",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_9_1793666817247",
+      "name": "Traditional Architecture",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_10_1793666817247",
+      "name": "Music and Topology",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_11_1793666817247",
+      "name": "Game Theory & Cryptography",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_12_1793666817247",
+      "name": "Applied Mathematics & Topology",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    },
+    {
+      "id": "cat_yt_13_1793666817247",
+      "name": "Competitive Strategy & Mechanics",
+      "is_auto_created": true,
+      "is_dismissed": false,
+      "created_at": "2026-11-03T00:46:57.247Z"
+    }
+  ]
+}
