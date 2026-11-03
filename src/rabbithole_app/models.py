@@ -530,6 +530,8 @@ class UserPreferences(BaseModel):
     )
     recent_queries: List[str] = Field(default_factory=list, max_length=40)
     recent_shown_video_ids: List[str] = Field(default_factory=list, max_length=100)
+    recent_shown_subjects: List[str] = Field(default_factory=list, max_length=40)
+    recent_shown_creators: List[str] = Field(default_factory=list, max_length=40)
     refresh_index: int = Field(
         default=0,
         ge=0,

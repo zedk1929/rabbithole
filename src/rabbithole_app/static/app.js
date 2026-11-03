@@ -2910,6 +2910,10 @@ async function fetchFeed(payload) {
   payload.recent_queries = (queryHistory[scope] || []).slice(-40);
   const impressions = readLocalJSON("rabbithole_recent_impressions") || [];
   payload.recent_shown_video_ids = impressions.filter(x => Date.now() - x.at < 3600000).slice(-20).map(x => x.id);
+  const shownSubjectsHistory = readLocalJSON("rabbithole_recent_shown_subjects") || [];
+  payload.recent_shown_subjects = shownSubjectsHistory.slice(-20);
+  const shownCreatorsHistory = readLocalJSON("rabbithole_recent_shown_creators") || [];
+  payload.recent_shown_creators = shownCreatorsHistory.slice(-20);
   const requestPayload = { ...payload };
   const requestedTasteProfile = JSON.stringify(payload.living_taste_profile);
 
@@ -2959,9 +2963,20 @@ function displayFeed(data, payload) {
     exhaustionBanner.classList.add("hidden");
   }
 
-    // Accumulate shown video IDs for feed deduplication
+    // Accumulate shown video IDs, subjects, and creators for feed deduplication & diversity planning
     if (data.items && data.items.length > 0) {
       const returnedIds = data.items.map(i => i.video.id).filter(Boolean);
+      const returnedSubjects = data.items.map(i => i.domain || (i.video && i.video.source_domain)).filter(Boolean);
+      const returnedCreators = data.items.map(i => i.video && i.video.channel).filter(Boolean);
+
+      const subHistory = readLocalJSON("rabbithole_recent_shown_subjects") || [];
+      const updatedSubs = Array.from(new Set([...subHistory, ...returnedSubjects])).slice(-40);
+      saveLocalJSON("rabbithole_recent_shown_subjects", updatedSubs);
+
+      const creatorHistory = readLocalJSON("rabbithole_recent_shown_creators") || [];
+      const updatedCreators = Array.from(new Set([...creatorHistory, ...returnedCreators])).slice(-40);
+      saveLocalJSON("rabbithole_recent_shown_creators", updatedCreators);
+
       const impressions = (readLocalJSON("rabbithole_recent_impressions") || []).filter(x => Date.now() - x.at < 3600000);
       const known = new Set(impressions.map(x => x.id));
       saveLocalJSON("rabbithole_recent_impressions", [...impressions, ...returnedIds.filter(id => !known.has(id)).map(id => ({id, at: Date.now()}))].slice(-100));
@@ -2971,6 +2986,8 @@ function displayFeed(data, payload) {
       updateSeenHistoryUI(mergedSeen.length);
       if (currentPreferences) {
         currentPreferences.seen_video_ids = mergedSeen;
+        currentPreferences.recent_shown_subjects = updatedSubs;
+        currentPreferences.recent_shown_creators = updatedCreators;
       }
     }
 

@@ -1981,16 +1981,56 @@ class QueryExpander:
         - Ensure every refresh explores fresh, unrepeated angles and creators.
             """
 
+        # Collect recent searches, recently shown subjects, and recently shown creators
+        recent_queries_list = preferences.recent_queries[-20:] if preferences.recent_queries else []
+        if recent_queries_list:
+            recent_queries_str = "\n".join(f"  • {q}" for q in recent_queries_list)
+        else:
+            recent_queries_str = "None yet (initial exploration)"
+
+        shown_subjects = []
+        if getattr(preferences, "recent_shown_subjects", None):
+            shown_subjects.extend([s for s in preferences.recent_shown_subjects if s and s not in shown_subjects])
+        if preferences.watched_topics:
+            shown_subjects.extend([t for t in preferences.watched_topics if t and t not in shown_subjects])
+        if preferences.living_taste_profile and preferences.living_taste_profile.recent_signals:
+            for s in preferences.living_taste_profile.recent_signals[:20]:
+                if s.domain and s.domain not in shown_subjects:
+                    shown_subjects.append(s.domain)
+        shown_subjects_str = ", ".join(shown_subjects[:15]) if shown_subjects else "None recorded yet"
+
+        shown_creators = []
+        if getattr(preferences, "recent_shown_creators", None):
+            shown_creators.extend([c for c in preferences.recent_shown_creators if c and c not in shown_creators])
+        if preferences.watched_channels:
+            shown_creators.extend([ch for ch in preferences.watched_channels.keys() if ch and ch not in shown_creators])
+        if preferences.living_taste_profile and preferences.living_taste_profile.recent_signals:
+            for s in preferences.living_taste_profile.recent_signals[:20]:
+                if s.channel and s.channel not in shown_creators:
+                    shown_creators.append(s.channel)
+        if preferences.followed_creators:
+            for fc in preferences.followed_creators:
+                if fc.name and fc.name not in shown_creators:
+                    shown_creators.append(fc.name)
+        shown_creators_str = ", ".join(shown_creators[:15]) if shown_creators else "None recorded yet"
+
+        refresh_section = f"""
+        FEED REFRESH & DIVERSITY PLANNING (Turn #{preferences.refresh_index}):
+        - Previous search directions already explored:
+{recent_queries_str}
+        - Recently shown subjects/domains: {shown_subjects_str}
+        - Recently shown creators/channels: {shown_creators_str}
+        - MANDATORY REFRESH DIRECTIVE: The user has refreshed the feed (Turn #{preferences.refresh_index}). You must NOT repeat, recycle, or marginally reword previous search directions. Plan completely different specific angles, alternative sub-disciplines, distinct creator pools, and novel entry points while preserving the active category ('{preferences.active_category or "Main Feed"}') and viewing mode ('{preferences.feed_mode}').
+        """
+
         prompt = f"""
         User's Curiosity Profile: {preferences.curiosity_summary}
         Seed Interests (if any): "{preferences.interests or 'None specified'}"
-        Refresh number: {preferences.refresh_index}
-        Recent searches already explored: {preferences.recent_queries[-20:]}
-        Upload recency preference: {preferences.recency_preference}
-        Plan different specific angles from recent searches while preserving the active topic and viewing mode.
-        For recent uploads, include timely subjects and current-year searches; avoid generic best-of archives.
+        Feed Refresh Count: {preferences.refresh_index}
+        Upload Recency Preference: {preferences.recency_preference}
         Active Category: {preferences.active_category or 'All / Main Feed'}
         Experience Type: {preferences.experience_type}
+        {refresh_section}
         {familiar_instruction}
         {avoid_instruction}
         {goal_instruction}
@@ -2006,8 +2046,11 @@ class QueryExpander:
         {mode_guidance}
         {discovery_instruction}
 
-        DO NOT expect the user to have specified what fields to search. Actively originate specific, creative directions on your own.
-        Strictly respect any avoided topics. Keep each query string between 3 and 6 words.
+        CRITICAL SEARCH PLANNING REQUIREMENTS:
+        1. Prioritize exploring different specific angles from recent searches and recently shown subjects ({shown_subjects_str}) / creators ({shown_creators_str}).
+        2. For recent uploads, include timely subjects and current-year searches; avoid generic best-of archives.
+        3. DO NOT expect the user to have specified what fields to search. Actively originate specific, creative directions on your own.
+        4. Strictly respect any avoided topics. Keep each query string between 3 and 6 words.
         """
 
         interaction = client.interactions.create(
