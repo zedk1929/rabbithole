@@ -251,6 +251,8 @@ function saveLocalJSON(key, value) {
 
 function getLivingTasteProfile() {
   const defaultProfile = {
+    imported_subject_affinities: {},
+    imported_subject_evidence_counts: {},
     subject_affinities: {},
     subject_evidence_counts: {},
     preferred_qualities: {
@@ -274,6 +276,14 @@ function getLivingTasteProfile() {
     return {
       ...defaultProfile,
       ...parsed,
+      imported_subject_affinities: {
+        ...(defaultProfile.imported_subject_affinities || {}),
+        ...(parsed.imported_subject_affinities || {})
+      },
+      imported_subject_evidence_counts: {
+        ...(defaultProfile.imported_subject_evidence_counts || {}),
+        ...(parsed.imported_subject_evidence_counts || {})
+      },
       preferred_qualities: {
         ...defaultProfile.preferred_qualities,
         ...(parsed.preferred_qualities || {})
@@ -357,11 +367,35 @@ function extractVideoQualities(vid, ev = null) {
 }
 
 function recalculateLivingTasteProfile(profile) {
-  if (!profile.imported_subject_affinities && !(profile.recent_signals || []).length) {
-    profile.imported_subject_affinities = { ...(profile.subject_affinities || {}) };
-    profile.imported_subject_evidence_counts = { ...(profile.subject_evidence_counts || {}) };
+  if (!profile) return;
+
+  // 1. Ensure imported evidence containers are initialized
+  if (!profile.imported_subject_affinities || typeof profile.imported_subject_affinities !== "object") {
+    profile.imported_subject_affinities = {};
   }
+  if (!profile.imported_subject_evidence_counts || typeof profile.imported_subject_evidence_counts !== "object") {
+    profile.imported_subject_evidence_counts = {};
+  }
+
+  // 2. Retain any existing subject affinities that don't have explicit imported tracking yet.
+  // When an import seeds subject affinities directly into subject_affinities, preserve those
+  // baseline subjects into imported_subject_affinities so they survive subsequent interactions.
+  if (profile.subject_affinities && typeof profile.subject_affinities === "object") {
+    const signalDomains = new Set((profile.recent_signals || []).map(s => s.domain).filter(Boolean));
+    for (const [dom, score] of Object.entries(profile.subject_affinities)) {
+      if (profile.imported_subject_affinities[dom] === undefined) {
+        if (!signalDomains.has(dom)) {
+          profile.imported_subject_affinities[dom] = score;
+          const cnt = profile.subject_evidence_counts?.[dom];
+          profile.imported_subject_evidence_counts[dom] = (cnt !== undefined && cnt !== null) ? cnt : 2;
+        }
+      }
+    }
+  }
+
+  // 3. Start baseline affinities and evidence counts from retained imported evidence
   profile.subject_affinities = { ...(profile.imported_subject_affinities || {}) };
+  profile.subject_evidence_counts = { ...(profile.imported_subject_evidence_counts || {}) };
   profile.preferred_qualities = {};
   profile.preferred_entertainment_formats = {};
   const vidsPerDomain = {};
@@ -391,7 +425,7 @@ function recalculateLivingTasteProfile(profile) {
     "lore": "compelling_story"
   };
 
-  // Process in chronological order (oldest to newest)
+  // 4. Combine with ongoing activity from recent_signals in chronological order (oldest to newest)
   [...signals].reverse().forEach((s, idx) => {
     const ageDays = Math.max(0, (Date.now() - Date.parse(s.timestamp || new Date().toISOString())) / 86400000);
     const effectiveWeight = s.weight * (s.action === "substantial_watch" ? Math.pow(0.5, ageDays / 30) : 1);
@@ -420,7 +454,7 @@ function recalculateLivingTasteProfile(profile) {
     }
   });
 
-  profile.subject_evidence_counts = { ...(profile.imported_subject_evidence_counts || {}) };
+  // 5. Combine interaction evidence counts with imported counts
   for (const [dom, vids] of Object.entries(vidsPerDomain)) {
     profile.subject_evidence_counts[dom] = (profile.subject_evidence_counts[dom] || 0) + vids.size;
   }
@@ -454,7 +488,7 @@ function removeTasteSignal(videoId, action = null) {
 }
 
 function recordTasteAction(vid, action, ev = null, reason = null) {
-  if (!vid || (!vid.id && !vid.title)) return;
+  if (!vid || (!vid.id && !vid.video_id && !vid.title)) return;
   const profile = getLivingTasteProfile();
 
   recalculateLivingTasteProfile(profile);
@@ -2039,13 +2073,34 @@ function initYouTubeModal() {
           ? Object.keys(stagedYouTubeResult.living_taste_profile.subject_affinities)
           : []);
 
-      if (latentSubjects.length > 0) {
+      if (latentSubjects.length > 0 || stagedYouTubeResult.living_taste_profile) {
         const profile = getLivingTasteProfile();
         profile.imported_subject_affinities = profile.imported_subject_affinities || {};
         profile.imported_subject_evidence_counts = profile.imported_subject_evidence_counts || {};
+
+        if (stagedYouTubeResult.living_taste_profile) {
+          const ltp = stagedYouTubeResult.living_taste_profile;
+          if (ltp.imported_subject_affinities) {
+            Object.assign(profile.imported_subject_affinities, ltp.imported_subject_affinities);
+          }
+          if (ltp.imported_subject_evidence_counts) {
+            Object.assign(profile.imported_subject_evidence_counts, ltp.imported_subject_evidence_counts);
+          }
+          if (ltp.subject_affinities) {
+            for (const [sub, score] of Object.entries(ltp.subject_affinities)) {
+              if (profile.imported_subject_affinities[sub] === undefined) {
+                profile.imported_subject_affinities[sub] = score;
+                profile.imported_subject_evidence_counts[sub] = ltp.subject_evidence_counts?.[sub] || 2;
+              }
+            }
+          }
+        }
+
         for (const subject of latentSubjects) {
-          profile.imported_subject_affinities[subject] = 2;
-          profile.imported_subject_evidence_counts[subject] = 2;
+          if (profile.imported_subject_affinities[subject] === undefined) {
+            profile.imported_subject_affinities[subject] = 2;
+            profile.imported_subject_evidence_counts[subject] = 2;
+          }
         }
         recalculateLivingTasteProfile(profile);
         saveLivingTasteProfile(profile);
@@ -2856,6 +2911,7 @@ async function fetchFeed(payload) {
   const impressions = readLocalJSON("rabbithole_recent_impressions") || [];
   payload.recent_shown_video_ids = impressions.filter(x => Date.now() - x.at < 3600000).slice(-20).map(x => x.id);
   const requestPayload = { ...payload };
+  const requestedTasteProfile = JSON.stringify(payload.living_taste_profile);
 
   try {
     const res = await fetch("/api/feed", {
@@ -2870,6 +2926,8 @@ async function fetchFeed(payload) {
 
     const data = await res.json();
     if (requestId !== latestFeedRequestId) return;
+    // Feedback received during generation makes this response obsolete.
+    if (JSON.stringify(getLivingTasteProfile()) !== requestedTasteProfile) return;
     const history = readLocalJSON("rabbithole_recent_queries") || {};
     history[scope] = [...(history[scope] || []), ...(data.generated_queries || []).map(q => q.query)].slice(-40);
     saveLocalJSON("rabbithole_recent_queries", history);

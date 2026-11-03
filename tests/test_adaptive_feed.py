@@ -49,3 +49,37 @@ console.log(JSON.stringify(profile));
     assert profile['subject_affinities']['Music']==2
     assert len(profile['recent_signals'])==2
     assert {x['video_id'] for x in profile['recent_signals']}=={'a','b'}
+
+
+def test_server_retains_history_and_deduplicates_repeat_actions():
+    profile = LivingTasteProfile()
+    for i in range(305):
+        profile.record_signal(TasteSignal(video_id=str(i), domain='Math', action='watch_later'))
+    assert len(profile.recent_signals) == 300
+    profile.record_signal(TasteSignal(video_id='304', domain='Music', action='watch_later'))
+    assert len(profile.recent_signals) == 300
+    assert profile.subject_evidence_counts['Math'] == 299
+    assert profile.subject_evidence_counts['Music'] == 1
+
+
+def test_inflight_feed_cannot_cache_obsolete_preferences():
+    app = Path(__file__).parents[1] / 'src/rabbithole_app/static/app.js'
+    script = r'''
+const fs=require('fs'),vm=require('vm');const s=fs.readFileSync(process.argv[1],'utf8');
+const start=s.indexOf('async function fetchFeed('),end=s.indexOf('\nfunction displayFeed',start);
+let profile={subject_affinities:{Math:2}}, resolveFetch, writes=0, displays=0, cleaned=false;
+const c={latestFeedRequestId:0, tabFeedsCache:{}, currentPreferences:{}, FEED_STORAGE_KEY:'feed',
+ document:{getElementById:()=>({classList:{add:()=>{},remove:()=>{cleaned=true;}}})},
+ extractViewingSignals:()=>({}),getDislikedVideoIds:()=>[],getDislikedRecords:()=>[],
+ getCategories:()=>[],getActiveCategory:()=>null,getDismissedCategories:()=>[],getEmergingInterests:()=>[],
+ getWatchLaterRecords:()=>[],getFollowedCreators:()=>[],getLivingTasteProfile:()=>profile,
+ readLocalJSON:()=>null,saveLocalJSON:()=>{writes++;},displayFeed:()=>{displays++;},
+ savePreferencesLocally:()=>{},feedCacheKey:()=>'',console,
+ fetch:()=>new Promise(resolve=>resolveFetch=resolve)};
+vm.createContext(c);vm.runInContext(s.slice(start,end),c);
+(async()=>{const pending=c.fetchFeed({});profile={subject_affinities:{Music:4}};
+resolveFetch({ok:true,json:async()=>({items:[],generated_queries:[]})});await pending;
+console.log(JSON.stringify({writes,displays,cache:c.tabFeedsCache,cleaned}));})();
+'''
+    result = subprocess.run(['node', '-e', script, str(app)], capture_output=True, text=True, check=True)
+    assert json.loads(result.stdout) == {'writes': 0, 'displays': 0, 'cache': {}, 'cleaned': True}

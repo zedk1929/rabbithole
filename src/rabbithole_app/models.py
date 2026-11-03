@@ -157,6 +157,15 @@ class LivingTasteProfile(BaseModel):
         - Older passive signals can be decayed via apply_passive_decay().
         - Explicit actions (watch_later, followed, completed, disliked) maintain full strength.
         """
+        if not self.imported_subject_affinities and self.subject_affinities:
+            signal_domains = {s.domain for s in self.recent_signals if s.domain}
+            for dom, score in self.subject_affinities.items():
+                if dom not in signal_domains:
+                    self.imported_subject_affinities[dom] = score
+                    self.imported_subject_evidence_counts[dom] = max(
+                        2, self.subject_evidence_counts.get(dom, 2)
+                    )
+
         self.subject_affinities = dict(self.imported_subject_affinities)
         self.preferred_qualities.clear()
         self.preferred_entertainment_formats.clear()
@@ -223,9 +232,13 @@ class LivingTasteProfile(BaseModel):
 
     def record_signal(self, signal: TasteSignal) -> None:
         """Records a new taste signal, updating affinities, evidence counts, and preferred qualities."""
+        if signal.video_id:
+            self.recent_signals = [
+                existing for existing in self.recent_signals
+                if not (existing.video_id == signal.video_id and existing.action == signal.action)
+            ]
         self.recent_signals.insert(0, signal)
-        if len(self.recent_signals) > 30:
-            self.recent_signals = self.recent_signals[:30]
+        self.recent_signals = self.recent_signals[:300]
 
         if signal.action == "followed" and signal.channel:
             if signal.channel not in self.followed_creators:
@@ -257,6 +270,15 @@ class LivingTasteProfile(BaseModel):
 
     def reset(self) -> None:
         """Resets all learned taste data back to a clean slate."""
+        if not self.imported_subject_affinities and self.subject_affinities:
+            signal_domains = {s.domain for s in self.recent_signals if s.domain}
+            for dom, score in self.subject_affinities.items():
+                if dom not in signal_domains:
+                    self.imported_subject_affinities[dom] = score
+                    self.imported_subject_evidence_counts[dom] = max(
+                        2, self.subject_evidence_counts.get(dom, 2)
+                    )
+
         self.subject_affinities = dict(self.imported_subject_affinities)
         self.subject_evidence_counts.clear()
         self.preferred_qualities.clear()
