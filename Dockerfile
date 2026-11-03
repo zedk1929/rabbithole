@@ -11,15 +11,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv binary
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Copy project manifest and lockfile
-COPY pyproject.toml uv.lock ./
-
-# Install python dependencies without development extras
-RUN uv sync --frozen --no-dev
-
-# Copy application code
+# Copy project manifest, lockfile, README, and source code
+COPY pyproject.toml uv.lock README.md ./
 COPY src/ ./src/
 COPY run.py ./
+
+# Install python dependencies and application
+RUN uv sync --frozen --no-dev
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV HOST=0.0.0.0
