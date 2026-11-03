@@ -9,6 +9,7 @@ import re
 from typing import List, Set, Optional, Dict, Any
 
 from rabbithole_app.models import FeedItem, UserPreferences
+from rabbithole_app.relevance_gate import _extract_tokens, GENERIC_QUERY_MODIFIERS
 
 
 DEEP_LEARNING_STEPS = (
@@ -844,18 +845,23 @@ def build_category_feed(
     items: list[FeedItem],
     preferences: UserPreferences,
     category_name: str,
-    length: int = 5
+    length: int = 5,
+    view: Optional[str] = None
 ) -> list[FeedItem]:
     """
-    Builds a focused feed of ~5 videos for a specific interest tab.
-    - Strictly filters out disliked and completed videos.
-    - Requires verified on-topic relevance for the category.
-    - Prefers fresh unseen videos (+0.08 freshness bonus), but allows previously
-      shown videos to return when fresh candidates are sparse or exhausted.
-    - Followed creators (+0.12) and living taste profile qualities (+0.06) influence
-      ranking WITHIN the tab without admitting off-topic videos.
-    - Never pads with random videos if pool has fewer than length items.
+    Builds a focused feed of ~5 videos for a specific interest tab across 3 selectable views:
+    - 'new': Worthwhile recent videos about the selected interest.
+    - 'deeper': Videos that build on videos watched or saved in that interest.
+    - 'connections': Videos that connect the selected interest to another field while retaining focus on it.
+
+    Enforces:
+    - Relevance to the selected interest (rejects off-topic filler).
+    - Meaningful differences between views in which videos are selected.
+    - Deduplication: avoids showing the same video across views when alternatives exist.
+    - Strict dislike and exclusion enforcement.
+    - Honest sparse / cold-start results instead of unrelated padding.
     """
+    current_view = (view or preferences.category_view or "new").lower().strip()
     raw_pool = _filter_pool(items, preferences)
     if not raw_pool:
         return []
@@ -869,94 +875,231 @@ def build_category_feed(
     if not pool:
         return []
 
+    category_lower = category_name.lower().strip()
+    category_tokens = _extract_tokens(category_name) - GENERIC_QUERY_MODIFIERS
     seen_ids = set(preferences.seen_video_ids or [])
+    other_view_ids = set(preferences.other_view_video_ids or [])
     followed_names = {fc.name.lower() for fc in (preferences.followed_creators or [])}
     followed_ch_ids = {fc.channel_id for fc in (preferences.followed_creators or []) if fc.channel_id}
 
-    # Living taste profile preferred qualities
     pref_qualities = set()
     if preferences.living_taste_profile:
         pref_qualities = {q.lower() for q, _ in preferences.living_taste_profile.get_top_qualities(limit=3)}
 
-    selected: list[FeedItem] = []
-    used_channels: set[str] = set()
+    # Identify history items (watched or saved) belonging to this category
+    watched_or_saved_ids = set()
+    watched_or_saved_titles = []
+    watched_or_saved_domains = []
 
-    def cat_item_score(item: FeedItem) -> float:
-        ev = item.assessment
-        chan_pen = 0.15 if item.video.channel in used_channels else 0.0
+    for sv in (preferences.saved_videos or []):
+        cat_match = (
+            (sv.source_category and category_lower in sv.source_category.lower())
+            or (sv.source_domain and category_lower in sv.source_domain.lower())
+            or (sv.title and any(tok in sv.title.lower() for tok in category_tokens))
+        )
+        if cat_match:
+            watched_or_saved_ids.add(sv.video_id)
+            if sv.title:
+                watched_or_saved_titles.append(sv.title)
+            if sv.source_domain:
+                watched_or_saved_domains.append(sv.source_domain)
 
-        # Freshness bonus: prioritize unseen videos, but allow seen videos to return
-        freshness = 0.08 if item.video.id not in seen_ids else 0.0
+    if preferences.living_taste_profile:
+        for s in preferences.living_taste_profile.recent_signals:
+            if s.action in ("substantial_watch", "completed", "watch_later"):
+                dom_match = s.domain and (category_lower in s.domain.lower() or s.domain.lower() in category_lower)
+                title_match = s.title and any(tok in s.title.lower() for tok in category_tokens)
+                if dom_match or title_match:
+                    if s.video_id:
+                        watched_or_saved_ids.add(s.video_id)
+                    if s.title:
+                        watched_or_saved_titles.append(s.title)
+                    if s.domain:
+                        watched_or_saved_domains.append(s.domain)
 
-        # Followed creator ranking boost within the tab
+    for top in (preferences.watched_topics or []):
+        if category_lower in top.lower() or top.lower() in category_lower:
+            watched_or_saved_domains.append(top)
+
+    has_category_history = bool(watched_or_saved_ids or watched_or_saved_titles or watched_or_saved_domains)
+
+    # 1. COLD-START / SPARSE HANDLING FOR 'GO DEEPER'
+    # If the user has no viewing or saved history in this category, return an honest sparse result (empty)
+    # rather than padding with unrelated or arbitrary videos.
+    if current_view == "deeper" and not has_category_history:
+        return []
+
+    # 2. CANDIDATE FILTERING PER VIEW
+    history_text = " ".join(watched_or_saved_titles + watched_or_saved_domains).lower()
+    hist_terms = _terms(history_text)
+
+    def is_eligible_for_view(it: FeedItem) -> bool:
+        full_text = f"{it.video.title} {it.video.channel or ''} {it.video.description or ''} {it.video.source_domain or ''} {it.category or ''} {getattr(it.assessment, 'primary_appeal_domain', '') or ''}".lower()
+        cand_tokens = _extract_tokens(full_text)
+
+        rel = getattr(it.assessment, "relevance", None)
+        rel_is_relevant = getattr(rel, "is_relevant", None)
+        is_rel_supported = rel_is_relevant if rel_is_relevant is not None else (getattr(it.assessment, "relevance_status", "supported") != "rejected")
+
+        # Base requirement for all views: must retain genuine relevance to category
+        has_cat_connection = (
+            bool(category_tokens & cand_tokens)
+            or (category_lower in full_text)
+            or (it.category and category_lower in it.category.lower())
+            or is_rel_supported
+        )
+        if not has_cat_connection:
+            return False
+
+        if current_view == "deeper":
+            # Must not be an item already watched or saved
+            if it.video.id in watched_or_saved_ids:
+                return False
+            # Filter out purely superficial beginner primers if deeper candidates are requested
+            primer_words = {"beginner", "beginners", "intro", "introduction", "101", "basics", "for beginners"}
+            title_words = set(re.findall(r"[a-z0-9]+", it.video.title.lower()))
+            if primer_words & title_words:
+                return False
+            # Must demonstrate alignment with category history or advanced depth
+            cand_terms = _terms(full_text)
+            overlap = len(cand_terms & hist_terms)
+            is_deep_format = (
+                it.video.source_query_type in ("archive_lecture", "practitioner_deep_dive", "first_principles")
+                or it.assessment.substance_score >= 0.70
+            )
+            return overlap > 0 or is_deep_format
+
+        elif current_view == "connections":
+            # Must connect category to an external/interdisciplinary field
+            qt = it.video.source_query_type or ""
+            dt = (getattr(it.video, "discovery_type", None) or it.discovery_type or "").lower()
+            is_cross_query = qt in ("cross_domain_analogy", "lateral_discovery") or dt in ("adjacent", "distant") or it.is_discovery
+            domain_name = (it.video.source_domain or "").lower()
+            is_cross_domain = bool(domain_name and category_lower not in domain_name and len(domain_name) > 3)
+            interdisciplinary_terms = {
+                "physics", "mechanics", "game theory", "biology", "computation", "algorithm",
+                "algorithms", "biomechanics", "neuroscience", "psychology", "architecture",
+                "network", "evolution", "analogies", "cross-domain", "geometry", "fluid dynamics"
+            }
+            has_interdisciplinary_concept = bool(interdisciplinary_terms & cand_tokens)
+            return is_cross_query or is_cross_domain or has_interdisciplinary_concept
+
+        else:
+            # 'new' view: all on-topic candidates in pool are eligible
+            return True
+
+    eligible_pool = [it for it in pool if is_eligible_for_view(it)]
+    if not eligible_pool:
+        return []
+
+    # 3. VIEW-SPECIFIC SCORING & RANKING
+    def view_item_score(it: FeedItem) -> float:
+        ev = it.assessment
+        full_text = f"{it.video.title} {it.video.channel or ''} {it.video.description or ''} {it.video.source_domain or ''}".lower()
+        cand_tokens = _extract_tokens(full_text)
+
+        # Deduplication penalty: prioritize candidates not seen in other views when alternatives exist
+        other_view_pen = 0.25 if it.video.id in other_view_ids else 0.0
+
+        chan_pen = 0.15 if it.video.channel in used_channels else 0.0
+
         is_followed = (
-            item.video.channel.lower() in followed_names
-            or (item.video.channel_id and item.video.channel_id in followed_ch_ids)
+            it.video.channel.lower() in followed_names
+            or (it.video.channel_id and it.video.channel_id in followed_ch_ids)
         )
         followed_boost = 0.12 if is_followed else 0.0
 
-        # Quality alignment boost from living taste profile
         quality_boost = 0.0
         if pref_qualities:
-            content_lower = f"{item.video.title} {item.video.description or ''}".lower()
+            content_lower = f"{it.video.title} {it.video.description or ''}".lower()
             if any(q in content_lower for q in pref_qualities):
                 quality_boost = 0.06
 
-        if preferences.feed_mode == "entertainment":
-            base = (ev.entertainment_score * 0.55) + (ev.novelty_score * 0.30) + (ev.composite_score * 0.15)
-        elif preferences.feed_mode == "deep_learning":
-            base = (ev.substance_score * 0.50) + (ev.composite_score * 0.30) + (ev.novelty_score * 0.20)
+        if current_view == "new":
+            # Recency and freshness weighting
+            freshness = 0.15 if it.video.id not in seen_ids else 0.0
+            recency_words = {"2026", "2025", "latest", "recent", "new", "breakthrough", "modern", "innovations"}
+            recency_boost = 0.20 if bool(recency_words & cand_tokens) else 0.0
+            base = (ev.composite_score * 0.40) + (ev.substance_score * 0.35) + recency_boost + freshness
+
+        elif current_view == "deeper":
+            # Depth and history concept overlap weighting
+            cand_terms = _terms(full_text)
+            overlap = len(cand_terms & hist_terms)
+            history_boost = min(0.35, 0.10 * overlap)
+            depth_bonus = 0.15 if it.video.source_query_type in ("archive_lecture", "practitioner_deep_dive") else 0.0
+            base = (ev.substance_score * 0.55) + (ev.composite_score * 0.25) + history_boost + depth_bonus
+
+        elif current_view == "connections":
+            # Cross-disciplinary bridge weighting
+            bridge_bonus = 0.25 if it.video.source_query_type in ("cross_domain_analogy", "lateral_discovery") or it.discovery_type in ("adjacent", "distant") else 0.10
+            base = (ev.novelty_score * 0.45) + (ev.composite_score * 0.35) + bridge_bonus
+
         else:
             base = ev.composite_score
 
-        return base + freshness + followed_boost + quality_boost - chan_pen - _topic_repetition_penalty(item, selected)
+        return base + followed_boost + quality_boost - chan_pen - other_view_pen - _topic_repetition_penalty(it, selected)
 
-    target_count = min(length, len(pool))
+    selected: list[FeedItem] = []
+    used_channels: set[str] = set()
+    target_count = min(length, len(eligible_pool))
     restoration_budget = _restoration_budget(preferences)
+
     for i in range(target_count):
-        if not pool:
+        if not eligible_pool:
             break
-        distinct_pool = [item for item in pool if not _topic_repetition_penalty(item, selected)]
-        within_budget = [item for item in distinct_pool if _within_restoration_budget(item, selected, restoration_budget)]
+
+        # Preference 1: Distinct topic & within restoration budget & fresh to this view
+        fresh_alternatives = [it for it in eligible_pool if it.video.id not in other_view_ids]
+        candidate_pool = fresh_alternatives if fresh_alternatives else eligible_pool
+
+        distinct_pool = [it for it in candidate_pool if not _topic_repetition_penalty(it, selected)]
+        within_budget = [it for it in distinct_pool if _within_restoration_budget(it, selected, restoration_budget)]
         if not within_budget:
-            within_budget = [item for item in pool if _within_restoration_budget(item, selected, restoration_budget)]
+            within_budget = [it for it in candidate_pool if _within_restoration_budget(it, selected, restoration_budget)]
+        if not within_budget:
+            within_budget = [it for it in eligible_pool if _within_restoration_budget(it, selected, restoration_budget)]
         if not within_budget:
             break
-        chosen = max(within_budget, key=cat_item_score)
-        pool.remove(chosen)
+
+        chosen = max(within_budget, key=view_item_score)
+        eligible_pool.remove(chosen)
         used_channels.add(chosen.video.channel)
 
         chosen.category = category_name
-        chosen.is_discovery = False
-        chosen.discovery_type = None
 
-        if preferences.feed_mode == "entertainment":
-            fmt = chosen.assessment.entertainment_format
-            fmt_labels = {
-                "comedy": ("Comedy & Wit", "Selected for comedic wit, humor, or sketch comedy."),
-                "gameplay": ("Gameplay & Playthrough", "Selected for engaging gameplay, clutch moments, or speedrun."),
-                "challenges": ("Challenge & Tournament", "Selected for high-stakes competition or challenges."),
-                "sports_moments": ("Sports Highlight", "Selected for athletic highlights, walk-offs, or buzzer beaters."),
-                "performance": ("Live Performance", "Selected for live musical performance or stage craft."),
-                "animation": ("Creative Animation", "Selected for artistic animation, CGI, or visual craft."),
-                "creative_projects": ("Creative Build", "Selected for satisfying craftsmanship or creative build."),
-                "compelling_story": ("Lore & Tales", "Selected for bizarre lore, wild adventures, or narrative storytelling."),
-            }
-            if fmt and fmt in fmt_labels:
-                role_label, default_reason = fmt_labels[fmt]
+        if current_view == "new":
+            chosen.is_discovery = False
+            chosen.discovery_type = None
+            if preferences.feed_mode == "deep_learning":
+                role_label, _, _ = DEEP_LEARNING_STEPS[i % len(DEEP_LEARNING_STEPS)]
             else:
-                role_label, default_reason = ENTERTAINMENT_ROLES[i % len(ENTERTAINMENT_ROLES)]
+                role_label = "⚡ Recent Release"
             chosen.path_step = role_label
-            chosen.path_reason = f"Focused in '{category_name}': {default_reason}"
-        elif preferences.feed_mode == "deep_learning":
-            role_label, _, default_reason = DEEP_LEARNING_STEPS[i % len(DEEP_LEARNING_STEPS)]
-            chosen.path_step = role_label
-            chosen.path_reason = f"Focused in '{category_name}': {default_reason}"
+            chosen.path_reason = f"Focused in '{category_name}': Recent worthwhile video covering {chosen.video.title}."
+
+        elif current_view == "deeper":
+            chosen.is_discovery = False
+            chosen.discovery_type = None
+            chosen.path_step = "🔍 Go Deeper"
+            chosen.path_reason = f"Focused in '{category_name}': Advanced deep-dive building on your viewing history with {chosen.video.title}."
+
+        elif current_view == "connections":
+            chosen.is_discovery = True
+            chosen.discovery_type = "adjacent"
+            chosen.path_step = "🌐 Connections"
+            connected_domain = chosen.video.source_domain or "an interdisciplinary field"
+            chosen.discovery_connection = f"Interdisciplinary bridge connecting '{category_name}' to {connected_domain}."
+            chosen.path_reason = f"Focused in '{category_name}': Interdisciplinary connection linking to {connected_domain}."
+
         else:
-            role_label, default_reason = MIX_ROLES[i % len(MIX_ROLES)]
-            chosen.path_step = role_label
-            chosen.path_reason = f"Focused in '{category_name}': {default_reason}"
+            chosen.is_discovery = False
+            chosen.discovery_type = None
+            chosen.path_step = "Highlight"
+            chosen.path_reason = f"Focused in '{category_name}': Curated for your interest."
 
         selected.append(chosen)
+
+    return selected
 
     return selected

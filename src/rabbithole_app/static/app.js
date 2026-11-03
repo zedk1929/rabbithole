@@ -15,12 +15,31 @@ const EMERGING_STORAGE_KEY = "rabbithole_emerging_interests";
 const DISMISSED_CATEGORIES_STORAGE_KEY = "rabbithole_dismissed_categories";
 const FOLLOWED_CREATORS_STORAGE_KEY = "rabbithole_followed_creators";
 const TASTE_PROFILE_STORAGE_KEY = "rabbithole_living_taste_profile";
+const CATEGORY_VIEWS_STORAGE_KEY = "rabbithole_category_views";
 
 // In-memory feed cache per tab and refresh indices
 let tabFeedsCache = {};
 let perTabRefreshIndex = readLocalJSON("rabbithole_refresh_indices") || {};
+let perCategoryView = readLocalJSON(CATEGORY_VIEWS_STORAGE_KEY) || {};
 let activeEditingCategory = null;
 let latestFeedRequestId = 0;
+
+function getActiveCategoryView(categoryName) {
+  if (!categoryName) return "new";
+  return perCategoryView[categoryName] || "new";
+}
+
+function setActiveCategoryView(categoryName, view) {
+  if (!categoryName) return;
+  perCategoryView[categoryName] = view;
+  saveLocalJSON(CATEGORY_VIEWS_STORAGE_KEY, perCategoryView);
+}
+
+function getTabCacheKey(categoryNameOrNull, view) {
+  if (!categoryNameOrNull) return "main";
+  const currentView = view || getActiveCategoryView(categoryNameOrNull);
+  return `${categoryNameOrNull}::${currentView}`;
+}
 
 // Curiosity Archetypes & YouTube State
 let selectedArchetypes = new Set();
@@ -793,6 +812,7 @@ function feedCacheKey(prefs) {
     interests: prefs.interests,
     curiosity_archetypes: (prefs.curiosity_archetypes || []).slice().sort(),
     active_category: prefs.active_category || null,
+    category_view: prefs.active_category ? (prefs.category_view || "new") : null,
     experience_type: prefs.experience_type,
     feed_mode: prefs.feed_mode,
     recency_preference: prefs.recency_preference,
@@ -1473,25 +1493,81 @@ function renderHomepageTabs() {
     tabWrap.appendChild(editBtn);
     tabsBar.appendChild(tabWrap);
   });
+
+  renderCategoryViewsBar(activeCategory);
+}
+
+function renderCategoryViewsBar(activeCategory) {
+  const bar = document.getElementById("categoryViewsBar");
+  if (!bar) return;
+  if (!activeCategory) {
+    bar.classList.add("hidden");
+    return;
+  }
+  bar.classList.remove("hidden");
+  const currentView = getActiveCategoryView(activeCategory);
+
+  const views = ["new", "deeper", "connections"];
+  views.forEach(v => {
+    const btn = document.querySelector(`.category-view-btn[data-view="${v}"]`);
+    if (!btn) return;
+    if (v === currentView) {
+      btn.className = "category-view-btn px-3 py-1 rounded-full text-xs font-medium transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer shadow-sm hover:border-emerald-400";
+    } else {
+      btn.className = "category-view-btn px-3 py-1 rounded-full text-xs font-medium transition-all bg-surface/60 text-surface-muted border border-surface-border cursor-pointer hover:text-surface-text hover:border-surface-border/80";
+    }
+  });
 }
 
 function selectCategoryTab(categoryNameOrNull) {
   // Invalidate a response still being generated for the previous tab.
   latestFeedRequestId += 1;
   setActiveCategory(categoryNameOrNull);
-  if (currentPreferences) currentPreferences.active_category = categoryNameOrNull;
+  const view = categoryNameOrNull ? getActiveCategoryView(categoryNameOrNull) : null;
+  if (currentPreferences) {
+    currentPreferences.active_category = categoryNameOrNull;
+    currentPreferences.category_view = view;
+  }
   renderHomepageTabs();
 
-  const tabKey = categoryNameOrNull || "main";
+  const tabKey = getTabCacheKey(categoryNameOrNull, view);
   if (tabFeedsCache[tabKey] && tabFeedsCache[tabKey].items && tabFeedsCache[tabKey].items.length > 0) {
     document.getElementById("loadingState").classList.add("hidden");
     document.getElementById("cardsGrid").classList.remove("opacity-50", "pointer-events-none");
     displayFeed(tabFeedsCache[tabKey], {
       ...(currentPreferences || {}),
       active_category: categoryNameOrNull,
+      category_view: view
     });
   } else if (currentPreferences) {
     currentPreferences.active_category = categoryNameOrNull;
+    currentPreferences.category_view = view;
+    currentPreferences.refresh_index = perTabRefreshIndex[tabKey] || 0;
+    fetchFeed(currentPreferences);
+  }
+}
+
+function onSelectCategoryView(view) {
+  const activeCat = getActiveCategory();
+  if (!activeCat) return;
+  setActiveCategoryView(activeCat, view);
+  renderCategoryViewsBar(activeCat);
+  const tabKey = getTabCacheKey(activeCat, view);
+
+  if (currentPreferences) {
+    currentPreferences.active_category = activeCat;
+    currentPreferences.category_view = view;
+  }
+
+  if (tabFeedsCache[tabKey] && tabFeedsCache[tabKey].items && tabFeedsCache[tabKey].items.length > 0) {
+    document.getElementById("loadingState").classList.add("hidden");
+    document.getElementById("cardsGrid").classList.remove("opacity-50", "pointer-events-none");
+    displayFeed(tabFeedsCache[tabKey], {
+      ...(currentPreferences || {}),
+      active_category: activeCat,
+      category_view: view
+    });
+  } else if (currentPreferences) {
     currentPreferences.refresh_index = perTabRefreshIndex[tabKey] || 0;
     fetchFeed(currentPreferences);
   }
@@ -2214,6 +2290,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 function initElements() {
   initArchetypesUI();
   initYouTubeModal();
+
+  // Category tab view toggle buttons (New, Go Deeper, Connections)
+  document.querySelectorAll(".category-view-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const view = btn.getAttribute("data-view");
+      if (view) onSelectCategoryView(view);
+    });
+  });
   const slider = document.getElementById("serendipitySlider");
   const label = document.getElementById("serendipityLabel");
   const desc = document.getElementById("serendipityDescription");
@@ -2370,17 +2454,19 @@ function initElements() {
     }
   });
 
-  // Prominent Refresh Feed Button (independent per active tab)
+  // Prominent Refresh Feed Button (independent per active tab and view)
   document.getElementById("refreshFeedBtn").addEventListener("click", async () => {
     if (!currentPreferences) return;
     const activeCat = getActiveCategory();
-    const tabKey = activeCat || "main";
+    const currentView = activeCat ? getActiveCategoryView(activeCat) : null;
+    const tabKey = getTabCacheKey(activeCat, currentView);
     perTabRefreshIndex[tabKey] = (perTabRefreshIndex[tabKey] || 0) + 1;
     saveLocalJSON("rabbithole_refresh_indices", perTabRefreshIndex);
     delete tabFeedsCache[tabKey];
 
     currentPreferences.refresh_index = perTabRefreshIndex[tabKey];
     currentPreferences.active_category = activeCat;
+    currentPreferences.category_view = currentView;
     currentPreferences.seen_video_ids = getSeenVideoIds();
 
     const viewingSignals = extractViewingSignals();
@@ -2900,6 +2986,26 @@ async function fetchFeed(payload) {
     .map(c => (typeof c === "string" ? c.trim() : (c && c.name ? c.name.trim() : "")))
     .filter(Boolean);
   payload.active_category = getActiveCategory();
+  if (payload.active_category) {
+    const view = getActiveCategoryView(payload.active_category);
+    payload.category_view = view;
+    const otherViewIds = new Set();
+    ["new", "deeper", "connections"].forEach(v => {
+      if (v !== view) {
+        const otherKey = getTabCacheKey(payload.active_category, v);
+        if (tabFeedsCache[otherKey] && tabFeedsCache[otherKey].items) {
+          tabFeedsCache[otherKey].items.forEach(it => {
+            if (it.video && it.video.id) otherViewIds.add(it.video.id);
+          });
+        }
+      }
+    });
+    payload.other_view_video_ids = Array.from(otherViewIds);
+  } else {
+    payload.category_view = null;
+    payload.other_view_video_ids = [];
+  }
+  payload.saved_videos = getWatchLaterRecords();
   payload.dismissed_categories = (getDismissedCategories() || []).map(d => (typeof d === "string" ? d : d.name || "")).filter(Boolean);
   payload.emerging_interests = (getEmergingInterests() || []).map(s => (typeof s === "string" ? s.trim() : (s && s.topic ? s.topic.trim() : ""))).filter(Boolean);
   payload.watch_later_video_ids = getWatchLaterRecords().map(r => r.video_id);
@@ -2935,7 +3041,8 @@ async function fetchFeed(payload) {
     const history = readLocalJSON("rabbithole_recent_queries") || {};
     history[scope] = [...(history[scope] || []), ...(data.generated_queries || []).map(q => q.query)].slice(-40);
     saveLocalJSON("rabbithole_recent_queries", history);
-    tabFeedsCache[requestPayload.active_category || "main"] = data;
+    const tabCacheKey = getTabCacheKey(requestPayload.active_category, requestPayload.category_view);
+    tabFeedsCache[tabCacheKey] = data;
     displayFeed(data, requestPayload);
     if (currentPreferences) saveLocalJSON(FEED_STORAGE_KEY, {key: feedCacheKey(currentPreferences), data});
     if (currentPreferences) savePreferencesLocally(currentPreferences);
@@ -2952,7 +3059,9 @@ async function fetchFeed(payload) {
 }
 
 function displayFeed(data, payload) {
-  const tabKey = (payload && payload.active_category) || getActiveCategory() || "main";
+  const activeCat = (payload && payload.active_category) || getActiveCategory();
+  const currentView = (payload && payload.category_view) || (activeCat ? getActiveCategoryView(activeCat) : null);
+  const tabKey = getTabCacheKey(activeCat, currentView);
   tabFeedsCache[tabKey] = data;
 
   const exhaustionBanner = document.getElementById("poolExhaustedBanner");

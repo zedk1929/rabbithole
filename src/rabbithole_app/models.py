@@ -560,6 +560,18 @@ class UserPreferences(BaseModel):
         default=None,
         description="Specific category tab to focus on, or None for balanced main feed."
     )
+    category_view: Optional[Literal["new", "deeper", "connections"]] = Field(
+        default="new",
+        description="Selectable view for an active category tab: 'new' (worthwhile recent videos), 'deeper' (videos building on watched/saved in this interest), or 'connections' (videos connecting this interest to another field while retaining focus on this interest)."
+    )
+    other_view_video_ids: List[str] = Field(
+        default_factory=list,
+        description="Video IDs already displayed in other views of this tab to avoid duplication across views when alternatives exist."
+    )
+    saved_videos: List[WatchLaterRecord] = Field(
+        default_factory=list,
+        description="Videos saved by the user (e.g. from Watch Later) to inform 'Go deeper' recommendations."
+    )
     dismissed_categories: List[str] = Field(
         default_factory=list,
         description="Categories dismissed by the viewer that should not immediately reappear."

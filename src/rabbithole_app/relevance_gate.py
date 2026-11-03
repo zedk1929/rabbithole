@@ -334,6 +334,41 @@ class RelevanceGate:
         channel_lower = channel.lower()
         interests_lower = preferences.interests.lower()
 
+        # 0. Global Exclusions: Explicit Dislikes and Avoided Topics across ALL modes, categories, and views
+        avoided_terms = [part.strip().lower() for part in re.split(r"[,;\n|]", preferences.avoid_topics) if part.strip()]
+        if _is_text_avoided(full_metadata, avoided_terms):
+            return RelevanceAssessment(
+                is_relevant=False,
+                status="rejected",
+                reason=f"Candidate matches avoided topics ('{preferences.avoid_topics}').",
+                confidence=0.95
+            )
+
+        if preferences.disliked_video_ids and candidate.id in set(preferences.disliked_video_ids):
+            return RelevanceAssessment(
+                is_relevant=False,
+                status="rejected",
+                reason="Video was previously disliked by user.",
+                confidence=0.99
+            )
+
+        if preferences.disliked_records:
+            for dr in preferences.disliked_records:
+                if dr.video_id == candidate.id:
+                    return RelevanceAssessment(
+                        is_relevant=False,
+                        status="rejected",
+                        reason=f"Candidate matches disliked feedback ('{dr.title or dr.channel}').",
+                        confidence=0.99
+                    )
+                if dr.channel and dr.channel.lower() == channel_lower and dr.chosen_reason and "channel" in dr.chosen_reason.lower():
+                    return RelevanceAssessment(
+                        is_relevant=False,
+                        status="rejected",
+                        reason=f"Channel was explicitly disliked by user ('{dr.channel}').",
+                        confidence=0.95
+                    )
+
         if preferences.active_category:
             active_cat_lower = preferences.active_category.lower()
 

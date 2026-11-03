@@ -2087,6 +2087,170 @@ class QueryExpander:
             return clean_options[seed % len(clean_options)]
         return None
 
+    def _generate_category_tab_queries(
+        self,
+        preferences: UserPreferences,
+        view: str,
+        avoided_terms: List[str],
+        count: int,
+        seed: int
+    ) -> List[CuriosityQuery]:
+        cat = preferences.active_category.strip()
+        cat_lower = cat.lower()
+        refresh = preferences.refresh_index
+
+        # Find matching domain definition if any
+        matched_domain = None
+        for domain_name, data in DOMAIN_DEFINITIONS.items():
+            active_keywords = [kw for kw in data["match_keywords"] if not self.is_text_avoided(kw, avoided_terms)]
+            if any(kw in cat_lower for kw in active_keywords):
+                matched_domain = domain_name
+                break
+
+        domain_cfg = DOMAIN_DEFINITIONS.get(matched_domain, {}) if matched_domain else {}
+
+        if view == "new":
+            # 1. NEW: Worthwhile recent videos about the selected interest
+            new_options = [
+                (f"{cat} latest developments 2026 modern analysis", f"{cat.title()} Recent Analysis", "first_principles", f"Recent developments and modern analysis in {cat}."),
+                (f"{cat} cutting edge research breakthrough case study", f"{cat.title()} Innovations", "practitioner_deep_dive", f"Cutting-edge breakthrough and research in {cat}."),
+                (f"{cat} recent masterclass archival lecture symposium", f"{cat.title()} Lecture", "archive_lecture", f"Recent masterclass and lecture symposium in {cat}."),
+                (f"{cat} modern techniques new methodology history tutorial", f"{cat.title()} History & Techniques", "niche_history", f"Modern techniques and developments in {cat}."),
+                (f"{cat} recent breakthroughs and structural principles", f"{cat.title()} State of the Art", "first_principles", f"State of the art overview in {cat}."),
+                (f"{cat} contemporary tactics and practitioner breakdown", f"{cat.title()} Contemporary Practice", "practitioner_deep_dive", f"Contemporary tactical breakdown in {cat}."),
+            ]
+            if domain_cfg.get("first_principles"):
+                for q, d, r in domain_cfg["first_principles"]:
+                    new_options.append((f"{q} recent developments analysis", d, "first_principles", f"Recent analysis of {d}."))
+            if domain_cfg.get("archive_lecture"):
+                for q, d, r in domain_cfg["archive_lecture"]:
+                    new_options.append((f"{q} modern lecture", d, "archive_lecture", f"Modern lecture in {d}."))
+            if domain_cfg.get("niche_history"):
+                for q, d, r in domain_cfg["niche_history"]:
+                    new_options.append((f"{q} modern perspectives", d, "niche_history", f"Modern perspectives in {d}."))
+
+            rot_offset = (seed + refresh * 2) % len(new_options)
+            rotated = new_options[rot_offset:] + new_options[:rot_offset]
+            queries: List[CuriosityQuery] = []
+            for q_str, d, qt, rat in rotated:
+                if not (self.is_text_avoided(q_str, avoided_terms) or self.is_text_avoided(d, avoided_terms)):
+                    queries.append(CuriosityQuery(
+                        query=q_str,
+                        domain=d,
+                        query_type=qt,
+                        rationale=rat,
+                        sort_by_date=True
+                    ))
+                if len(queries) >= count:
+                    break
+            return queries
+
+        elif view == "deeper":
+            # 2. GO DEEPER: Videos that build on videos watched or saved in that interest
+            watched_concepts = []
+            for sv in (preferences.saved_videos or []):
+                t = sv.title or ""
+                if t and (cat_lower in (sv.source_category or "").lower() or cat_lower in (sv.source_domain or "").lower() or any(tok in t.lower() for tok in _extract_tokens(cat))):
+                    watched_concepts.append(t)
+            if preferences.living_taste_profile:
+                for s in preferences.living_taste_profile.recent_signals:
+                    if s.action in ("substantial_watch", "completed", "watch_later"):
+                        t = s.title or ""
+                        d = s.domain or ""
+                        if t and (cat_lower in d.lower() or any(tok in t.lower() for tok in _extract_tokens(cat))):
+                            watched_concepts.append(t)
+            for top in (preferences.watched_topics or []):
+                if cat_lower in top.lower() or top.lower() in cat_lower:
+                    watched_concepts.append(top)
+
+            deeper_options = []
+            if watched_concepts:
+                for concept in watched_concepts[:4]:
+                    clean_concept = concept.split("|")[0].split("—")[0].split("-")[0].strip()
+                    clean_concept = re.sub(r"vol\.?\s*\d+", "", clean_concept, flags=re.I).strip()
+                    deeper_options.append((
+                        f"{clean_concept} advanced principles rigorous theoretical analysis",
+                        f"{cat.title()} Advanced Theory",
+                        "archive_lecture",
+                        f"Rigorous theoretical analysis building on your previous engagement with '{clean_concept}'."
+                    ))
+                    deeper_options.append((
+                        f"{clean_concept} practitioner deep dive methodology case study",
+                        f"{cat.title()} Practitioner Deep Dive",
+                        "practitioner_deep_dive",
+                        f"Advanced practitioner methodology building on '{clean_concept}'."
+                    ))
+                    deeper_options.append((
+                        f"{clean_concept} pioneer masterclass archival lecture",
+                        f"{cat.title()} Masterclass",
+                        "archive_lecture",
+                        f"Archival pioneer masterclass continuing from '{clean_concept}'."
+                    ))
+
+            if domain_cfg.get("archive_lecture"):
+                for q, d, r in domain_cfg["archive_lecture"]:
+                    deeper_options.append((q, d, "archive_lecture", r))
+            if domain_cfg.get("practitioner_deep_dive"):
+                for q, d, r in domain_cfg["practitioner_deep_dive"]:
+                    deeper_options.append((q, d, "practitioner_deep_dive", r))
+
+            deeper_options.append((f"{cat} advanced theoretical mechanisms graduate lecture", f"{cat.title()} Advanced Mechanisms", "archive_lecture", f"Advanced theoretical mechanisms in {cat}."))
+            deeper_options.append((f"{cat} practitioner methodology expert case study", f"{cat.title()} Methodology", "practitioner_deep_dive", f"Expert practitioner case study in {cat}."))
+            deeper_options.append((f"{cat} mathematical formalisms and structural principles", f"{cat.title()} Formal Foundations", "first_principles", f"Mathematical formalisms and foundational depth in {cat}."))
+
+            rot_offset = (seed + refresh * 2) % len(deeper_options)
+            rotated = deeper_options[rot_offset:] + deeper_options[:rot_offset]
+            queries: List[CuriosityQuery] = []
+            for q_str, d, qt, rat in rotated:
+                if not (self.is_text_avoided(q_str, avoided_terms) or self.is_text_avoided(d, avoided_terms)):
+                    queries.append(CuriosityQuery(
+                        query=q_str,
+                        domain=d,
+                        query_type=qt,
+                        rationale=rat
+                    ))
+                if len(queries) >= count:
+                    break
+            return queries
+
+        elif view == "connections":
+            # 3. CONNECTIONS: Videos connecting selected interest to another field while retaining selected interest
+            conn_options = []
+            cd_map = domain_cfg.get("cross_domain_analogy", {})
+            if cd_map:
+                for tier in ["focused", "balanced", "radical"]:
+                    cand = cd_map.get(tier)
+                    if cand and not (self.is_text_avoided(cand[0], avoided_terms) or self.is_text_avoided(cand[1], avoided_terms)):
+                        conn_options.append((cand[0], cand[1], "cross_domain_analogy", f"Cross-domain bridge connecting {cat} to {cand[1]}."))
+
+            conn_options.extend([
+                (f"{cat} game theory decision models minimax strategy", f"{cat.title()} & Game Theory", "cross_domain_analogy", f"Interdisciplinary bridge connecting {cat} to game theoretic decision models."),
+                (f"{cat} physical mechanics fluid dynamics principles", f"{cat.title()} & Physics", "cross_domain_analogy", f"Connecting physical mechanics and dynamical systems to {cat}."),
+                (f"{cat} computational algorithms simulation modeling", f"{cat.title()} & Computation", "cross_domain_analogy", f"Connecting computational modeling and algorithms to {cat}."),
+                (f"{cat} cognitive neuroscience perception visual reaction", f"{cat.title()} & Neuroscience", "cross_domain_analogy", f"Connecting cognitive neuroscience and perception to {cat}."),
+                (f"{cat} complex systems network theory architecture", f"{cat.title()} & Network Science", "cross_domain_analogy", f"Connecting network science and complex systems to {cat}."),
+                (f"{cat} biological evolution adaptation analogies", f"{cat.title()} & Evolutionary Biology", "cross_domain_analogy", f"Connecting evolutionary biology and adaptation systems to {cat}."),
+            ])
+
+            rot_offset = (seed + refresh * 2) % len(conn_options)
+            rotated = conn_options[rot_offset:] + conn_options[:rot_offset]
+            queries: List[CuriosityQuery] = []
+            for q_str, d, qt, rat in rotated:
+                if not (self.is_text_avoided(q_str, avoided_terms) or self.is_text_avoided(d, avoided_terms)):
+                    queries.append(CuriosityQuery(
+                        query=q_str,
+                        domain=d,
+                        query_type=qt,
+                        rationale=rat,
+                        discovery_type="adjacent",
+                        discovery_rationale=f"Interdisciplinary connection linking {cat} to {d}."
+                    ))
+                if len(queries) >= count:
+                    break
+            return queries
+
+        return []
+
     def sanitize_and_filter_avoided(
         self,
         queries: List[CuriosityQuery],
@@ -2224,13 +2388,49 @@ class QueryExpander:
 
         category_instruction = ""
         if preferences.active_category:
+            view = preferences.category_view or "new"
+            if view == "new":
+                view_guidance = f"""
+        VIEW: 'NEW' (Worthwhile recent videos in '{preferences.active_category}'):
+        - Generate {count} queries focused on worthwhile recent videos, latest breakthroughs, cutting-edge developments, fresh angles, and modern analyses strictly about {preferences.active_category}.
+        - Emphasize contemporary developments, recent case studies, and current state-of-the-art practice.
+        - Avoid stale, introductory, or generic archival overviews.
+                """
+            elif view == "deeper":
+                watched_in_cat = []
+                if preferences.saved_videos:
+                    for sv in preferences.saved_videos:
+                        if preferences.active_category.lower() in (sv.source_category or "").lower() or preferences.active_category.lower() in (sv.source_domain or "").lower():
+                            watched_in_cat.append(f"Saved: {sv.title}")
+                if preferences.living_taste_profile and preferences.living_taste_profile.recent_signals:
+                    for s in preferences.living_taste_profile.recent_signals:
+                        if s.domain and (preferences.active_category.lower() in s.domain.lower() or s.domain.lower() in preferences.active_category.lower()):
+                            watched_in_cat.append(f"Watched: '{s.title}' ({s.domain})")
+                hist_str = "\n".join(f"  • {item}" for item in watched_in_cat[:10]) if watched_in_cat else "No previous videos watched/saved in this category yet."
+
+                view_guidance = f"""
+        VIEW: 'GO DEEPER' (Videos that build on videos watched or saved in '{preferences.active_category}'):
+        User history in this interest:
+{hist_str}
+        - Generate {count} queries for advanced deep-dives, rigorous masterclasses, practitioner breakdowns, and technical mechanisms that build directly on what the viewer has already engaged with.
+        - Assume familiarity with the foundational concepts. Search for subsequent, advanced, or graduate-level depth.
+        - If the user has no history yet, search for comprehensive, rigorous foundational masterclasses in {preferences.active_category}.
+                """
+            elif view == "connections":
+                view_guidance = f"""
+        VIEW: 'CONNECTIONS' (Videos connecting '{preferences.active_category}' to another field):
+        - Generate {count} queries that connect {preferences.active_category} to another discipline (e.g. game theory, physics, biomechanics, computational modeling, cognitive science, architecture, biology).
+        - CRITICAL RULE: {preferences.active_category} MUST remain clearly relevant and central to every query (e.g. "game theory in baseball pitch selection", "aerodynamics of baseball fastballs"), rather than abandoning {preferences.active_category} for pure outside topics.
+                """
+            else:
+                view_guidance = ""
+
             category_instruction = f"""
         CRITICAL FOCUSED CATEGORY TAB RULE:
         Active Tab: '{preferences.active_category}'.
-        You are generating queries for a focused category tab dedicated exclusively to '{preferences.active_category}'.
+        {view_guidance}
         - Every single query MUST be strictly about {preferences.active_category} or its recognized core subfields, terminology, and tactical/analytical depth.
         - DO NOT generate cross-domain lateral leaps to unrelated disciplines (e.g. NEVER leap from Baseball to corporate business strategy, and NEVER leap from Mathematics to cooking recipes or woodworking).
-        - DO NOT generate discovery queries (discovery_type should be null) because this is a focused category tab, not the main feed.
         - Ensure all {count} queries search for substantive videos that genuinely belong inside the '{preferences.active_category}' tab.
             """
 
@@ -2538,8 +2738,8 @@ class QueryExpander:
             queries_per_cat = max(1, (cat_target + len(categories) - 1) // len(categories))
 
             for cat in categories:
-                cat_prefs = preferences.model_copy(update={"active_category": cat, "categories": []})
-                cat_res = self._expand_with_heuristics(cat_prefs, count=queries_per_cat)
+                cat_prefs = preferences.model_copy(update={"interests": cat, "categories": [cat]})
+                cat_res = self._expand_with_heuristics(cat_prefs, avoided_terms, count=queries_per_cat)
                 for q in cat_res:
                     if q.query not in seen_query_strings:
                         seen_query_strings.add(q.query)
@@ -2555,7 +2755,7 @@ class QueryExpander:
                 if len(multi_queries) > count:
                     disc_in_multi = [q for q in multi_queries if q.discovery_type]
                     non_disc_in_multi = [q for q in multi_queries if not q.discovery_type]
-                    num_disc = min(len(disc_in_multi), count - 1)
+                    num_disc = min(len(disc_in_multi), 2 if count <= 5 else count // 2)
                     num_non = count - num_disc
                     sorted_disc = sorted(
                         disc_in_multi,
@@ -2563,6 +2763,13 @@ class QueryExpander:
                     )
                     return (non_disc_in_multi[:num_non] + sorted_disc[:num_disc])[:count]
                 return multi_queries[:count]
+
+        # Focused category tab query generation across selectable views (New, Go Deeper, Connections)
+        if preferences.active_category:
+            view = preferences.category_view or "new"
+            cat_tab_queries = self._generate_category_tab_queries(preferences, view, avoided_terms, count, seed)
+            if cat_tab_queries:
+                return cat_tab_queries[:count]
 
         # Match domain definition, but only match on keywords that are not themselves avoided!
         matched_domain = None

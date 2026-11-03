@@ -987,7 +987,7 @@
       "Micro Sports Entertainment": 0,
       "Historical Navigation Science": 3,
       "Traditional Architecture": 0,
-      "Music and Topology": 4,
+      "Music and Topology": 6.5,
       "Hawk-Dove game model in evolutionary biology": 3
     },
     "subject_evidence_counts": {
@@ -1020,6 +1020,16 @@
       "Too shallow"
     ],
     "recent_signals": [
+      {
+        "video_id": "2Tw0AKt91pQ",
+        "title": "The Math Behind Bach's Crab Canon",
+        "channel": "Aman Trivedi",
+        "domain": "Music and Topology",
+        "qualities": [],
+        "action": "completed",
+        "weight": 2.5,
+        "timestamp": "2026-11-03T23:08:26.790Z"
+      },
       {
         "video_id": "2Tw0AKt91pQ",
         "title": "The Math Behind Bach's Crab Canon",
@@ -1423,7 +1433,7 @@
         "timestamp": "2026-10-30T07:32:21.753Z"
       }
     ],
-    "last_updated_at": "2026-11-03T23:03:53.908Z"
+    "last_updated_at": "2026-11-03T23:08:26.790Z"
   },
   "followed_creators": [
     {

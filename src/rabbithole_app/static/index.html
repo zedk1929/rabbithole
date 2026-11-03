@@ -429,6 +429,23 @@
           <span class="hidden sm:inline">Add Category</span>
         </button>
       </div>
+
+      <!-- Interest Tab Selectable Views Bar (New, Go Deeper, Connections) -->
+      <div id="categoryViewsBar" class="hidden flex items-center gap-2 pt-1 pb-1">
+        <span class="text-xs text-surface-muted font-medium mr-1 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 text-surface-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+          View:
+        </span>
+        <button id="viewBtnNew" type="button" data-view="new" class="category-view-btn px-3 py-1 rounded-full text-xs font-medium transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer shadow-sm hover:border-emerald-400" title="Worthwhile recent videos about this interest">
+          ⚡ New
+        </button>
+        <button id="viewBtnDeeper" type="button" data-view="deeper" class="category-view-btn px-3 py-1 rounded-full text-xs font-medium transition-all bg-surface/60 text-surface-muted border border-surface-border cursor-pointer hover:text-surface-text hover:border-surface-border/80" title="Builds on videos you have meaningfully watched or saved in this interest">
+          🔍 Go deeper
+        </button>
+        <button id="viewBtnConnections" type="button" data-view="connections" class="category-view-btn px-3 py-1 rounded-full text-xs font-medium transition-all bg-surface/60 text-surface-muted border border-surface-border cursor-pointer hover:text-surface-text hover:border-surface-border/80" title="Connects this interest to another field while retaining focus on it">
+          🌐 Connections
+        </button>
+      </div>
     </div>
 
     <!-- Emerging Interest Auto-Promotion Notice Banner -->

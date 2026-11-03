@@ -289,7 +289,13 @@ class RabbitholeService:
 
         # Step 4: Feed Construction
         if preferences.active_category:
-            path = build_category_feed(feed_items, feed_preferences, category_name=preferences.active_category, length=target_len)
+            path = build_category_feed(
+                feed_items,
+                feed_preferences,
+                category_name=preferences.active_category,
+                length=target_len,
+                view=preferences.category_view or "new"
+            )
         elif top_k == 5 and preferences.feed_mode == "deep_learning" and not preferences.categories:
             path = build_path(feed_items, preferences, length=target_len)
         elif top_k == 5 and preferences.feed_mode == "entertainment" and not preferences.categories:
@@ -329,7 +335,23 @@ class RabbitholeService:
         elif preferences.active_category and len(path) < target_len:
             pool_exhausted = True
             tab_name = preferences.active_category
-            if len(path) == 0:
+            view = preferences.category_view or "new"
+            if view == "deeper" and len(path) == 0:
+                status_msg = (
+                    f"No viewing or saved history found for '{tab_name}' yet. "
+                    "Watch or save videos in this interest tab to unlock personalized 'Go Deeper' paths building on what you've learned."
+                )
+            elif view == "deeper":
+                status_msg = (
+                    f"Returned a focused feed of {len(path)} deeper video{'s' if len(path) > 1 else ''} for '{tab_name}' "
+                    f"(requested {target_len}). Rabbithole avoided padding with superficial or introductory filler."
+                )
+            elif view == "connections":
+                status_msg = (
+                    f"Returned a focused feed of {len(path)} verified interdisciplinary connection{'s' if len(path) > 1 else ''} for '{tab_name}' "
+                    f"(requested {target_len}). Rabbithole avoided padding with disconnected or single-topic filler."
+                )
+            elif len(path) == 0:
                 status_msg = (
                     f"No on-topic videos found for '{tab_name}' meeting Rabbithole's standards. "
                     "Rabbithole avoided padding your tab with unrelated recommendations. Try exploring another angle."
