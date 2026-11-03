@@ -3,9 +3,10 @@ Rabbithole Web Application Server.
 Exposes the recommendation and discovery REST API and serves the interactive UI.
 """
 import os
+import json
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -266,6 +267,61 @@ async def import_youtube_subscriptions(req: FileImportRequest):
     except Exception as e:
         logger.exception(f"Error importing subscriptions: {e}")
         return JSONResponse(status_code=500, content={"success": False, "error": str(e), "detail": str(e)})
+        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
+
+
+STATE_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "user_state.json"
+STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+
+class UserStatePayload(BaseModel):
+    watch_later: Optional[List[Dict[str, Any]]] = None
+    preferences: Optional[Dict[str, Any]] = None
+    living_taste_profile: Optional[Dict[str, Any]] = None
+    followed_creators: Optional[List[Dict[str, Any]]] = None
+    categories: Optional[List[Dict[str, Any]]] = None
+    disliked_records: Optional[List[Dict[str, Any]]] = None
+    history: Optional[Dict[str, Any]] = None
+    seen_video_ids: Optional[List[str]] = None
+
+
+@app.get("/api/user/state")
+def get_user_state():
+    """Retrieves persisted user state (watch later, taste profile, categories)."""
+    if not STATE_FILE.exists():
+        return {"has_state": False, "state": {}}
+    try:
+        with open(STATE_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return {"has_state": True, "state": data}
+    except Exception as e:
+        logger.warning(f"Failed to read user state: {e}")
+        return {"has_state": False, "state": {}}
+
+
+@app.post("/api/user/state")
+def save_user_state(payload: UserStatePayload):
+    """Persists user state across sessions, server restarts, and devices."""
+    try:
+        current = {}
+        if STATE_FILE.exists():
+            try:
+                with open(STATE_FILE, "r", encoding="utf-8") as f:
+                    current = json.load(f)
+            except Exception:
+                current = {}
+
+        dumped = payload.model_dump(exclude_unset=True, exclude_none=True)
+        for k, v in dumped.items():
+            current[k] = v
+
+        temp_file = STATE_FILE.with_suffix(".tmp")
+        with open(temp_file, "w", encoding="utf-8") as f:
+            json.dump(current, f, indent=2)
+        temp_file.replace(STATE_FILE)
+        return {"success": True, "saved_keys": list(current.keys())}
+    except Exception as e:
+        logger.error(f"Failed to save user state: {e}")
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
 

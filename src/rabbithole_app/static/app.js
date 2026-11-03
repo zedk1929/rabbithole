@@ -38,6 +38,112 @@ const ARCHETYPE_INFO = {
 // YouTube Player state
 let ytPlayer = null;
 let isYTAPIReady = false;
+
+// --- Server-Side State Persistence & Multi-Device Sync ---
+let _syncDebounceTimer = null;
+let _pendingSyncState = {};
+
+function scheduleServerSync(partialState, immediate = false) {
+  _pendingSyncState = { ..._pendingSyncState, ...partialState };
+  if (_syncDebounceTimer) clearTimeout(_syncDebounceTimer);
+  const doSync = async () => {
+    try {
+      const payload = { ..._pendingSyncState };
+      _pendingSyncState = {};
+      if (Object.keys(payload).length === 0) return;
+      await fetch("/api/user/state", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) {
+      console.warn("Background user state sync failed:", e);
+    }
+  };
+  if (immediate) {
+    doSync();
+  } else {
+    _syncDebounceTimer = setTimeout(doSync, 600);
+  }
+}
+
+async function syncUserStateWithServer() {
+  try {
+    const res = await fetch("/api/user/state");
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.has_state && data.state) {
+      const s = data.state;
+      // 1. Watch Later
+      if (Array.isArray(s.watch_later) && s.watch_later.length > 0) {
+        const local = getWatchLaterRecords();
+        if (local.length === 0) {
+          localStorage.setItem(WATCH_LATER_STORAGE_KEY, JSON.stringify(s.watch_later));
+          updateWatchLaterNavBadge();
+        } else {
+          const existingIds = new Set(local.map(r => r.video_id));
+          let changed = false;
+          for (const item of s.watch_later) {
+            if (!existingIds.has(item.video_id)) {
+              local.push(item);
+              changed = true;
+            }
+          }
+          if (changed) {
+            localStorage.setItem(WATCH_LATER_STORAGE_KEY, JSON.stringify(local));
+            updateWatchLaterNavBadge();
+          }
+        }
+      }
+      // 2. Taste Profile
+      if (s.living_taste_profile) {
+        const localProfRaw = localStorage.getItem(TASTE_PROFILE_STORAGE_KEY);
+        if (!localProfRaw || localProfRaw === "{}" || Object.keys(JSON.parse(localProfRaw).subject_affinities || {}).length === 0) {
+          localStorage.setItem(TASTE_PROFILE_STORAGE_KEY, JSON.stringify(s.living_taste_profile));
+          updateTasteProfileBadge();
+        }
+      }
+      // 3. Followed Creators
+      if (Array.isArray(s.followed_creators) && s.followed_creators.length > 0) {
+        const localFollows = getFollowedCreators();
+        if (localFollows.length === 0) {
+          localStorage.setItem(FOLLOWED_CREATORS_STORAGE_KEY, JSON.stringify(s.followed_creators));
+          updateFollowedCreatorsNavBadge();
+        }
+      }
+      // 4. Categories
+      if (Array.isArray(s.categories) && s.categories.length > 0) {
+        const localCats = getCategories();
+        if (localCats.length === 0) {
+          localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(s.categories));
+          renderCategoryTabs();
+        }
+      }
+      // 5. Preferences
+      if (s.preferences && !localStorage.getItem(PREFS_STORAGE_KEY)) {
+        localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(s.preferences));
+      }
+    } else {
+      // Server is empty! Upload existing local storage data to back it up on server
+      const localWatchLater = getWatchLaterRecords();
+      const localProf = getLivingTasteProfile();
+      const localFollows = getFollowedCreators();
+      const localCats = getCategories();
+      const localPrefs = getSavedPreferences();
+      const payload = {};
+      if (localWatchLater.length > 0) payload.watch_later = localWatchLater;
+      if (localProf && Object.keys(localProf.subject_affinities || {}).length > 0) payload.living_taste_profile = localProf;
+      if (localFollows.length > 0) payload.followed_creators = localFollows;
+      if (localCats.length > 0) payload.categories = localCats;
+      if (localPrefs) payload.preferences = localPrefs;
+      if (Object.keys(payload).length > 0) {
+        scheduleServerSync(payload, true);
+      }
+    }
+  } catch (err) {
+    console.warn("User state sync error:", err);
+  }
+}
 let playbackTrackerInterval = null;
 let activeVideoRecord = null;
 let activeVideoAssessment = null;
@@ -100,6 +206,7 @@ function getSavedPreferences() {
 function savePreferencesLocally(prefs) {
   try {
     localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(prefs));
+    scheduleServerSync({ preferences: prefs });
     return true;
   } catch (_) {
     return false;
@@ -172,6 +279,7 @@ function saveLivingTasteProfile(profile) {
     localStorage.removeItem(FEED_STORAGE_KEY);
     localStorage.setItem(TASTE_PROFILE_STORAGE_KEY, JSON.stringify(profile));
     updateTasteProfileBadge();
+    scheduleServerSync({ living_taste_profile: profile });
     return true;
   } catch (_) {
     return false;
@@ -712,6 +820,7 @@ function saveWatchLaterRecords(records) {
   try {
     localStorage.setItem(WATCH_LATER_STORAGE_KEY, JSON.stringify(records));
     updateWatchLaterNavBadge();
+    scheduleServerSync({ watch_later: records });
   } catch (_) {}
 }
 
@@ -897,6 +1006,7 @@ function saveFollowedCreators(creators) {
     localStorage.setItem(FOLLOWED_CREATORS_STORAGE_KEY, JSON.stringify(creators));
     updateFollowedCreatorsNavBadge();
     updateCardFollowButtons();
+    scheduleServerSync({ followed_creators: creators });
   } catch (_) {}
 }
 
@@ -1072,6 +1182,7 @@ function getCategories() {
 function saveCategories(cats) {
   try {
     localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(cats));
+    scheduleServerSync({ categories: cats });
   } catch (_) {}
 }
 
@@ -2016,7 +2127,8 @@ function displayYouTubeSynthesisResult(data) {
 
 // --- DOM Lifecycle ---
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await syncUserStateWithServer();
   initElements();
   checkHealth();
   bootstrapHomepage();
