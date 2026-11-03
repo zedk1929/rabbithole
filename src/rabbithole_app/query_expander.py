@@ -9,7 +9,7 @@ import json
 import logging
 import hashlib
 import certifi
-from typing import List, Optional, Tuple, Dict, Any
+from typing import List, Optional, Tuple, Dict, Any, Set
 from dotenv import load_dotenv
 
 from rabbithole_app.models import UserPreferences, CuriosityQuery, CuriosityQueryPlan, CURIOSITY_ARCHETYPES
@@ -51,6 +51,35 @@ CRITICAL SEARCH STRATEGY RULES:
 6. Provide an explainable rationale for each query stating why it branches out meaningfully while remaining grounded.
 7. PERSONALITY & ARCHETYPE-FIRST DISCOVERY: When the viewer's curiosity archetypes, intellectual vibes, or curiosity statement are provided, do NOT merely repeat the user's initial seed topic nouns in every query. Instead, interpret the viewer's underlying curiosity personality (e.g. love of physical tolerances, archival disputes, geometric intuition, tactile master craft, hidden incentives) and boldly formulate search queries across UNEXPECTED fields of human endeavor that scratch this exact cognitive drive.
 """
+
+
+STOPWORDS: Set[str] = {
+    "a", "about", "above", "after", "again", "against", "all", "am", "an", "and",
+    "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being",
+    "below", "between", "both", "but", "by", "can't", "cannot", "could", "couldn't",
+    "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during",
+    "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't",
+    "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her", "here",
+    "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i",
+    "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it", "it's",
+    "its", "itself", "let's", "me", "more", "most", "mustn't", "my", "myself",
+    "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought",
+    "our", "ours", "ourselves", "out", "over", "own", "same", "shan't", "she",
+    "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such", "than",
+    "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there",
+    "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this",
+    "those", "through", "to", "too", "under", "until", "up", "very", "was", "wasn't",
+    "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's",
+    "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom",
+    "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll",
+    "you're", "you've", "your", "yours", "yourself", "yourselves"
+}
+
+
+def _extract_tokens(text: str) -> Set[str]:
+    """Extract clean alphanumeric tokens of length >= 3, excluding stopwords."""
+    words = re.findall(r"[a-z0-9]+", text.lower())
+    return {w for w in words if len(w) >= 3 and w not in STOPWORDS}
 
 
 def _clean_json_markdown(text: str) -> str:
@@ -1400,6 +1429,219 @@ QUALITY_TO_DISTANT_QUERIES: Dict[str, List[Tuple[str, str, str]]] = {
     ],
 }
 
+# High-substance independent discovery catalog across varied broad domains and formats.
+# Generated without using user seed interests, saved categories, followed creators, or learned affinities.
+INDEPENDENT_DISCOVERY_CATALOG: List[Tuple[str, str, str, str, str]] = [
+    # (query, domain, query_type, rationale, format_label)
+    # 1. Maritime Craft & Ocean Engineering
+    (
+        "traditional wooden boatbuilding timber steam bending craftsmanship",
+        "Maritime Craft",
+        "first_principles",
+        "Exploring traditional wooden boatbuilding and steam-bent oak framing without synthetic fasteners.",
+        "craft"
+    ),
+    (
+        "deep sea submersible pressure hull exploration titanium",
+        "Deep Ocean Engineering",
+        "first_principles",
+        "Titanium spherical pressure hull mechanics for abyssal ocean exploration.",
+        "engineering"
+    ),
+    # 2. Aviation & Aerospace Mechanics
+    (
+        "radial aircraft engine teardown restoration masterclass",
+        "Aviation Mechanics",
+        "practitioner_deep_dive",
+        "Deep dive into vintage multi-row radial aircraft engine mechanics and valve timing.",
+        "workshop"
+    ),
+    (
+        "glider ridge lift soaring aerodynamics meteorological physics",
+        "Aviation Aerodynamics",
+        "first_principles",
+        "Analyzing mountain wave meteorological dynamics and motorless soaring physics.",
+        "demonstration"
+    ),
+    # 3. Ecology, Mycology & Animal Cognition
+    (
+        "mycelial underground networks forest nutrient exchange ecology",
+        "Mycology & Forest Ecology",
+        "first_principles",
+        "Fungal mycorrhizal networks mediating biochemical exchange among trees in old-growth forests.",
+        "science"
+    ),
+    (
+        "corvid problem solving puzzle cognition behavioral experiment",
+        "Animal Cognition",
+        "first_principles",
+        "Multi-step causal reasoning and tool use in wild crows and ravens.",
+        "experiment"
+    ),
+    # 4. Metallurgy & Precision Horology
+    (
+        "crucible wootz damascus steel forging pattern metallurgy",
+        "Historical Metallurgy",
+        "practitioner_deep_dive",
+        "Crucible steel crystal formation, carbide banding, and high-carbon blade forging.",
+        "craft"
+    ),
+    (
+        "tower clock pendulum escapement historical mechanical restoration",
+        "Horology Restoration",
+        "practitioner_deep_dive",
+        "Restoring antique church tower clock gear trains and deadbeat escapements.",
+        "restoration"
+    ),
+    # 5. Civil Engineering & Heavy Logistics
+    (
+        "electrical grid frequency synchronization rotational inertia black start",
+        "Power Grid Infrastructure",
+        "first_principles",
+        "Rotational inertia and dynamic frequency stabilization in regional high-voltage power grids.",
+        "infrastructure"
+    ),
+    (
+        "tunnel boring machine earth pressure balance subterranean shield",
+        "Civil Engineering",
+        "practitioner_deep_dive",
+        "Earth pressure balance shield mechanics and segmental lining in deep underwater tunneling.",
+        "engineering"
+    ),
+    (
+        "rotary car dumper train unloading coal infrastructure bulk logistics",
+        "Industrial Logistics",
+        "practitioner_deep_dive",
+        "Heavy bulk train car rotators and rail freight logistics systems in modern ports.",
+        "spectacle"
+    ),
+    # 6. Archaeology & Ancient Materials
+    (
+        "Linear B decipherment Michael Ventris linguistic mystery archival",
+        "Archaeolinguistics",
+        "niche_history",
+        "The dramatic decipherment of Bronze Age Linear B syllabic script from clay tablets.",
+        "narrative"
+    ),
+    (
+        "Antikythera mechanism mechanical gear train bronze decoding",
+        "Ancient Technology",
+        "niche_history",
+        "Differential gearing and astronomical cycles in the ancient Hellenistic computer.",
+        "history"
+    ),
+    (
+        "Roman pozzolanic marine concrete lime clasts self-healing chemistry",
+        "Ancient Materials Science",
+        "first_principles",
+        "Hot mixing chemistry and volcanic ash self-healing in 2,000-year-old Roman harbor concrete.",
+        "science"
+    ),
+    # 7. Acoustic Physics & Musical Craft
+    (
+        "pipe organ voicing acoustic resonance windchest mechanics",
+        "Acoustic Engineering",
+        "practitioner_deep_dive",
+        "Voicing flue and reed pipes, windchest hydraulics, and acoustic resonance in cathedrals.",
+        "craft"
+    ),
+    (
+        "chladni figures acoustic standing wave patterns visual resonance",
+        "Acoustic Physics",
+        "first_principles",
+        "Visualizing two-dimensional nodal lines and standing wave resonance in metal plates.",
+        "demonstration"
+    ),
+    (
+        "unbelievable street musician virtuosic live acoustic performance",
+        "Live Performance",
+        "entertainment_performance",
+        "Virtuosic acoustic performance and improvised live musical craft.",
+        "performance"
+    ),
+    # 8. Animation & Creative Automata
+    (
+        "kinetic sculpture mechanical automaton intricate wooden gear train",
+        "Artisan Automata",
+        "entertainment_creative",
+        "Hand-crafted wooden mechanical automata, linkages, and kinetic sculptures.",
+        "creative_projects"
+    ),
+    (
+        "stop motion claymation puppet armature fabrication behind the scenes",
+        "Animation Craft",
+        "entertainment_creative",
+        "Precision ball-and-socket armatures and claymation character mechanics.",
+        "animation"
+    ),
+    (
+        "marble run complex rube goldberg kinetic physics machine",
+        "Kinetic Engineering",
+        "entertainment_creative",
+        "Intricate chain reactions and mechanical kinetic marble runs.",
+        "creative_projects"
+    ),
+    # 9. Eccentric Sports & Physics
+    (
+        "blindfolded speedcubing 3x3 memory tracing algorithmic execution",
+        "Algorithmic Speedcubing",
+        "practitioner_deep_dive",
+        "Algorithmic commutators and spatial memory tracing in blindfolded cube solving.",
+        "feat"
+    ),
+    (
+        "competitive stone skipping hydrodynamics spin angle world record",
+        "Hydrodynamics & Sport",
+        "first_principles",
+        "Hydrodynamic bounce angles, gyroscopic spin stability, and stone aerodynamics across water.",
+        "physics"
+    ),
+    (
+        "curling ice pebble sweeping friction thermal breakdown",
+        "Sports Physics",
+        "first_principles",
+        "Pebbled ice friction manipulation and directional curling broom physics.",
+        "sports"
+    ),
+    # 10. Gastronomy & Food Science
+    (
+        "traditional alpine cheese cave aging microbiology affinage",
+        "Microbial Gastronomy",
+        "first_principles",
+        "Cave affinage biochemistry, surface molds, and proteolytic aging in alpine cheeses.",
+        "food_science"
+    ),
+    (
+        "bean to bar chocolate conching crystal tempering food chemistry",
+        "Culinary Science",
+        "first_principles",
+        "Polymorphic cocoa butter crystal structures and bean-to-bar conching kinetics.",
+        "food_science"
+    ),
+    # 11. Witty Deconstructions & Comedy
+    (
+        "absurdist game show rules loophole disaster comedic breakdown",
+        "Comedic Game Shows",
+        "entertainment_comedy",
+        "Hilarious breakdown of flawed television game show rules and unintended loopholes.",
+        "comedy"
+    ),
+    (
+        "unintended historical consequences weird policy blunders documentary",
+        "Historical Ironies",
+        "entertainment_story",
+        "Bizarre historical unintended consequences and administrative blunders.",
+        "story"
+    ),
+    (
+        "standup comedy sharp witty observational sketches funniest moments",
+        "Standup & Wit",
+        "entertainment_comedy",
+        "Witty observational standup comedy and sharp humorous commentary.",
+        "comedy"
+    ),
+]
+
 # High-substance wildcard discovery queries from outside domains
 WILDCARD_DISCOVERY_QUERIES: List[Tuple[str, str, str]] = [
     (
@@ -1554,6 +1796,101 @@ class QueryExpander:
             or self.is_text_avoided(query.rationale, avoided_terms)
         )
 
+    def _generate_independent_discovery_queries(
+        self,
+        preferences: UserPreferences,
+        avoided_terms: List[str],
+        count: int = 1
+    ) -> List[CuriosityQuery]:
+        """
+        Generates independent discovery queries without using initial interests,
+        saved categories, followed creators, or learned subject affinities as search seeds.
+        Rotates across broad areas and formats over refreshes using recent query and impression history.
+        """
+        # 1. User stated interests and categories to exclude from seeds
+        seed_words = set()
+        raw_seed = f"{preferences.interests} {' '.join(preferences.categories)}".lower()
+        for w in re.findall(r"[a-z0-9]+", raw_seed):
+            if len(w) >= 3 and w not in STOPWORDS:
+                seed_words.add(w)
+
+        # 2. Followed creators to exclude
+        creator_names = {fc.name.lower() for fc in (preferences.followed_creators or []) if fc.name}
+
+        # 3. Learned subject affinities from living taste profile to exclude
+        learned_domains = set()
+        if preferences.living_taste_profile:
+            lp = preferences.living_taste_profile
+            for s, _ in (lp.get_established_subjects() + lp.get_tentative_subjects()):
+                learned_domains.add(s.lower())
+            for sig in lp.recent_signals:
+                if sig.domain:
+                    learned_domains.add(sig.domain.lower())
+
+        # 4. Recent queries and recently shown subjects (to prevent repetition across refreshes)
+        recent_searches = {q.lower() for q in (preferences.recent_queries or [])}
+        recent_shown = {s.lower() for s in (preferences.recent_shown_subjects or [])}
+
+        eligible_items = []
+        for q_str, domain, q_type, rationale, fmt in INDEPENDENT_DISCOVERY_CATALOG:
+            # Check avoided topics
+            if self.is_text_avoided(q_str, avoided_terms) or self.is_text_avoided(domain, avoided_terms):
+                continue
+
+            # Check overlap with seed interests / categories
+            q_tokens = _extract_tokens(f"{q_str} {domain}")
+            if q_tokens & seed_words:
+                continue
+
+            # Check followed creators
+            if any(cn in domain.lower() for cn in creator_names):
+                continue
+
+            # Check learned subject affinities
+            if any(ld in domain.lower() or ld in q_str.lower() for ld in learned_domains):
+                continue
+
+            # Check recent queries and recently shown subjects
+            if any(rs in q_str.lower() or rs in domain.lower() for rs in recent_searches):
+                continue
+            if any(sh in domain.lower() for sh in recent_shown):
+                continue
+
+            eligible_items.append((q_str, domain, q_type, rationale, fmt))
+
+        # Fallback if filters were too restrictive (relaxing recent history but keeping avoided/seed exclusions)
+        if not eligible_items:
+            for q_str, domain, q_type, rationale, fmt in INDEPENDENT_DISCOVERY_CATALOG:
+                if self.is_text_avoided(q_str, avoided_terms) or self.is_text_avoided(domain, avoided_terms):
+                    continue
+                q_tokens = _extract_tokens(f"{q_str} {domain}")
+                if q_tokens & seed_words:
+                    continue
+                eligible_items.append((q_str, domain, q_type, rationale, fmt))
+
+        if not eligible_items:
+            for q_str, domain, q_type, rationale, fmt in INDEPENDENT_DISCOVERY_CATALOG:
+                if not (self.is_text_avoided(q_str, avoided_terms) or self.is_text_avoided(domain, avoided_terms)):
+                    eligible_items.append((q_str, domain, q_type, rationale, fmt))
+
+        if not eligible_items:
+            return []
+
+        selected_queries: List[CuriosityQuery] = []
+        start_idx = (preferences.refresh_index * 2) % len(eligible_items)
+        for i in range(count):
+            item = eligible_items[(start_idx + i) % len(eligible_items)]
+            selected_queries.append(CuriosityQuery(
+                query=item[0],
+                domain=item[1],
+                query_type=item[2],
+                rationale=item[3],
+                discovery_type="independent",
+                discovery_rationale=f"Independent discovery exploring {item[1]}."
+            ))
+
+        return selected_queries
+
     def _generate_discovery_queries(
         self,
         preferences: UserPreferences,
@@ -1561,15 +1898,18 @@ class QueryExpander:
         seed: int
     ) -> List[CuriosityQuery]:
         """
-        Generates 2-3 genuine discovery queries across distinct tiers:
-        1. Adjacent: connected to an established interest or learned taste subject.
-        2. Distant: an unfamiliar field matching the user's preferred viewing qualities.
-        3. Wildcard: an outside high-substance domain rotating deterministically.
+        Generates genuine discovery queries:
+        1. Adjacent: connected to an established interest or learned taste subject as a lateral branch.
+        2. Independent: completely independent broad areas outside user's seed interests and affinities.
+        3. Wildcard / Distant: exploratory high-substance find.
         """
+        if preferences.active_category:
+            return []
+
         discovery_queries: List[CuriosityQuery] = []
         lp = preferences.living_taste_profile
 
-        # 1. Adjacent Discovery Query
+        # 1. Adjacent Discovery Query (lateral branch branching from user interest)
         adjacent_candidate = None
         adjacent_subject = None
         if preferences.feed_mode == "entertainment":
@@ -1653,33 +1993,25 @@ class QueryExpander:
                         discovery_rationale=f"Adjacent exploration connected to '{adjacent_subject}'."
                     ))
 
-        # 2. Distant Discovery Query (matched to preferred qualities or viewing style)
+        # 2. Independent Discovery Query (completely independent from seed topics)
+        indep_queries = self._generate_independent_discovery_queries(preferences, avoided_terms, count=1)
+        discovery_queries.extend(indep_queries)
+
+        # 3. Distant / Wildcard Discovery Query
         if preferences.feed_mode == "entertainment":
-            top_format = None
-            if lp:
-                top_fmts = lp.get_top_entertainment_formats(limit=2)
-                if top_fmts:
-                    top_format = top_fmts[0][0]
-            if not top_format:
-                top_format = "comedy" if "fun" in (preferences.experience_type or "") else "animation"
-            ent_distant_opts = ENTERTAINMENT_FORMAT_TO_DISTANT_QUERIES.get(
-                top_format, ENTERTAINMENT_FORMAT_TO_DISTANT_QUERIES["comedy"]
+            wild_opt = self._select_safe_option(
+                ENTERTAINMENT_WILDCARD_QUERIES,
+                avoided_terms,
+                seed + (preferences.refresh_index * 2) + 1
             )
-            distant_opt = self._select_safe_option(ent_distant_opts, avoided_terms, seed + preferences.refresh_index)
-            if not distant_opt:
-                for alt_f, alt_opts in ENTERTAINMENT_FORMAT_TO_DISTANT_QUERIES.items():
-                    distant_opt = self._select_safe_option(alt_opts, avoided_terms, seed + preferences.refresh_index)
-                    if distant_opt:
-                        top_format = alt_f
-                        break
-            if distant_opt:
+            if wild_opt:
                 discovery_queries.append(CuriosityQuery(
-                    query=distant_opt[0],
-                    domain=distant_opt[1],
-                    query_type=f"entertainment_{top_format}" if f"entertainment_{top_format}" in CuriosityQuery.__annotations__["query_type"].__args__ else "entertainment_creative",
-                    rationale=distant_opt[2],
-                    discovery_type="distant",
-                    discovery_rationale=f"Distant entertainment discovery matching your taste for '{top_format}'."
+                    query=wild_opt[0],
+                    domain=wild_opt[1],
+                    query_type="entertainment_creative",
+                    rationale=wild_opt[2],
+                    discovery_type="wildcard",
+                    discovery_rationale="High-quality entertainment wildcard outside your current subjects and tabs."
                 ))
         else:
             top_quality = None
@@ -1718,23 +2050,6 @@ class QueryExpander:
                     discovery_rationale=f"Distant discovery matched to your affinity for '{top_quality}'."
                 ))
 
-        # 3. Wildcard Discovery Query
-        if preferences.feed_mode == "entertainment":
-            wild_opt = self._select_safe_option(
-                ENTERTAINMENT_WILDCARD_QUERIES,
-                avoided_terms,
-                seed + (preferences.refresh_index * 2) + 1
-            )
-            if wild_opt:
-                discovery_queries.append(CuriosityQuery(
-                    query=wild_opt[0],
-                    domain=wild_opt[1],
-                    query_type="entertainment_creative",
-                    rationale=wild_opt[2],
-                    discovery_type="wildcard",
-                    discovery_rationale="High-quality entertainment wildcard outside your current subjects and tabs."
-                ))
-        else:
             wild_opt = self._select_safe_option(
                 WILDCARD_DISCOVERY_QUERIES,
                 avoided_terms,
@@ -2079,7 +2394,7 @@ class QueryExpander:
                 continue
             if not q.domain:
                 q.domain = "Curiosity Exploration"
-            if q.discovery_type and q.discovery_type not in ("adjacent", "distant", "wildcard"):
+            if q.discovery_type and q.discovery_type not in ("adjacent", "distant", "wildcard", "independent"):
                 q.discovery_type = None
             if preferences.active_category:
                 q.discovery_type = None
@@ -2089,7 +2404,7 @@ class QueryExpander:
         # 2. On main feed, ensure discovery tiers are present and valid
         if not preferences.active_category:
             disc_types_present = {q.discovery_type for q in valid_queries if q.discovery_type}
-            needed_tiers = ["adjacent", "distant", "wildcard"]
+            needed_tiers = ["adjacent", "distant", "wildcard", "independent"]
             missing_tiers = [t for t in needed_tiers if t not in disc_types_present]
             if missing_tiers:
                 safe_disc_queries = self._generate_discovery_queries(preferences, avoided_terms, seed)
@@ -2097,6 +2412,10 @@ class QueryExpander:
                 for tier in missing_tiers:
                     if tier in safe_by_type:
                         valid_queries.append(safe_by_type[tier])
+                    elif tier == "independent":
+                        indep_gen = self._generate_independent_discovery_queries(preferences, avoided_terms, count=1)
+                        if indep_gen:
+                            valid_queries.append(indep_gen[0])
 
         # 3. If still short of count, backfill with deterministic queries
         if len(valid_queries) < count:
@@ -2191,12 +2510,26 @@ class QueryExpander:
         if not preferences.active_category and (len(preferences.categories) > 1 or preferences.living_taste_profile is not None):
             multi_queries: List[CuriosityQuery] = []
             seen_query_strings: set[str] = set()
-            categories = [c.strip() for c in preferences.categories if c.strip()]
-            if not categories and preferences.living_taste_profile:
-                profile_subjects = [s for s, _ in preferences.living_taste_profile.get_established_subjects()]
-                categories = [preferences.interests.strip()] + profile_subjects[:1]
-            elif not categories:
-                categories = [preferences.interests.strip()]
+            
+            initial_cats = [c.strip() for c in preferences.categories if c.strip()]
+            if not initial_cats and preferences.interests.strip():
+                initial_cats = [preferences.interests.strip()]
+
+            established_subs = []
+            if preferences.living_taste_profile:
+                established_subs = [s for s, _ in preferences.living_taste_profile.get_established_subjects(min_count=2)]
+
+            lp_signals_count = len(preferences.living_taste_profile.recent_signals) if preferences.living_taste_profile else 0
+
+            # Dynamic weighting: Reduce the influence of initial typed preferences as real viewing evidence accumulates
+            if established_subs and lp_signals_count >= 2:
+                decay_weight = max(0.20, 1.0 / (1.0 + 0.25 * lp_signals_count))
+                if decay_weight < 0.5:
+                    categories = established_subs[:2] + initial_cats[:1]
+                else:
+                    categories = initial_cats[:1] + established_subs[:1]
+            else:
+                categories = initial_cats or [preferences.interests.strip() or "Curiosity Exploration"]
 
             # Generate 2 to 3 genuine discovery queries across tiers
             disc_queries = self._generate_discovery_queries(preferences, avoided_terms, seed)
@@ -2212,13 +2545,23 @@ class QueryExpander:
                         seen_query_strings.add(q.query)
                         multi_queries.append(q)
 
-            # Ensure at least 1 cross-domain analogy / discovery query is present
+            # Ensure discovery queries are present
             for dq in disc_queries:
                 if dq.query not in seen_query_strings:
                     seen_query_strings.add(dq.query)
                     multi_queries.append(dq)
 
             if multi_queries:
+                if len(multi_queries) > count:
+                    disc_in_multi = [q for q in multi_queries if q.discovery_type]
+                    non_disc_in_multi = [q for q in multi_queries if not q.discovery_type]
+                    num_disc = min(len(disc_in_multi), count - 1)
+                    num_non = count - num_disc
+                    sorted_disc = sorted(
+                        disc_in_multi,
+                        key=lambda x: 0 if x.discovery_type in ("distant", "wildcard") else (1 if x.discovery_type == "adjacent" else 2)
+                    )
+                    return (non_disc_in_multi[:num_non] + sorted_disc[:num_disc])[:count]
                 return multi_queries[:count]
 
         # Match domain definition, but only match on keywords that are not themselves avoided!

@@ -69,6 +69,48 @@ def _topic_repetition_penalty(item: FeedItem, selected: list[FeedItem]) -> float
     return 0.50 if any(_same_video_topic(item, prior) for prior in selected) else 0.0
 
 
+def _is_same_subject(it1: FeedItem, it2: FeedItem) -> bool:
+    """Checks if two feed items share the same core subject, topic, or domain."""
+    if _same_video_topic(it1, it2):
+        return True
+    dom1 = (it1.video.source_domain or it1.category or "").strip().lower()
+    dom2 = (it2.video.source_domain or it2.category or "").strip().lower()
+    if dom1 and dom2 and (dom1 == dom2 or (len(dom1) > 4 and dom1 in dom2) or (len(dom2) > 4 and dom2 in dom1)):
+        return True
+    subj1 = (getattr(it1.assessment, "actual_subject", "") or "").strip().lower()
+    subj2 = (getattr(it2.assessment, "actual_subject", "") or "").strip().lower()
+    if subj1 and subj2:
+        t1 = _terms(subj1)
+        t2 = _terms(subj2)
+        if len(t1 & t2) >= min(2, max(1, len(t1)), max(1, len(t2))):
+            return True
+    return False
+
+
+def _is_same_creator(it1: FeedItem, it2: FeedItem) -> bool:
+    """Checks if two items share the same channel or creator."""
+    c1 = (it1.video.channel or "").strip().lower()
+    c2 = (it2.video.channel or "").strip().lower()
+    if c1 and c2 and c1 == c2:
+        return True
+    cid1 = getattr(it1.video, "channel_id", None)
+    cid2 = getattr(it2.video, "channel_id", None)
+    if cid1 and cid2 and cid1 == cid2:
+        return True
+    return False
+
+
+def _is_same_format(it1: FeedItem, it2: FeedItem) -> bool:
+    """Checks if two items share the same content or entertainment format."""
+    fmt1 = getattr(it1.assessment, "content_format", None) or getattr(it1.assessment, "entertainment_format", None)
+    fmt2 = getattr(it2.assessment, "content_format", None) or getattr(it2.assessment, "entertainment_format", None)
+    if fmt1 and fmt2:
+        f1 = fmt1.strip().lower()
+        f2 = fmt2.strip().lower()
+        return bool(f1 and f2 and f1 == f2)
+    return False
+
+
 _RESTORATION_TITLE = re.compile(
     r"\b(restor(?:ation|ations|e|ed|ing)|refurbish(?:ed|ing|ment)?|"
     r"refinish(?:ed|ing)?|renovat(?:e|ed|ing|ion))\b", re.I
@@ -377,14 +419,18 @@ def build_main_feed(
     items: list[FeedItem],
     preferences: UserPreferences,
     length: int = 10,
-    discovery_target: int = 3
+    discovery_target: int = 5
 ) -> list[FeedItem]:
     """
-    Assembles a balanced main feed of about 10 videos:
-    - Draws from several user categories without letting one interest dominate.
-    - Reserves roughly 2-3 slots for genuinely new discovery areas across tiers:
-      1 adjacent idea, 1 distant idea, and optionally 1 outside wildcard.
-    - Mixes educational depth and creative entertainment matching preferences.
+    Assembles a balanced main feed targeting:
+    - 5 personalized picks: drawing from categories, seed interests, or established living taste profile subjects.
+      As real viewing evidence accumulates, the influence of initial typed preferences is reduced.
+    - 3 adjacent discoveries: lateral cross-domain branches connecting from active interests.
+    - 2 independent discoveries: broad, unfamiliar subjects and formats generated outside initial interests and taste profile.
+    
+    Includes an honest fallback when a lane lacks suitable candidates, preserves entertainment
+    as a valid outcome (without requiring educational justification), prevents consecutive duplicate
+    subjects/creators/formats, and provides truthful descriptions for independent discoveries.
     """
     raw_pool = _filter_pool(items, preferences)
     if not raw_pool:
@@ -399,207 +445,397 @@ def build_main_feed(
     if not pool:
         return []
 
-    # 1. Resolve user categories
-    categories = [c.strip() for c in preferences.categories if c.strip()]
-    if not categories:
-        categories = split_interest_categories(preferences.interests)
-    if not categories:
-        categories = [preferences.interests.strip() or "General Discovery"]
+    # 1. Target Lane Quotas
+    # For a roughly 10-video feed: 5 personalized, 3 adjacent, 2 independent
+    if discovery_target == 0:
+        target_pers = length
+        target_adj = 0
+        target_indep = 0
+    elif discovery_target == 2:
+        target_pers = length - 2
+        target_adj = 1
+        target_indep = 1
+    elif discovery_target == 3:
+        target_pers = length - 3
+        target_adj = 2
+        target_indep = 1
+    elif length >= 10:
+        target_pers = round(length * 0.5)
+        target_adj = round(length * 0.3)
+        target_indep = length - target_pers - target_adj
+    elif length >= 5:
+        target_pers = max(2, round(length * 0.5))
+        target_adj = max(1, round(length * 0.3))
+        target_indep = max(1, length - target_pers - target_adj)
+    else:
+        target_pers = length
+        target_adj = 0
+        target_indep = 0
 
-    used_channels: set[str] = set()
+    seen_ids = set(preferences.seen_video_ids or [])
+    restoration_budget = _restoration_budget(preferences)
 
-    # 2. Identify candidate discovery items (cross-domain bridges outside direct category scope)
-    discovery_candidates = []
-    category_candidates = []
+    initial_categories = [c.strip() for c in preferences.categories if c.strip()]
+    if not initial_categories:
+        initial_categories = split_interest_categories(preferences.interests)
+    if not initial_categories:
+        initial_categories = [preferences.interests.strip() or "General Discovery"]
 
-    for item in pool:
-        qt = item.video.source_query_type or ""
-        disc_type = getattr(item.video, "discovery_type", None)
-        is_disc = (qt == "cross_domain_analogy" or item.is_discovery or disc_type in ("adjacent", "distant", "wildcard"))
-        if is_disc and is_new_relative_to_categories(item, categories, preferences):
-            discovery_candidates.append(item)
+    # 2. Partition pool into candidate lanes
+    def is_independent_candidate(it: FeedItem) -> bool:
+        dtype = (getattr(it.video, "discovery_type", None) or it.discovery_type or "").lower()
+        qtype = (it.video.source_query_type or "").lower()
+        return dtype in ("independent", "wildcard") or qtype == "independent_discovery"
+
+    def is_adjacent_candidate(it: FeedItem) -> bool:
+        dtype = (getattr(it.video, "discovery_type", None) or it.discovery_type or "").lower()
+        qtype = (it.video.source_query_type or "").lower()
+        is_disc = (
+            dtype in ("adjacent", "distant")
+            or qtype in ("cross_domain_analogy", "lateral_discovery")
+            or (it.is_discovery and not is_independent_candidate(it))
+        )
+        return is_disc and is_new_relative_to_categories(it, initial_categories, preferences)
+
+    indep_pool = [it for it in pool if is_independent_candidate(it)]
+    adj_pool = [it for it in pool if is_adjacent_candidate(it) and it not in indep_pool]
+    pers_pool = [it for it in pool if it not in indep_pool and it not in adj_pool]
+
+    selected_indep: list[FeedItem] = []
+    selected_adj: list[FeedItem] = []
+    selected_pers: list[FeedItem] = []
+    used_ids: set[str] = set()
+
+    # 3. Select Independent Discoveries (target: 2)
+    # Evaluate for basic quality, watchability, freshness, duplication, explicit dislikes, and avoided topics.
+    # Preserve entertainment as a valid outcome without requiring educational justification.
+    def indep_score(it: FeedItem) -> float:
+        ev = it.assessment
+        primary_quality = max(ev.substance_score, ev.entertainment_score)
+        freshness = 0.08 if it.video.id not in seen_ids else 0.0
+        return (primary_quality * 0.45) + (ev.novelty_score * 0.35) - (ev.clickbait_score * 0.40) + freshness
+
+    indep_sorted = sorted(indep_pool, key=indep_score, reverse=True)
+    for it in indep_sorted:
+        if len(selected_indep) >= target_indep:
+            break
+        if it.video.id in used_ids:
+            continue
+        if not _within_restoration_budget(it, selected_indep + selected_adj + selected_pers, restoration_budget):
+            continue
+        if any(_same_video_topic(it, prior) for prior in selected_indep):
+            continue
+
+        it.is_discovery = True
+        it.discovery_type = "independent"
+        it.path_step = "✨ Discovery"
+
+        # Truthful reason describing what the video offers rather than inventing a connection to preferences
+        subj = getattr(it.assessment, "actual_subject", "") or ""
+        ang = getattr(it.assessment, "specific_angle", "") or ""
+        rationale = it.video.source_rationale or getattr(it.video, "discovery_rationale", "") or ""
+        domain = it.video.source_domain or ""
+        clean_t = it.video.title.split("|")[0].split("—")[0].strip()
+
+        if subj and ang:
+            truthful_desc = f"Independent discovery in {domain or subj}: {subj} — {ang}."
+        elif subj:
+            truthful_desc = f"Independent discovery in {domain or subj}: {subj}."
+        elif rationale:
+            truthful_desc = f"Independent discovery: {rationale}"
         else:
-            category_candidates.append(item)
+            truthful_desc = f"Independent discovery: Exploring {clean_t} outside your usual topics."
 
-    # 3. Select 2 to 3 discovery items covering diverse tiers (adjacent, distant, wildcard)
-    selected_discoveries: list[FeedItem] = []
-    num_discoveries = min(discovery_target, len(discovery_candidates))
-    if num_discoveries > 0:
-        adj_cands = [c for c in discovery_candidates if getattr(c.video, "discovery_type", None) == "adjacent"]
-        dist_cands = [c for c in discovery_candidates if getattr(c.video, "discovery_type", None) == "distant"]
-        wild_cands = [c for c in discovery_candidates if getattr(c.video, "discovery_type", None) == "wildcard"]
-        other_cands = [c for c in discovery_candidates if c not in adj_cands and c not in dist_cands and c not in wild_cands]
+        it.discovery_signal = truthful_desc
+        it.discovery_connection = truthful_desc
+        it.path_reason = f"Why this discovery? {truthful_desc}"
 
-        for cand_list in [adj_cands, dist_cands, wild_cands, other_cands]:
-            cand_list.sort(
-                key=lambda x: (
-                    x.assessment.novelty_score * 0.45
-                    + x.assessment.composite_score * 0.40
-                    - (0.15 if x.video.channel in used_channels else 0.0)
-                ),
-                reverse=True
-            )
+        selected_indep.append(it)
+        used_ids.add(it.video.id)
 
-        prioritized: list[FeedItem] = []
-        restoration_budget = _restoration_budget(preferences)
-        for tier_list in [adj_cands, dist_cands, wild_cands, other_cands]:
-            if tier_list and len(prioritized) < num_discoveries:
-                eligible = [c for c in tier_list if _within_restoration_budget(c, prioritized, restoration_budget)]
-                if eligible:
-                    prioritized.append(eligible[0])
+    # 4. Select Adjacent Discoveries (target: 3)
+    def adj_score(it: FeedItem) -> float:
+        ev = it.assessment
+        primary_quality = max(ev.substance_score, ev.entertainment_score)
+        freshness = 0.08 if it.video.id not in seen_ids else 0.0
+        return (primary_quality * 0.45) + (ev.novelty_score * 0.35) - (ev.clickbait_score * 0.40) + freshness
 
-        if len(prioritized) < num_discoveries:
-            discovery_candidates.sort(
-                key=lambda x: (
-                    x.assessment.novelty_score * 0.45
-                    + x.assessment.composite_score * 0.40
-                    - (0.15 if x.video.channel in used_channels else 0.0)
-                ),
-                reverse=True
-            )
-            for c in discovery_candidates:
-                if len(prioritized) >= num_discoveries:
-                    break
-                if c not in prioritized and _within_restoration_budget(c, prioritized, restoration_budget):
-                    prioritized.append(c)
+    adj_sorted = sorted(adj_pool, key=adj_score, reverse=True)
+    for it in adj_sorted:
+        if len(selected_adj) >= target_adj:
+            break
+        if it.video.id in used_ids:
+            continue
+        if not _within_restoration_budget(it, selected_indep + selected_adj + selected_pers, restoration_budget):
+            continue
+        if any(_same_video_topic(it, prior) for prior in (selected_indep + selected_adj)):
+            continue
 
-        for disc_item in prioritized:
-            disc_item.is_discovery = True
-            disc_item.path_step = "✨ Discovery"
-            disc_type = getattr(disc_item.video, "discovery_type", None) or ("adjacent" if disc_item.video.source_query_type == "cross_domain_analogy" else "discovery")
-            disc_item.discovery_type = disc_type
-            disc_domain = disc_item.video.source_domain or "an unexpected field"
-            disc_signal = getattr(disc_item.video, "discovery_rationale", None) or disc_item.assessment.connection_note or disc_item.assessment.relevance_reason or f"Surprising lateral bridge connecting your taste to {disc_domain}."
-            disc_item.discovery_signal = disc_signal
-            disc_item.discovery_connection = disc_signal
-            disc_item.path_reason = f"Why this discovery? {disc_signal}"
-            selected_discoveries.append(disc_item)
-            used_channels.add(disc_item.video.channel)
-            pool.remove(disc_item)
+        it.is_discovery = True
+        it.discovery_type = getattr(it.video, "discovery_type", None) or "adjacent"
+        it.path_step = "✨ Discovery"
+        disc_domain = it.video.source_domain or "an unexpected field"
+        disc_signal = getattr(it.video, "discovery_rationale", None) or it.assessment.connection_note or it.assessment.relevance_reason or f"Surprising lateral bridge connecting your taste to {disc_domain}."
+        it.discovery_signal = disc_signal
+        it.discovery_connection = disc_signal
+        it.path_reason = f"Why this discovery? {disc_signal}"
 
-    # 4. Fill remaining slots across categories without letting one interest dominate
-    remaining_slots = min(length - len(selected_discoveries), len(pool))
-    selected_category_items: list[FeedItem] = []
+        selected_adj.append(it)
+        used_ids.add(it.video.id)
 
-    # Map candidates to best matching category
-    cat_bins: dict[str, list[FeedItem]] = {cat: [] for cat in categories}
-    unmatched: list[FeedItem] = []
+    # 5. Select Personalized Picks (target: 5)
+    # Reduce the influence of initial typed preferences as real viewing evidence accumulates.
+    # A few interactions remain tentative; repeated meaningful watches, saves, and dislikes change the mix over time.
+    lp = preferences.living_taste_profile
+    established_subs = [s for s, _ in lp.get_established_subjects(min_count=2)] if lp else []
+    meaningful_actions = {"substantial_watch", "completed", "watch_later"}
+    real_evidence_count = sum(1 for s in (lp.recent_signals if lp else []) if s.action in meaningful_actions)
 
-    for item in pool:
+    all_personalized_topics = list(initial_categories)
+    for es in established_subs:
+        if es not in all_personalized_topics:
+            all_personalized_topics.append(es)
+
+    topic_bins: dict[str, list[FeedItem]] = {top: [] for top in all_personalized_topics}
+    unmatched_pers: list[FeedItem] = []
+
+    for item in pers_pool:
+        if item.video.id in used_ids:
+            continue
         searchable = _terms(f"{item.video.title} {item.video.description or ''} {item.source_query or ''}")
-        best_cat = None
+        best_top = None
         best_overlap = 0
-        for cat in categories:
-            overlap = len(searchable & _terms(cat))
+        for top in all_personalized_topics:
+            overlap = len(searchable & _terms(top))
             if overlap > best_overlap:
                 best_overlap = overlap
-                best_cat = cat
-        if best_cat and best_overlap > 0:
-            cat_bins[best_cat].append(item)
+                best_top = top
+        if best_top and best_overlap > 0:
+            topic_bins[best_top].append(item)
         else:
-            unmatched.append(item)
+            unmatched_pers.append(item)
 
-    # Max quota per category to avoid one category dominating
-    max_per_cat = max(2, (remaining_slots // len(categories)) + 1) if len(categories) > 1 else remaining_slots
+    # Quota weighting between established taste subjects and initial typed categories
+    topic_quotas: dict[str, int] = {}
+    if established_subs and real_evidence_count >= 2:
+        initial_decay_weight = max(0.20, 1.0 / (1.0 + 0.25 * real_evidence_count))
+        established_weight = 1.0 - initial_decay_weight
+        est_slots = min(len(established_subs) * 2, max(1, round(target_pers * established_weight)))
+        init_slots = max(1, target_pers - est_slots)
 
-    cat_counts = {cat: 0 for cat in categories}
-    while len(selected_category_items) < remaining_slots:
+        per_est = max(1, (est_slots + len(established_subs) - 1) // len(established_subs))
+        for es in established_subs:
+            topic_quotas[es] = per_est
+        per_init = max(1, (init_slots + len(initial_categories) - 1) // len(initial_categories))
+        for ic in initial_categories:
+            topic_quotas[ic] = per_init
+    else:
+        per_init = max(1, (target_pers + len(initial_categories) - 1) // len(initial_categories))
+        for ic in initial_categories:
+            topic_quotas[ic] = per_init
+
+    def pers_score(it: FeedItem) -> float:
+        ev = it.assessment
+        primary_quality = max(ev.substance_score, ev.entertainment_score)
+        freshness = 0.08 if it.video.id not in seen_ids else 0.0
+        taste = _creator_preference_boost(it, preferences)
+        return (primary_quality * 0.50) + (ev.novelty_score * 0.25) - (ev.clickbait_score * 0.40) + freshness + taste
+
+    topic_counts: dict[str, int] = {top: 0 for top in all_personalized_topics}
+    while len(selected_pers) < target_pers:
         added_in_round = False
-        for cat in categories:
-            if len(selected_category_items) >= remaining_slots:
+        for top in all_personalized_topics:
+            if len(selected_pers) >= target_pers:
                 break
-            if cat_counts[cat] >= max_per_cat:
+            if topic_counts.get(top, 0) >= topic_quotas.get(top, target_pers):
                 continue
-
-            available_for_cat = [it for it in cat_bins[cat] if it not in selected_category_items]
-            if not available_for_cat:
-                continue
-            distinct_for_cat = [
-                it for it in available_for_cat
-                if not _topic_repetition_penalty(it, selected_category_items + selected_discoveries)
+            candidates_for_top = [
+                it for it in topic_bins[top]
+                if it.video.id not in used_ids
+                and _within_restoration_budget(it, selected_indep + selected_adj + selected_pers, restoration_budget)
             ]
-            distinct_for_cat = [
-                it for it in distinct_for_cat
-                if _within_restoration_budget(it, selected_category_items + selected_discoveries, _restoration_budget(preferences))
-            ]
-            if not distinct_for_cat:
+            if not candidates_for_top:
                 continue
-
-            seen_ids = set(preferences.seen_video_ids or [])
-            def score_func(item: FeedItem) -> float:
-                ev = item.assessment
-                chan_pen = 0.15 if item.video.channel in used_channels else 0.0
-                freshness = 0.08 if item.video.id not in seen_ids else 0.0
-                taste = _creator_preference_boost(item, preferences)
-                repetition = _topic_repetition_penalty(item, selected_category_items + selected_discoveries)
-                return ev.composite_score + freshness + taste - chan_pen - repetition
-
-            best_item = max(distinct_for_cat, key=score_func)
-            best_item.category = cat
-            if preferences.feed_mode == "deep_learning":
-                best_item.path_step = DEEP_LEARNING_STEPS[len(selected_category_items) % len(DEEP_LEARNING_STEPS)][0]
-            else:
-                best_item.path_step = best_item.path_step or "Highlight"
-            best_item.path_reason = f"Curated for your interest in '{cat}'."
-            selected_category_items.append(best_item)
-            used_channels.add(best_item.video.channel)
-            cat_counts[cat] += 1
+            distinct_for_top = [
+                it for it in candidates_for_top
+                if not any(_same_video_topic(it, prior) for prior in (selected_indep + selected_adj + selected_pers))
+            ]
+            eligible = distinct_for_top if distinct_for_top else candidates_for_top
+            best_it = max(eligible, key=pers_score)
+            best_it.category = top
+            best_it.is_discovery = False
+            best_it.discovery_type = None
+            best_it.path_reason = f"Curated for your ongoing interest in '{top}'."
+            selected_pers.append(best_it)
+            used_ids.add(best_it.video.id)
+            topic_counts[top] = topic_counts.get(top, 0) + 1
             added_in_round = True
 
         if not added_in_round:
-            leftover = [it for it in pool if it not in selected_category_items]
+            leftover = [
+                it for it in (unmatched_pers + [it for sublist in topic_bins.values() for it in sublist])
+                if it.video.id not in used_ids
+                and _within_restoration_budget(it, selected_indep + selected_adj + selected_pers, restoration_budget)
+            ]
             if not leftover:
                 break
-            while leftover and len(selected_category_items) < remaining_slots:
-                within_budget = [
-                    it for it in leftover
-                    if _within_restoration_budget(it, selected_category_items + selected_discoveries, _restoration_budget(preferences))
-                ]
-                distinct_leftover = [
-                    it for it in within_budget
-                    if not _topic_repetition_penalty(it, selected_category_items + selected_discoveries)
-                ]
-                def fallback_category(item: FeedItem) -> str:
-                    return next((cat for cat in categories if item in cat_bins[cat]), categories[0])
+            distinct_leftover = [
+                it for it in leftover
+                if not any(_same_video_topic(it, prior) for prior in (selected_indep + selected_adj + selected_pers))
+            ]
+            eligible = distinct_leftover if distinct_leftover else leftover
+            best_it = max(eligible, key=pers_score)
+            best_it.category = best_it.category or all_personalized_topics[0]
+            best_it.is_discovery = False
+            best_it.discovery_type = None
+            best_it.path_reason = "Curated for your viewing taste."
+            selected_pers.append(best_it)
+            used_ids.add(best_it.video.id)
 
-                if not within_budget:
-                    break
-                it = max(
-                    distinct_leftover or within_budget,
-                    key=lambda x: x.assessment.composite_score
-                    + _creator_preference_boost(x, preferences)
-                    - _topic_repetition_penalty(x, selected_category_items + selected_discoveries)
-                    - (0.15 * cat_counts[fallback_category(x)]),
-                )
-                leftover.remove(it)
-                it.category = fallback_category(it)
-                cat_counts[it.category] += 1
-                if preferences.feed_mode == "deep_learning":
-                    it.path_step = DEEP_LEARNING_STEPS[len(selected_category_items) % len(DEEP_LEARNING_STEPS)][0]
+    # 6. Honest Fallback
+    # If any lane lacked suitable candidates, backfill honestly from remaining qualified candidates
+    total_selected = len(selected_pers) + len(selected_adj) + len(selected_indep)
+    if total_selected < length:
+        leftover_all = [
+            it for it in pool
+            if it.video.id not in used_ids
+            and _within_restoration_budget(it, selected_indep + selected_adj + selected_pers, restoration_budget)
+        ]
+        distinct_leftover = [
+            it for it in leftover_all
+            if not any(_same_video_topic(it, prior) for prior in (selected_indep + selected_adj + selected_pers))
+        ]
+        leftover_sorted = sorted(
+            leftover_all,
+            key=lambda x: (
+                1 if x in distinct_leftover else 0,
+                max(x.assessment.substance_score, x.assessment.entertainment_score) * 0.5 + x.assessment.novelty_score * 0.3 - x.assessment.clickbait_score * 0.4
+            ),
+            reverse=True
+        )
+        for it in leftover_sorted:
+            if len(selected_pers) + len(selected_adj) + len(selected_indep) >= length:
+                break
+            if is_adjacent_candidate(it):
+                it.is_discovery = True
+                it.discovery_type = getattr(it.video, "discovery_type", None) or "adjacent"
+                it.path_step = "✨ Discovery"
+                disc_domain = it.video.source_domain or "an unexpected field"
+                disc_signal = getattr(it.video, "discovery_rationale", None) or it.assessment.connection_note or it.assessment.relevance_reason or f"Surprising lateral bridge connecting your taste to {disc_domain}."
+                it.discovery_signal = disc_signal
+                it.discovery_connection = disc_signal
+                it.path_reason = f"Why this discovery? {disc_signal}"
+                selected_adj.append(it)
+            elif is_independent_candidate(it):
+                it.is_discovery = True
+                it.discovery_type = "independent"
+                it.path_step = "✨ Discovery"
+                subj = getattr(it.assessment, "actual_subject", "") or ""
+                ang = getattr(it.assessment, "specific_angle", "") or ""
+                rationale = it.video.source_rationale or getattr(it.video, "discovery_rationale", "") or ""
+                domain = it.video.source_domain or ""
+                clean_t = it.video.title.split("|")[0].split("—")[0].strip()
+
+                if subj and ang:
+                    truthful_desc = f"Independent discovery in {domain or subj}: {subj} — {ang}."
+                elif subj:
+                    truthful_desc = f"Independent discovery in {domain or subj}: {subj}."
+                elif rationale:
+                    truthful_desc = f"Independent discovery: {rationale}"
                 else:
-                    it.path_step = it.path_step or "Highlight"
-                it.path_reason = f"Curated for your viewing taste."
-                selected_category_items.append(it)
-                used_channels.add(it.video.channel)
+                    truthful_desc = f"Independent discovery: Exploring {clean_t} outside your usual topics."
+
+                it.discovery_signal = truthful_desc
+                it.discovery_connection = truthful_desc
+                it.path_reason = f"Why this discovery? {truthful_desc}"
+                selected_indep.append(it)
+            else:
+                it.is_discovery = False
+                it.discovery_type = None
+                it.path_reason = "Curated for your viewing taste."
+                selected_pers.append(it)
+            used_ids.add(it.video.id)
+
+    # 7. Anti-Clustering Interleaving & Sequencing
+    # Prevent one subject, creator, or format from filling consecutive slots.
+    final_feed: list[FeedItem] = []
+    available_pools = {
+        "pers": list(selected_pers),
+        "adj": list(selected_adj),
+        "indep": list(selected_indep),
+    }
+
+    # Desired slot lane blueprint for balanced discovery pacing:
+    # 5 pers, 3 adj, 2 indep across 10 slots
+    blueprint = ["pers", "pers", "adj", "pers", "indep", "pers", "adj", "pers", "indep", "adj"]
+
+    def can_place(cand: FeedItem, prev: Optional[FeedItem]) -> bool:
+        if not prev:
+            return True
+        if _is_same_creator(cand, prev):
+            return False
+        if _is_same_subject(cand, prev):
+            return False
+        if _is_same_format(cand, prev):
+            return False
+        return True
+
+    for pos in range(length):
+        total_remaining = sum(len(p) for p in available_pools.values())
+        if total_remaining == 0:
             break
 
-    # 5. Interleave discovery items into the feed (e.g. at slots 2, 5, 8)
-    final_feed: list[FeedItem] = []
-    cat_idx = 0
-    disc_idx = 0
+        desired_lane = blueprint[pos % len(blueprint)]
+        lane_order = [desired_lane] + [l for l in ["pers", "adj", "indep"] if l != desired_lane]
 
-    total_target = len(selected_category_items) + len(selected_discoveries)
-    disc_positions = {2, 5, 8} if len(selected_discoveries) >= 3 else ({2, 6} if len(selected_discoveries) == 2 else {3})
-    for pos in range(total_target):
-        if (pos in disc_positions or cat_idx >= len(selected_category_items)) and disc_idx < len(selected_discoveries):
-            final_feed.append(selected_discoveries[disc_idx])
-            disc_idx += 1
-        elif cat_idx < len(selected_category_items):
-            final_feed.append(selected_category_items[cat_idx])
-            cat_idx += 1
-        elif disc_idx < len(selected_discoveries):
-            final_feed.append(selected_discoveries[disc_idx])
-            disc_idx += 1
+        prev_item = final_feed[-1] if final_feed else None
+        chosen_item = None
+        chosen_lane = None
+
+        # 1st attempt: Find candidate in desired or alternative lanes that satisfies full anti-clustering
+        for lane in lane_order:
+            for item in available_pools[lane]:
+                if can_place(item, prev_item):
+                    chosen_item = item
+                    chosen_lane = lane
+                    break
+            if chosen_item:
+                break
+
+        # 2nd attempt: If no item avoids all 3 clashes, at least avoid creator and subject
+        if not chosen_item and prev_item:
+            for lane in lane_order:
+                for item in available_pools[lane]:
+                    if not _is_same_creator(item, prev_item) and not _is_same_subject(item, prev_item):
+                        chosen_item = item
+                        chosen_lane = lane
+                        break
+                if chosen_item:
+                    break
+
+        # 3rd attempt: Pick any remaining item avoiding duplicate video ID
+        if not chosen_item:
+            for lane in lane_order:
+                if available_pools[lane]:
+                    chosen_item = available_pools[lane][0]
+                    chosen_lane = lane
+                    break
+
+        if chosen_item and chosen_lane:
+            available_pools[chosen_lane].remove(chosen_item)
+            final_feed.append(chosen_item)
+
+    for idx, item in enumerate(final_feed):
+        if not item.is_discovery:
+            if preferences.feed_mode == "deep_learning":
+                item.path_step = DEEP_LEARNING_STEPS[idx % len(DEEP_LEARNING_STEPS)][0]
+            else:
+                item.path_step = item.path_step or "Highlight"
+        else:
+            if item.discovery_type == "independent":
+                item.path_step = "🧭 Independent Discovery"
+            else:
+                item.path_step = "✨ Discovery"
 
     return final_feed
 

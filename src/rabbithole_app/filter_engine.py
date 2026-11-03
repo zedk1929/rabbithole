@@ -635,6 +635,11 @@ class FilterEngine:
                         score += 0.20
                         break
 
+            # Discovery boost (fair baseline for independent / distant exploration outside taste profile)
+            dtype = (getattr(cand, "discovery_type", None) or "").lower()
+            if dtype in ("independent", "wildcard"):
+                score += 0.15
+
             # Living taste profile match
             if preferences.living_taste_profile:
                 lp = preferences.living_taste_profile
@@ -654,9 +659,9 @@ class FilterEngine:
             dtype = (getattr(cand, "discovery_type", None) or "").lower()
             return bool(
                 getattr(cand, "is_discovery", False)
-                or qtype in ("wildcard_discovery", "distant_discovery", "lateral_discovery")
+                or qtype in ("wildcard_discovery", "distant_discovery", "lateral_discovery", "independent_discovery")
                 or "discovery" in qtype
-                or dtype in ("wildcard", "distant", "adjacent")
+                or dtype in ("wildcard", "distant", "adjacent", "independent")
             )
 
         shortlist: List[CandidateVideo] = []
@@ -669,25 +674,35 @@ class FilterEngine:
             creator_key = cand.channel_id or cand.channel or "unknown"
             creator_counts[creator_key] = creator_counts.get(creator_key, 0) + 1
 
-        # 1. On main feed (not a focused interest tab), preserve genuine discovery slots (up to 3 slots)
+        # 1. On main feed (not a focused interest tab), preserve genuine discovery slots (both independent and adjacent)
         if not preferences.active_category:
             discovery_cands = [c for c in candidates if is_discovery_cand(c)]
             if discovery_cands:
-                discovery_sorted = sorted(discovery_cands, key=cheap_pre_score, reverse=True)
-                discovery_target = min(3, max(1, limit // 4))
-                seen_disc_queries = set()
-                for dc in discovery_sorted:
-                    if len(shortlist) >= discovery_target:
-                        break
-                    q_key = dc.source_query or dc.source_domain or "discovery"
-                    creator_key = dc.channel_id or dc.channel or "unknown"
-                    if q_key not in seen_disc_queries and creator_counts.get(creator_key, 0) < 1:
-                        add_candidate(dc)
-                        seen_disc_queries.add(q_key)
+                indep_cands = [c for c in discovery_cands if (getattr(c, "discovery_type", None) or "").lower() in ("independent", "wildcard")]
+                adj_cands = [c for c in discovery_cands if (getattr(c, "discovery_type", None) or "").lower() not in ("independent", "wildcard")]
 
-                # Fill remaining discovery target slots if needed
-                for dc in discovery_sorted:
-                    if len(shortlist) >= discovery_target:
+                # Reserve up to 2-3 independent candidates for the shortlist
+                indep_sorted = sorted(indep_cands, key=cheap_pre_score, reverse=True)
+                for dc in indep_sorted[:3]:
+                    if len(shortlist) >= limit:
+                        break
+                    creator_key = dc.channel_id or dc.channel or "unknown"
+                    if creator_counts.get(creator_key, 0) < 1:
+                        add_candidate(dc)
+
+                # Reserve up to 3 adjacent candidates for the shortlist
+                adj_sorted = sorted(adj_cands, key=cheap_pre_score, reverse=True)
+                for dc in adj_sorted[:4]:
+                    if len(shortlist) >= limit:
+                        break
+                    creator_key = dc.channel_id or dc.channel or "unknown"
+                    if creator_counts.get(creator_key, 0) < 1:
+                        add_candidate(dc)
+
+                # Fill remaining discovery target slots up to 5 if available
+                all_disc_sorted = sorted(discovery_cands, key=cheap_pre_score, reverse=True)
+                for dc in all_disc_sorted:
+                    if len(shortlist) >= min(5, limit // 2):
                         break
                     if dc.id not in selected_ids:
                         add_candidate(dc)
@@ -1252,7 +1267,7 @@ class FilterEngine:
                     format_boost = min(0.06, pref_fmts[entertainment_format] * 0.02)
 
             # Novelty calibration for genuine discovery tiers
-            if getattr(cand, "discovery_type", None) == "wildcard":
+            if getattr(cand, "discovery_type", None) in ("wildcard", "independent"):
                 novelty_score = max(novelty_score, 0.95)
             elif getattr(cand, "discovery_type", None) == "distant":
                 novelty_score = max(novelty_score, 0.90)

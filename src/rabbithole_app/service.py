@@ -297,8 +297,8 @@ class RabbitholeService:
         elif top_k == 5 and not preferences.categories:
             path = build_mixed_feed(feed_items, preferences, length=target_len)
         else:
-            # Main feed: balanced across categories, 2-3 discovery items, top_k target
-            path = build_main_feed(feed_items, preferences, length=target_len, discovery_target=3)
+            # Main feed: 5 personalized, 3 adjacent discoveries, 2 independent discoveries
+            path = build_main_feed(feed_items, preferences, length=target_len, discovery_target=5)
 
         logger.info(
             "Feed timing: queries %.1fs, YouTube search %.1fs, scoring %.1fs, total %.1fs",

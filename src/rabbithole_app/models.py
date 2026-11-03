@@ -151,12 +151,8 @@ class LivingTasteProfile(BaseModel):
     )
     last_updated_at: Optional[str] = None
 
-    def recalculate_profile(self) -> None:
-        """
-        Recalculates affinities, evidence counts, preferred qualities, and entertainment formats from recent_signals in chronological order.
-        - Older passive signals can be decayed via apply_passive_decay().
-        - Explicit actions (watch_later, followed, completed, disliked) maintain full strength.
-        """
+    def model_post_init(self, __context: Any) -> None:
+        super().model_post_init(__context)
         if not self.imported_subject_affinities and self.subject_affinities:
             signal_domains = {s.domain for s in self.recent_signals if s.domain}
             for dom, score in self.subject_affinities.items():
@@ -166,6 +162,12 @@ class LivingTasteProfile(BaseModel):
                         2, self.subject_evidence_counts.get(dom, 2)
                     )
 
+    def recalculate_profile(self) -> None:
+        """
+        Recalculates affinities, evidence counts, preferred qualities, and entertainment formats from recent_signals in chronological order.
+        - Older passive signals can be decayed via apply_passive_decay().
+        - Explicit actions (watch_later, followed, completed, disliked) maintain full strength.
+        """
         self.subject_affinities = dict(self.imported_subject_affinities)
         self.preferred_qualities.clear()
         self.preferred_entertainment_formats.clear()
@@ -270,16 +272,9 @@ class LivingTasteProfile(BaseModel):
 
     def reset(self) -> None:
         """Resets all learned taste data back to a clean slate."""
-        if not self.imported_subject_affinities and self.subject_affinities:
-            signal_domains = {s.domain for s in self.recent_signals if s.domain}
-            for dom, score in self.subject_affinities.items():
-                if dom not in signal_domains:
-                    self.imported_subject_affinities[dom] = score
-                    self.imported_subject_evidence_counts[dom] = max(
-                        2, self.subject_evidence_counts.get(dom, 2)
-                    )
-
-        self.subject_affinities = dict(self.imported_subject_affinities)
+        self.imported_subject_affinities.clear()
+        self.imported_subject_evidence_counts.clear()
+        self.subject_affinities.clear()
         self.subject_evidence_counts.clear()
         self.preferred_qualities.clear()
         self.preferred_entertainment_formats.clear()
@@ -646,7 +641,7 @@ class CuriosityQuery(BaseModel):
         "entertainment_challenge"
     ] = Field(description="The angle of exploration or entertainment.")
     rationale: str = Field(description="Why this query helps the user discover non-mainstream content.")
-    discovery_type: Optional[Literal["adjacent", "distant", "wildcard"]] = Field(
+    discovery_type: Optional[Literal["adjacent", "distant", "wildcard", "independent"]] = Field(
         default=None,
         description="The discovery tier if this query explores outside primary categories."
     )
@@ -855,9 +850,9 @@ class FeedItem(BaseModel):
     path_step: Optional[str] = None
     path_reason: Optional[str] = None
     is_discovery: bool = Field(default=False, description="True if selected as a surprising cross-domain discovery.")
-    discovery_type: Optional[Literal["adjacent", "distant", "wildcard"]] = Field(
+    discovery_type: Optional[Literal["adjacent", "distant", "wildcard", "independent"]] = Field(
         default=None,
-        description="The discovery tier: 'adjacent', 'distant', or 'wildcard'."
+        description="The discovery tier: 'adjacent', 'distant', 'wildcard', or 'independent'."
     )
     discovery_connection: Optional[str] = Field(default=None, description="Explainable rationale connecting discovery to user taste.")
     discovery_signal: Optional[str] = Field(default=None, description="The specific user signal or experiment that led to this discovery.")

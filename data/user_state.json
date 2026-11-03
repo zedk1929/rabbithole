@@ -1,17 +1,17 @@
 {
   "watch_later": [
     {
-      "video_id": "GWCM9A1twc0",
-      "title": "SPY Bloopers: Hilarious Gag Reel with Melissa McCarthy, Jude Law & Jason Statham",
-      "channel": "FilmIsNow Epic Movie Zone",
-      "thumbnail": "https://i.ytimg.com/vi/GWCM9A1twc0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC3W8dEqqvi9-BYL8lvmTmfyDOUYA",
-      "duration_seconds": 542,
-      "recommendation_context": "Surfaced from channel FilmIsNow Epic Movie Zone. Based on metadata: Supported as adjacent discovery: lateral branch into Movies & Storytelling Comedy. Offers an engaging entertainment showcase (comedy).",
-      "source_domain": "Movies & Storytelling Comedy",
-      "source_category": "Movies & Storytelling",
+      "video_id": "49WVJo61d_k",
+      "title": "Hawk-Dove Game Explained: Why an All-Hawk or All-Dove World Would Collapse? Evolution & Balance",
+      "channel": "3-Minute Explanation",
+      "thumbnail": "https://i.ytimg.com/vi/49WVJo61d_k/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCceRK7plFYHbJEizV3OOOE2n05uw",
+      "duration_seconds": 742,
+      "recommendation_context": "Supported as distant discovery in Behavioral Biology and Mathematics matching viewer's preferred qualities.",
+      "source_domain": "Behavioral Biology and Mathematics",
+      "source_category": "Game Theory & Cryptography",
       "is_discovery": false,
       "discovery_connection": null,
-      "saved_at": "2026-11-03T21:16:10.989Z"
+      "saved_at": "2026-11-03T21:33:16.831Z"
     },
     {
       "video_id": "2Tw0AKt91pQ",
@@ -407,14 +407,14 @@
     "seen_video_ids": [
       "GWCM9A1twc0",
       "y5cldQpiuC8",
-      "JjHfo__zApE",
       "jj5z0x3BYBo",
-      "DbCEwHqQ5Tk",
-      "9LTZ8tbnc7g",
-      "BLYwQb2T_i8",
       "u0i3Ts6uhsU",
-      "__3zF8KZ17M",
-      "y5jchMm0Ae8"
+      "1oDXPJDcPvs",
+      "XeSu9fBJ2sI",
+      "DbCEwHqQ5Tk",
+      "rhgwIhB58PA",
+      "KrCwyDBPrUg",
+      "BLYwQb2T_i8"
     ],
     "completed_video_ids": [],
     "watched_channels": {},
@@ -424,6 +424,7 @@
     "dismissed_categories": [],
     "emerging_interests": [],
     "watch_later_video_ids": [
+      "49WVJo61d_k",
       "2Tw0AKt91pQ",
       "5DO1wygRtPY",
       "BocuAg-AsiE",
@@ -452,7 +453,8 @@
       "OP935oRhVHo",
       "S-pnuoPpmbI",
       "6IPXSqOhykg",
-      "Z9732sxpl48"
+      "Z9732sxpl48",
+      "GWCM9A1twc0"
     ],
     "followed_creators": [
       {
@@ -500,6 +502,8 @@
       }
     ],
     "living_taste_profile": {
+      "imported_subject_affinities": {},
+      "imported_subject_evidence_counts": {},
       "subject_affinities": {
         "Kinetic Sports Entertainment": 0.9,
         "Sports Highlights": 3,
@@ -511,7 +515,8 @@
         "Micro Sports Entertainment": 0,
         "Historical Navigation Science": 3,
         "Traditional Architecture": 0,
-        "Music and Topology": 3
+        "Music and Topology": 4,
+        "Hawk-Dove game model in evolutionary biology": 3
       },
       "subject_evidence_counts": {
         "Kinetic Sports Entertainment": 1,
@@ -519,15 +524,16 @@
         "Videogames": 1,
         "Maker Crafts": 1,
         "Historical Navigation Science": 1,
-        "Music and Topology": 1
+        "Music and Topology": 1,
+        "Hawk-Dove game model in evolutionary biology": 1
       },
       "preferred_qualities": {
         "visual explanation": 0.7,
         "storytelling": 5.5,
-        "technical depth": 0,
+        "technical depth": 2.4,
         "artisan craft": 2.4,
         "humor": 4.8,
-        "unusual connections": 9.6
+        "unusual connections": 12
       },
       "preferred_entertainment_formats": {
         "compelling_story": 5.5,
@@ -542,6 +548,29 @@
         "Too shallow"
       ],
       "recent_signals": [
+        {
+          "video_id": "2Tw0AKt91pQ",
+          "title": "The Math Behind Bach's Crab Canon",
+          "channel": "Aman Trivedi",
+          "domain": "Music and Topology",
+          "qualities": [],
+          "action": "substantial_watch",
+          "weight": 1,
+          "timestamp": "2026-11-03T23:01:59.253Z"
+        },
+        {
+          "video_id": "49WVJo61d_k",
+          "title": "Hawk-Dove Game Explained: Why an All-Hawk or All-Dove World Would Collapse? Evolution & Balance",
+          "channel": "3-Minute Explanation",
+          "domain": "Hawk-Dove game model in evolutionary biology",
+          "qualities": [
+            "technical depth",
+            "unusual connections"
+          ],
+          "action": "watch_later",
+          "weight": 3,
+          "timestamp": "2026-11-03T21:33:16.834Z"
+        },
         {
           "video_id": "4z3KmoCwoSY",
           "title": "10 Historical Pirate Moments That Were Beyond Stupid",
@@ -922,12 +951,31 @@
           "timestamp": "2026-10-30T07:32:21.753Z"
         }
       ],
-      "last_updated_at": "2026-11-03T01:29:20.976Z"
+      "last_updated_at": "2026-11-03T23:01:59.253Z"
     },
     "recent_queries": [],
-    "recent_shown_video_ids": []
+    "recent_shown_video_ids": [],
+    "recent_shown_subjects": [
+      "Movies & Storytelling Comedy",
+      "Comedic Creative Moments",
+      "Veritasium",
+      "Cinematic Trope Parodies"
+    ],
+    "recent_shown_creators": [
+      "FilmIsNow Epic Movie Zone",
+      "Papa Ruzz",
+      "BRAIN TIME",
+      "Kitchen Nightmares",
+      "PopMojo",
+      "Veritasium",
+      "Comedy Burst",
+      "Hell's Kitchen",
+      "Chris and Jack"
+    ]
   },
   "living_taste_profile": {
+    "imported_subject_affinities": {},
+    "imported_subject_evidence_counts": {},
     "subject_affinities": {
       "Kinetic Sports Entertainment": 0.9,
       "Sports Highlights": 3,
@@ -939,8 +987,8 @@
       "Micro Sports Entertainment": 0,
       "Historical Navigation Science": 3,
       "Traditional Architecture": 0,
-      "Music and Topology": 3,
-      "Movies & Storytelling Comedy": 3
+      "Music and Topology": 4,
+      "Hawk-Dove game model in evolutionary biology": 3
     },
     "subject_evidence_counts": {
       "Kinetic Sports Entertainment": 1,
@@ -949,20 +997,20 @@
       "Maker Crafts": 1,
       "Historical Navigation Science": 1,
       "Music and Topology": 1,
-      "Movies & Storytelling Comedy": 1
+      "Hawk-Dove game model in evolutionary biology": 1
     },
     "preferred_qualities": {
       "visual explanation": 0.7,
-      "storytelling": 7.9,
+      "storytelling": 5.5,
       "unusual connections": 12,
       "artisan craft": 2.4,
-      "humor": 7.2,
-      "comedy": 2.4
+      "humor": 4.8,
+      "technical depth": 2.4
     },
     "preferred_entertainment_formats": {
-      "compelling_story": 7.9,
+      "compelling_story": 5.5,
       "creative_projects": 2.4,
-      "comedy": 9.6
+      "comedy": 4.8
     },
     "followed_creators": [
       "3Blue1Brown"
@@ -973,19 +1021,27 @@
     ],
     "recent_signals": [
       {
-        "video_id": "GWCM9A1twc0",
-        "title": "SPY Bloopers: Hilarious Gag Reel with Melissa McCarthy, Jude Law & Jason Statham",
-        "channel": "FilmIsNow Epic Movie Zone",
-        "domain": "Movies & Storytelling Comedy",
+        "video_id": "2Tw0AKt91pQ",
+        "title": "The Math Behind Bach's Crab Canon",
+        "channel": "Aman Trivedi",
+        "domain": "Music and Topology",
+        "qualities": [],
+        "action": "substantial_watch",
+        "weight": 1,
+        "timestamp": "2026-11-03T23:01:59.253Z"
+      },
+      {
+        "video_id": "49WVJo61d_k",
+        "title": "Hawk-Dove Game Explained: Why an All-Hawk or All-Dove World Would Collapse? Evolution & Balance",
+        "channel": "3-Minute Explanation",
+        "domain": "Hawk-Dove game model in evolutionary biology",
         "qualities": [
-          "comedy",
-          "storytelling",
-          "humor",
+          "technical depth",
           "unusual connections"
         ],
         "action": "watch_later",
         "weight": 3,
-        "timestamp": "2026-11-03T21:16:10.991Z"
+        "timestamp": "2026-11-03T21:33:16.834Z"
       },
       {
         "video_id": "4z3KmoCwoSY",
@@ -1367,35 +1423,7 @@
         "timestamp": "2026-10-30T07:32:21.753Z"
       }
     ],
-    "last_updated_at": "2026-11-03T21:16:10.991Z",
-    "imported_subject_affinities": {
-      "Kinetic Sports Entertainment": 0.9,
-      "Sports Highlights": 3,
-      "Videogames": 3,
-      "Competitive Entertainment": 0,
-      "Narrative Lore": 0,
-      "Unique Competitions": 0,
-      "Maker Crafts": 3,
-      "Micro Sports Entertainment": 0,
-      "Historical Navigation Science": 3,
-      "Traditional Architecture": 0,
-      "Music and Topology": 3,
-      "Movies & Storytelling Comedy": 3
-    },
-    "imported_subject_evidence_counts": {
-      "Kinetic Sports Entertainment": 1,
-      "Sports Highlights": 1,
-      "Videogames": 1,
-      "Maker Crafts": 1,
-      "Historical Navigation Science": 1,
-      "Music and Topology": 1,
-      "Movies & Storytelling Comedy": 1,
-      "Competitive Entertainment": 2,
-      "Narrative Lore": 2,
-      "Unique Competitions": 2,
-      "Micro Sports Entertainment": 2,
-      "Traditional Architecture": 2
-    }
+    "last_updated_at": "2026-11-03T23:03:53.908Z"
   },
   "followed_creators": [
     {

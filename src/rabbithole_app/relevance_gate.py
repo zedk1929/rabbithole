@@ -266,6 +266,29 @@ def _extract_tokens(text: str) -> Set[str]:
     return {w for w in words if len(w) >= 3 and w not in STOPWORDS}
 
 
+def _is_text_avoided(text: str, avoided_terms: List[str]) -> bool:
+    """Checks whether text contains any avoided topics using word boundaries."""
+    if not text or not avoided_terms:
+        return False
+    t_lower = text.lower()
+    for term in avoided_terms:
+        term_clean = term.strip().lower()
+        if not term_clean:
+            continue
+        if term_clean in ("history", "historic", "historical"):
+            if re.search(r"\bhistor\w*\b", t_lower, re.IGNORECASE):
+                return True
+        else:
+            pattern = r"\b" + re.escape(term_clean) + r"(?:s|es|'s)?\b"
+            if re.search(pattern, t_lower, re.IGNORECASE):
+                return True
+            if " " in term_clean and term_clean in t_lower:
+                return True
+            if len(term_clean) > 3 and term_clean in t_lower:
+                return True
+    return False
+
+
 class RelevanceGate:
     """
     Evaluates candidate videos before they enter viewing paths.
@@ -468,6 +491,76 @@ class RelevanceGate:
                 matched_concept=f"category:{preferences.active_category}"
             )
 
+        # Independent discovery candidates: evaluate for quality, watchability, dislikes, and avoided topics
+        # without requiring connection to existing interests or clashing with seed topics
+        cand_disc_type = getattr(candidate, "discovery_type", None) or (getattr(query_context, "discovery_type", None) if query_context else None)
+        is_independent = (
+            cand_disc_type in ("independent", "wildcard")
+            or candidate.source_query_type == "independent_discovery"
+            or (getattr(candidate, "is_discovery", False) and cand_disc_type in ("independent", "wildcard"))
+        )
+
+        if is_independent and not preferences.active_category:
+            # 1. Avoided topics check
+            avoided_terms = [part.strip().lower() for part in re.split(r"[,;\n|]", preferences.avoid_topics) if part.strip()]
+            if _is_text_avoided(full_metadata, avoided_terms):
+                return RelevanceAssessment(
+                    is_relevant=False,
+                    status="rejected",
+                    reason=f"Candidate matches avoided topics ('{preferences.avoid_topics}').",
+                    confidence=0.95
+                )
+
+            # 2. Explicit dislikes check
+            if preferences.disliked_video_ids and candidate.id in set(preferences.disliked_video_ids):
+                return RelevanceAssessment(
+                    is_relevant=False,
+                    status="rejected",
+                    reason="Video was previously disliked by user.",
+                    confidence=0.99
+                )
+            if preferences.disliked_records:
+                for dr in preferences.disliked_records:
+                    if dr.video_id == candidate.id or (dr.channel and dr.channel.lower() == channel_lower):
+                        return RelevanceAssessment(
+                            is_relevant=False,
+                            status="rejected",
+                            reason=f"Candidate matches disliked feedback ('{dr.title or dr.channel}').",
+                            confidence=0.95
+                        )
+
+            # 3. Basic quality / watchability & non-empty metadata
+            if len(desc.strip()) < 10 and len(title.split()) <= 2:
+                return RelevanceAssessment(
+                    is_relevant=False,
+                    status="rejected",
+                    reason="Available metadata is too sparse or empty for independent discovery evaluation.",
+                    confidence=0.85
+                )
+
+            # 4. Verify coherence with the independent/wildcard query / domain
+            target_domain_name = domain or getattr(candidate, "source_domain", "") or ""
+            target_tokens = ((_extract_tokens(query) | _extract_tokens(target_domain_name)) - GENERIC_QUERY_MODIFIERS) - STOPWORDS
+            meta_tokens = _extract_tokens(full_metadata)
+            matched_target = target_tokens & meta_tokens
+            disc_label_type = cand_disc_type if cand_disc_type in ("wildcard", "adjacent", "distant") else "independent"
+            label_domain = target_domain_name or (", ".join(sorted(list(matched_target))[:2]) if matched_target else f"{disc_label_type} exploration")
+            if target_tokens and not matched_target:
+                return RelevanceAssessment(
+                    is_relevant=False,
+                    status="rejected",
+                    reason=f"Metadata does not support the proposed {disc_label_type} discovery topic ('{query}' / '{target_domain_name}').",
+                    confidence=0.88
+                )
+
+            return RelevanceAssessment(
+                is_relevant=True,
+                status="supported",
+                reason=f"Supported as {disc_label_type} discovery in {label_domain}: '{title}'.",
+                confidence=0.90,
+                matched_concept=f"{disc_label_type}:{label_domain}"
+            )
+
         # Check for minimal or sparse metadata (Uncertain case)
         if len(desc.strip()) < 20 and len(title.split()) <= 3:
             # Short ambiguous title and empty description
@@ -549,13 +642,13 @@ class RelevanceGate:
             matched_target = target_tokens & meta_tokens
             if matched_target:
                 label_domain = target_domain_name or (", ".join(sorted(list(matched_target))[:2]) if matched_target else "discovery field")
-                if cand_disc_type == "wildcard":
+                if cand_disc_type in ("independent", "wildcard"):
                     return RelevanceAssessment(
                         is_relevant=True,
                         status="supported",
-                        reason=f"Supported as high-quality wildcard discovery in {label_domain} outside current categories.",
-                        confidence=0.88,
-                        matched_concept=f"wildcard:{label_domain}"
+                        reason=f"Supported as high-quality {cand_disc_type} discovery in {label_domain} outside current categories.",
+                        confidence=0.90,
+                        matched_concept=f"{cand_disc_type}:{label_domain}"
                     )
                 elif cand_disc_type == "distant":
                     return RelevanceAssessment(
