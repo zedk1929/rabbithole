@@ -1,0 +1,37 @@
+[
+  {
+    "id": "pilot_baseball",
+    "title": "Baseball and strategy",
+    "category": "broad_interest",
+    "description": "Broad interest without a requested destination field.",
+    "preferences": {"interests": "baseball and strategy", "serendipity_level": 4}
+  },
+  {
+    "id": "pilot_movies",
+    "title": "Movies and storytelling",
+    "category": "broad_interest",
+    "description": "Broad interest without a requested destination field.",
+    "preferences": {"interests": "movies and storytelling", "serendipity_level": 4}
+  },
+  {
+    "id": "pilot_gardening",
+    "title": "Gardening and cooking",
+    "category": "broad_interest",
+    "description": "Broad interest without a requested destination field.",
+    "preferences": {"interests": "gardening and cooking", "serendipity_level": 3}
+  },
+  {
+    "id": "pilot_music",
+    "title": "Music and sound",
+    "category": "broad_interest",
+    "description": "Broad interest without a requested destination field.",
+    "preferences": {"interests": "music and sound", "serendipity_level": 5}
+  },
+  {
+    "id": "pilot_birds",
+    "title": "Birdwatching and photography",
+    "category": "broad_interest",
+    "description": "Broad interest outside the generator's named domain groups.",
+    "preferences": {"interests": "birdwatching and photography", "serendipity_level": 4}
+  }
+]

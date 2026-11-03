@@ -1,0 +1,61 @@
+/* Rabbithole custom styles */
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0d10;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2d36;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f4350;
+}
+
+/* Card hover glow and smooth transition */
+.feed-card {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.feed-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(16, 185, 129, 0.1);
+}
+
+/* Branch tag animation */
+.branch-pill {
+  transition: all 0.15s ease-in-out;
+}
+
+.branch-pill:hover {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #34d399;
+  transform: scale(1.02);
+}
+
+/* Serendipity dial accents */
+input[type="range"]::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Archetype Cards */
+.archetype-card {
+  cursor: pointer;
+  user-select: none;
+}
+.archetype-card.selected {
+  border-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  box-shadow: 0 0 14px -2px rgba(16, 185, 129, 0.25);
+}

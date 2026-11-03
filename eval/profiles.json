@@ -1,0 +1,182 @@
+[
+  {
+    "id": "p01_infrastructure",
+    "title": "Everyday Municipal Infrastructure & Utility Grids",
+    "category": "broad_interest",
+    "description": "Broad interest in how municipal water networks, wastewater treatment, and electric power grids operate.",
+    "preferences": {
+      "interests": "Everyday municipal infrastructure, water distribution networks, and electric utility grids",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "",
+      "learning_goal": "",
+      "serendipity_level": 3,
+      "depth_level": "curious_explorer",
+      "min_duration_minutes": 8,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p02_slime_molds",
+    "title": "Slime Mold Optimization & Biological Computing",
+    "category": "unfamiliar_field",
+    "description": "Unfamiliar biological computing domain exploring non-neural spatial network optimization, with optional avoided topics.",
+    "preferences": {
+      "interests": "Physarum polycephalum slime mold optimization, cellular computation, and biological network routing",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "Foraging identification, mushroom cooking, psychedelic culture, supplement marketing",
+      "learning_goal": "",
+      "serendipity_level": 4,
+      "depth_level": "deep_academic",
+      "min_duration_minutes": 10,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p03_instrument_physics",
+    "title": "Acoustics & Physical Mechanics of Musical Instruments",
+    "category": "broad_interest",
+    "description": "Broad interest in physical resonance chambers and timbre without specifying target discovery fields.",
+    "preferences": {
+      "interests": "Physical acoustics, resonance chambers, and harmonics of acoustic instruments",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "",
+      "learning_goal": "",
+      "serendipity_level": 2,
+      "depth_level": "curious_explorer",
+      "min_duration_minutes": 6,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p04_fluid_dynamics",
+    "title": "Intuitive Fluid Dynamics & Atmospheric Turbulence",
+    "category": "broad_interest",
+    "description": "Broad interest exploring visual fluid motion and vortex behavior from first principles.",
+    "preferences": {
+      "interests": "Fluid dynamics, vortex formation, and atmospheric turbulence from first principles",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "",
+      "learning_goal": "",
+      "serendipity_level": 3,
+      "depth_level": "beginner_friendly",
+      "min_duration_minutes": 7,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p05_ancient_metallurgy",
+    "title": "Ancient Metallurgy, Bronze Casting & Iron Smelting",
+    "category": "unfamiliar_field",
+    "description": "Unfamiliar archaeometallurgy domain with optional avoided topics.",
+    "preferences": {
+      "interests": "Bronze Age casting, bloomery iron smelting, and archaeometallurgy",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "Fantasy anime swords, cheap knife restoration gimmicks, movie weapons",
+      "learning_goal": "",
+      "serendipity_level": 4,
+      "depth_level": "deep_academic",
+      "min_duration_minutes": 10,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p06_spatial_memory",
+    "title": "Cognitive Maps, Wayfinding & Spatial Memory",
+    "category": "broad_interest",
+    "description": "Broad curiosity in spatial navigation and cognitive orientation without target field constraints.",
+    "preferences": {
+      "interests": "Spatial cognition, traditional wayfinding, and memory architecture",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "",
+      "learning_goal": "",
+      "serendipity_level": 4,
+      "depth_level": "curious_explorer",
+      "min_duration_minutes": 8,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p07_deep_sea_vents",
+    "title": "Abyssal Hydrothermal Vents & Chemosynthetic Ecosystems",
+    "category": "unfamiliar_field",
+    "description": "Unfamiliar deep sea chemosynthesis domain with optional avoided topics.",
+    "preferences": {
+      "interests": "Hydrothermal vent biology, abyssal trench geology, and chemosynthesis",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "Shark attack compilations, aquarium hobby care, scuba travel vlogs",
+      "learning_goal": "",
+      "serendipity_level": 5,
+      "depth_level": "deep_academic",
+      "min_duration_minutes": 10,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p08_islamic_geometry",
+    "title": "Aperiodic Tilings, Girih Geometry & Quasicrystals",
+    "category": "broad_interest",
+    "description": "Broad curiosity in geometric patterns and crystallography symmetry.",
+    "preferences": {
+      "interests": "Islamic geometric star patterns, Penrose tilings, and crystallographic symmetry",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "",
+      "learning_goal": "",
+      "serendipity_level": 3,
+      "depth_level": "curious_explorer",
+      "min_duration_minutes": 8,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p09_ancient_scripts",
+    "title": "Linguistic Decipherment of Ancient Scripts",
+    "category": "unfamiliar_field",
+    "description": "Unfamiliar epigraphy and cryptanalysis field with optional avoided topics.",
+    "preferences": {
+      "interests": "Decipherment of ancient writing systems, paleography, and epigraphy",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "Ancient aliens conspiracies, movie relics, treasure hunting lore",
+      "learning_goal": "",
+      "serendipity_level": 3,
+      "depth_level": "curious_explorer",
+      "min_duration_minutes": 9,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  },
+  {
+    "id": "p10_wild_fermentation",
+    "title": "Microbial Ecology of Traditional Fermentation",
+    "category": "broad_interest",
+    "description": "Broad curiosity in wild fermentation biochemistry without naming target discovery fields.",
+    "preferences": {
+      "interests": "Microbiology of ancient wild fermentation, wild yeasts, and enzymatic digestion",
+      "familiar_topics": "",
+      "explore_topics": "",
+      "avoid_topics": "",
+      "learning_goal": "",
+      "serendipity_level": 3,
+      "depth_level": "curious_explorer",
+      "min_duration_minutes": 7,
+      "max_duration_minutes": 180,
+      "avoid_sensationalism": true
+    }
+  }
+]
