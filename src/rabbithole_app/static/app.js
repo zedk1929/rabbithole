@@ -120,8 +120,24 @@ async function syncUserStateWithServer() {
         }
       }
       // 5. Preferences
-      if (s.preferences && !localStorage.getItem(PREFS_STORAGE_KEY)) {
-        localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(s.preferences));
+      if (s.preferences) {
+        const localPrefsRaw = localStorage.getItem(PREFS_STORAGE_KEY);
+        let shouldSet = false;
+        if (!localPrefsRaw || localPrefsRaw === "{}") {
+          shouldSet = true;
+        } else {
+          try {
+            const p = JSON.parse(localPrefsRaw);
+            if (!p.interests && (!p.curiosity_archetypes || p.curiosity_archetypes.length === 0)) {
+              shouldSet = true;
+            }
+          } catch (_) {
+            shouldSet = true;
+          }
+        }
+        if (shouldSet) {
+          localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(s.preferences));
+        }
       }
     } else {
       // Server is empty! Upload existing local storage data to back it up on server
