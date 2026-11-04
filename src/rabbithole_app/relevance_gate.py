@@ -178,7 +178,9 @@ DOMAIN_LEXICONS: Dict[str, Set[str]] = {
         "bsp tree", "platformer", "platforming", "roguelike", "roguelite", "metroidvania", "action rpg",
         "immersive sim", "sandbox", "open world design", "game ai", "behavior tree",
         "procedural generation", "procedural dungeon", "game balance", "difficulty curve",
-        # Famous games, series & franchises
+        "game audio", "game sound", "game programming", "indie game", "indie games", "concept art",
+        "procedural animation", "inverse kinematics", "making games", "game tutorial", "game retrospective",
+        # Famous games, series, franchises & hardware
         "super mario", "mario 64", "super mario 64", "zelda", "breath of the wild",
         "tears of the kingdom", "ocarina of time", "elden ring", "dark souls", "bloodborne",
         "sekiro", "fromsoftware", "hollow knight", "celeste", "minecraft", "redstone",
@@ -186,12 +188,21 @@ DOMAIN_LEXICONS: Dict[str, Set[str]] = {
         "super metroid", "metroid prime", "final fantasy", "cyberpunk", "skyrim",
         "elder scrolls", "grand theft auto", "gta", "pokemon", "chrono trigger",
         "metal gear", "metal gear solid", "resident evil", "silent hill", "castlevania",
-        "symphony of the night", "spelunky", "hades", "undertale", "bioshock",
-        "shadow of the colossus", "outer wilds", "disco elysium", "factorio",
+        "symphony of the night", "spelunky", "hades", "undertale", "bioshock", "fallout",
+        "fallout new vegas", "nintendo", "nintendo 64", "n64", "gamecube", "playstation", "xbox",
+        "shadow of the colossus", "outer wilds", "disco elysium", "factorio", "smash bros",
         # Recognizable creators & outlets
         "summoning salt", "game maker's toolkit", "gmtk", "noclip", "digital foundry",
         "mark brown", "ahoy", "design doc", "razbuten", "adam millard", "matthewmatosis",
         "didyouknowgaming", "iron pineapple", "karl jobst", "lowspecgamer", "core-a gaming"
+    },
+    "sports": {
+        "sport", "sports", "athlete", "athletic", "athletics", "highlight", "highlights",
+        "olympics", "gymnastics", "soccer", "football", "tennis", "hockey", "track and field",
+        "swimming", "rugby", "cricket", "referee", "stadium", "tournament", "championship",
+        "touchdown", "goal", "striker", "penalty kick", "penalty kicks", "tactical breakdown",
+        "coach", "biomechanics", "aerodynamic spin", "curveball", "fastball", "quarterback",
+        "formation", "striker masterclass", "tactical evolution"
     }
 }
 
@@ -214,7 +225,8 @@ DOMAIN_TRIGGERS: Dict[str, Set[str]] = {
     "mathematics": {"math", "mathematics", "calculus", "geometry", "linear algebra", "topology", "3blue1brown", "algebra", "fourier"},
     "basketball": {"basketball", "nba", "wnba", "hoops", "ncaa basketball"},
     "economics": {"economics", "economy", "macroeconomics", "microeconomics", "econometrics", "monetary policy", "fiscal policy"},
-    "gaming": {"videogames", "videogame", "video games", "video game", "gaming", "gameplay", "game design", "game dev", "game development", "speedrun", "speedrunning"}
+    "gaming": {"videogames", "videogame", "video games", "video game", "gaming", "gameplay", "game design", "game dev", "game development", "speedrun", "speedrunning"},
+    "sports": {"sport", "sports", "athletic", "athletics", "highlight", "highlights", "sports highlights"}
 }
 
 

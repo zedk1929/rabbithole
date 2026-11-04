@@ -44,7 +44,7 @@ class VideoRetriever:
         }
 
         def search(q: CuriosityQuery):
-            prefix = "ytsearchdate" if q.sort_by_date else "ytsearch"
+            prefix = "ytsearch"
             search_term = f"{prefix}{max_per_query}:{q.query}"
             try:
                 # yt-dlp instances are not shared between worker threads.

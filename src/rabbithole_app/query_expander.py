@@ -96,7 +96,7 @@ DOMAIN_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     "sports_strategy": {
         "match_keywords": [
             "baseball", "strategy", "sabermetrics", "tactics", "pitching",
-            "batting", "coaching"
+            "batting", "coaching", "sports", "sport", "highlights"
         ],
         "first_principles": [
             (
