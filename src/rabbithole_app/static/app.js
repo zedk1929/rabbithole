@@ -1550,6 +1550,8 @@ function selectCategoryTab(categoryNameOrNull) {
 function onSelectCategoryView(view) {
   const activeCat = getActiveCategory();
   if (!activeCat) return;
+  // Invalidate any in-flight requests from the previous view immediately
+  latestFeedRequestId += 1;
   setActiveCategoryView(activeCat, view);
   renderCategoryViewsBar(activeCat);
   const tabKey = getTabCacheKey(activeCat, view);
@@ -3038,6 +3040,19 @@ async function fetchFeed(payload) {
     if (requestId !== latestFeedRequestId) return;
     // Feedback received during generation makes this response obsolete.
     if (JSON.stringify(getLivingTasteProfile()) !== requestedTasteProfile) return;
+
+    // View switching protection: check both the active interest and selected view before displaying or caching
+    const currentActiveCat = getActiveCategory() || null;
+    const currentSelectedView = currentActiveCat ? getActiveCategoryView(currentActiveCat) : null;
+    const reqCat = requestPayload.active_category || null;
+    const reqView = requestPayload.category_view || null;
+
+    if (reqCat !== currentActiveCat || reqView !== currentSelectedView) {
+      // The user switched interest tab or view while this request was in flight.
+      // Prevent this older in-flight response from replacing the cached view or active display.
+      return;
+    }
+
     const history = readLocalJSON("rabbithole_recent_queries") || {};
     history[scope] = [...(history[scope] || []), ...(data.generated_queries || []).map(q => q.query)].slice(-40);
     saveLocalJSON("rabbithole_recent_queries", history);
@@ -3059,7 +3074,19 @@ async function fetchFeed(payload) {
 }
 
 function displayFeed(data, payload) {
-  const activeCat = (payload && payload.active_category) || getActiveCategory();
+  const currentActiveCat = getActiveCategory() || null;
+  const currentSelectedView = currentActiveCat ? getActiveCategoryView(currentActiveCat) : null;
+
+  // Protect against race condition: check both active category and view
+  if (payload && (payload.active_category !== undefined || payload.category_view !== undefined)) {
+    const pCat = payload.active_category || null;
+    const pView = payload.category_view || null;
+    if (pCat !== currentActiveCat || pView !== currentSelectedView) {
+      return;
+    }
+  }
+
+  const activeCat = (payload && payload.active_category) || currentActiveCat;
   const currentView = (payload && payload.category_view) || (activeCat ? getActiveCategoryView(activeCat) : null);
   const tabKey = getTabCacheKey(activeCat, currentView);
   tabFeedsCache[tabKey] = data;

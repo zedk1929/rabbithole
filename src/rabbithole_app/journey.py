@@ -6,10 +6,17 @@ Supports three distinct discovery experiences:
 3. 'deep_learning': The progressive 5-step exploration path (Start, Deepen, Bridge, Challenge, Continue).
 """
 import re
-from typing import List, Set, Optional, Dict, Any
+from datetime import datetime, timezone
+from typing import List, Set, Optional, Dict, Any, Tuple
 
 from rabbithole_app.models import FeedItem, UserPreferences
-from rabbithole_app.relevance_gate import _extract_tokens, GENERIC_QUERY_MODIFIERS
+from rabbithole_app.relevance_gate import (
+    _extract_tokens,
+    GENERIC_QUERY_MODIFIERS,
+    STOPWORDS,
+    DOMAIN_TRIGGERS,
+    DOMAIN_LEXICONS,
+)
 
 
 DEEP_LEARNING_STEPS = (
@@ -841,6 +848,131 @@ def build_main_feed(
     return final_feed
 
 
+RECENT_UPLOAD_WINDOW_DAYS = 365
+
+
+def parse_candidate_upload_date(upload_date_str: Optional[str]) -> Optional[datetime]:
+    """Parse candidate upload date into a timezone-aware UTC datetime."""
+    if not upload_date_str:
+        return None
+    val = str(upload_date_str).strip()
+    if "T" in val:
+        try:
+            return datetime.fromisoformat(val.replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            pass
+    clean_val = val.replace("-", "")[:8]
+    if len(clean_val) == 8 and clean_val.isdigit():
+        try:
+            return datetime.strptime(clean_val, "%Y%m%d").replace(tzinfo=timezone.utc)
+        except (ValueError, TypeError):
+            pass
+    return None
+
+
+def get_candidate_age_days(upload_date_str: Optional[str]) -> Optional[int]:
+    """Returns the age in days of a candidate, or None if date is missing or unparseable."""
+    dt = parse_candidate_upload_date(upload_date_str)
+    if dt is None:
+        return None
+    now = datetime.now(timezone.utc)
+    return max(0, (now - dt).days)
+
+
+INTERDISCIPLINARY_DOMAINS: Dict[str, Set[str]] = {
+    "Biology & Ecology": {
+        "biology", "biological", "evolution", "evolutionary", "ecology", "ecological",
+        "organism", "organisms", "genetics", "genetic", "dna", "mycelial", "mycology",
+        "biomechanics", "cellular", "photosynthesis", "species", "natural selection",
+        "zoology", "marine biology", "wildlife", "animal conflicts"
+    },
+    "Physics & Fluid Dynamics": {
+        "physics", "thermodynamics", "quantum", "astrophysics", "mechanics",
+        "magnetohydrodynamics", "gravity", "gravitational", "optics", "relativity",
+        "electromagnetism", "fluid dynamics", "aerodynamics", "kinetics", "entropy",
+        "particle physics", "superconductivity", "wave propagation"
+    },
+    "Game Theory & Decision Science": {
+        "game theory", "nash equilibrium", "replicator dynamics", "hawk dove",
+        "payoff matrix", "strategic conflict", "minimax", "prisoner dilemma",
+        "mechanism design", "social choice", "decision theory"
+    },
+    "Computation & Algorithms": {
+        "computation", "computational", "algorithm", "algorithms", "turing machine",
+        "complexity theory", "automata", "neural network", "machine learning",
+        "information theory", "data structure", "cryptography", "error correction"
+    },
+    "Neuroscience & Cognitive Science": {
+        "neuroscience", "neural", "brain", "synapse", "synaptic", "cortex",
+        "neuron", "neurons", "cognitive", "action potential", "neurobiology",
+        "cognition", "sensory perception"
+    },
+    "Music & Acoustics": {
+        "music", "musical", "acoustics", "harmonics", "composition", "timbre",
+        "temperament", "crab canon", "polyphony", "sound synthesis", "psychoacoustics",
+        "fugue", "counterpoint"
+    },
+    "Architecture & Structural Engineering": {
+        "architecture", "architectural", "structural engineering", "materials science",
+        "concrete", "structural design", "tensile strength", "cantilever", "facade engineering",
+        "civil engineering", "structural mechanics"
+    },
+    "Economics & Market Dynamics": {
+        "economics", "economy", "macroeconomics", "microeconomics", "market dynamics",
+        "inflation", "monetary policy", "supply and demand", "pricing mechanism",
+        "central bank", "econometrics"
+    }
+}
+
+
+def _detect_interdisciplinary_connection(it: FeedItem, category_name: str, category_tokens: Set[str]) -> Optional[str]:
+    """
+    Requires demonstrable metadata evidence in the candidate's actual title and description
+    covering both:
+    1. The selected interest category.
+    2. A distinct secondary field.
+
+    A query label, source-domain label, or generic keyword alone is strictly insufficient.
+    Returns the supported second field name, or None if evidence for both fields is absent.
+    """
+    title = (it.video.title or "").lower()
+    desc = (it.video.description or "").lower()
+    content_text = f"{title} {desc}"
+    content_tokens = _extract_tokens(content_text)
+
+    cat_lower = category_name.lower().strip()
+
+    # 1. Evidence of selected interest in video metadata
+    known_triggers = set()
+    for dom_name, trigs in DOMAIN_TRIGGERS.items():
+        if any(trig in cat_lower for trig in trigs):
+            known_triggers.update(trigs)
+            if dom_name in DOMAIN_LEXICONS:
+                known_triggers.update([t for t in DOMAIN_LEXICONS[dom_name] if len(t) >= 4])
+
+    has_cat_evidence = (
+        bool(category_tokens & content_tokens)
+        or (cat_lower in content_text)
+        or any(trig in content_text for trig in known_triggers if len(trig) >= 4)
+    )
+    if not has_cat_evidence:
+        return None
+
+    # 2. Evidence of distinct second field in video metadata
+    for field_name, field_terms in INTERDISCIPLINARY_DOMAINS.items():
+        field_tokens = _extract_tokens(field_name)
+        if bool(category_tokens & field_tokens) or (cat_lower in field_name.lower()):
+            continue
+        if any(tok in field_name.lower() for tok in category_tokens):
+            continue
+
+        matching_terms = [t for t in field_terms if t in content_text]
+        if matching_terms:
+            return field_name
+
+    return None
+
+
 def build_category_feed(
     items: list[FeedItem],
     preferences: UserPreferences,
@@ -931,7 +1063,8 @@ def build_category_feed(
 
     # 2. CANDIDATE FILTERING PER VIEW
     history_text = " ".join(watched_or_saved_titles + watched_or_saved_domains).lower()
-    hist_terms = _terms(history_text)
+    hist_tokens = _extract_tokens(history_text)
+    specific_hist_terms = (hist_tokens - category_tokens - GENERIC_QUERY_MODIFIERS - STOPWORDS) - _TITLE_FILLER
 
     def is_eligible_for_view(it: FeedItem) -> bool:
         full_text = f"{it.video.title} {it.video.channel or ''} {it.video.description or ''} {it.video.source_domain or ''} {it.category or ''} {getattr(it.assessment, 'primary_appeal_domain', '') or ''}".lower()
@@ -951,41 +1084,36 @@ def build_category_feed(
         if not has_cat_connection:
             return False
 
-        if current_view == "deeper":
-            # Must not be an item already watched or saved
+        if current_view == "new":
+            # 1. NEW: Use actual upload date to decide if recent
+            # Do not infer recency from title words or hard-coded years
+            age_days = get_candidate_age_days(it.video.upload_date)
+            if age_days is not None and age_days > RECENT_UPLOAD_WINDOW_DAYS:
+                return False
+            return True
+
+        elif current_view == "deeper":
+            # 2. GO DEEPER: Require demonstrable link to watched or saved history in this interest
             if it.video.id in watched_or_saved_ids:
                 return False
-            # Filter out purely superficial beginner primers if deeper candidates are requested
             primer_words = {"beginner", "beginners", "intro", "introduction", "101", "basics", "for beginners"}
             title_words = set(re.findall(r"[a-z0-9]+", it.video.title.lower()))
             if primer_words & title_words:
                 return False
-            # Must demonstrate alignment with category history or advanced depth
-            cand_terms = _terms(full_text)
-            overlap = len(cand_terms & hist_terms)
-            is_deep_format = (
-                it.video.source_query_type in ("archive_lecture", "practitioner_deep_dive", "first_principles")
-                or it.assessment.substance_score >= 0.70
-            )
-            return overlap > 0 or is_deep_format
+
+            cand_tokens_clean = (_extract_tokens(full_text) - category_tokens - GENERIC_QUERY_MODIFIERS - STOPWORDS) - _TITLE_FILLER
+            overlap_tokens = cand_tokens_clean & specific_hist_terms
+            if not overlap_tokens:
+                # High substance score or lecture query alone is strictly insufficient
+                return False
+            return True
 
         elif current_view == "connections":
-            # Must connect category to an external/interdisciplinary field
-            qt = it.video.source_query_type or ""
-            dt = (getattr(it.video, "discovery_type", None) or it.discovery_type or "").lower()
-            is_cross_query = qt in ("cross_domain_analogy", "lateral_discovery") or dt in ("adjacent", "distant") or it.is_discovery
-            domain_name = (it.video.source_domain or "").lower()
-            is_cross_domain = bool(domain_name and category_lower not in domain_name and len(domain_name) > 3)
-            interdisciplinary_terms = {
-                "physics", "mechanics", "game theory", "biology", "computation", "algorithm",
-                "algorithms", "biomechanics", "neuroscience", "psychology", "architecture",
-                "network", "evolution", "analogies", "cross-domain", "geometry", "fluid dynamics"
-            }
-            has_interdisciplinary_concept = bool(interdisciplinary_terms & cand_tokens)
-            return is_cross_query or is_cross_domain or has_interdisciplinary_concept
+            # 3. CONNECTIONS: Require demonstrable metadata evidence covering both the selected interest and another field
+            connected_field = _detect_interdisciplinary_connection(it, category_name, category_tokens)
+            return connected_field is not None
 
         else:
-            # 'new' view: all on-topic candidates in pool are eligible
             return True
 
     eligible_pool = [it for it in pool if is_eligible_for_view(it)]
@@ -996,7 +1124,6 @@ def build_category_feed(
     def view_item_score(it: FeedItem) -> float:
         ev = it.assessment
         full_text = f"{it.video.title} {it.video.channel or ''} {it.video.description or ''} {it.video.source_domain or ''}".lower()
-        cand_tokens = _extract_tokens(full_text)
 
         # Deduplication penalty: prioritize candidates not seen in other views when alternatives exist
         other_view_pen = 0.25 if it.video.id in other_view_ids else 0.0
@@ -1016,24 +1143,22 @@ def build_category_feed(
                 quality_boost = 0.06
 
         if current_view == "new":
-            # Recency and freshness weighting
             freshness = 0.15 if it.video.id not in seen_ids else 0.0
-            recency_words = {"2026", "2025", "latest", "recent", "new", "breakthrough", "modern", "innovations"}
-            recency_boost = 0.20 if bool(recency_words & cand_tokens) else 0.0
+            age_days = get_candidate_age_days(it.video.upload_date)
+            if age_days is not None and age_days <= RECENT_UPLOAD_WINDOW_DAYS:
+                recency_boost = 0.30 * max(0.20, 1.0 - (age_days / RECENT_UPLOAD_WINDOW_DAYS))
+            else:
+                recency_boost = 0.0
             base = (ev.composite_score * 0.40) + (ev.substance_score * 0.35) + recency_boost + freshness
 
         elif current_view == "deeper":
-            # Depth and history concept overlap weighting
-            cand_terms = _terms(full_text)
-            overlap = len(cand_terms & hist_terms)
-            history_boost = min(0.35, 0.10 * overlap)
-            depth_bonus = 0.15 if it.video.source_query_type in ("archive_lecture", "practitioner_deep_dive") else 0.0
-            base = (ev.substance_score * 0.55) + (ev.composite_score * 0.25) + history_boost + depth_bonus
+            cand_tokens_clean = (_extract_tokens(full_text) - category_tokens - GENERIC_QUERY_MODIFIERS - STOPWORDS) - _TITLE_FILLER
+            overlap_count = len(cand_tokens_clean & specific_hist_terms)
+            history_boost = min(0.35, 0.12 * overlap_count)
+            base = (ev.substance_score * 0.55) + (ev.composite_score * 0.25) + history_boost
 
         elif current_view == "connections":
-            # Cross-disciplinary bridge weighting
-            bridge_bonus = 0.25 if it.video.source_query_type in ("cross_domain_analogy", "lateral_discovery") or it.discovery_type in ("adjacent", "distant") else 0.10
-            base = (ev.novelty_score * 0.45) + (ev.composite_score * 0.35) + bridge_bonus
+            base = (ev.novelty_score * 0.45) + (ev.composite_score * 0.35)
 
         else:
             base = ev.composite_score
@@ -1071,26 +1196,40 @@ def build_category_feed(
         if current_view == "new":
             chosen.is_discovery = False
             chosen.discovery_type = None
-            if preferences.feed_mode == "deep_learning":
-                role_label, _, _ = DEEP_LEARNING_STEPS[i % len(DEEP_LEARNING_STEPS)]
-            else:
+            age_days = get_candidate_age_days(chosen.video.upload_date)
+            # Only label a video "Recent Release" when its date supports that claim
+            if age_days is not None and age_days <= RECENT_UPLOAD_WINDOW_DAYS:
                 role_label = "⚡ Recent Release"
+                date_str = str(chosen.video.upload_date).split("T")[0]
+                chosen.path_reason = f"Focused in '{category_name}': Recent upload ({date_str}) covering {chosen.video.title}."
+            else:
+                role_label = "⚡ Curated Candidate"
+                chosen.path_reason = f"Focused in '{category_name}': Curated video covering {chosen.video.title} (upload date unverified)."
             chosen.path_step = role_label
-            chosen.path_reason = f"Focused in '{category_name}': Recent worthwhile video covering {chosen.video.title}."
 
         elif current_view == "deeper":
             chosen.is_discovery = False
             chosen.discovery_type = None
             chosen.path_step = "🔍 Go Deeper"
-            chosen.path_reason = f"Focused in '{category_name}': Advanced deep-dive building on your viewing history with {chosen.video.title}."
+            cand_tokens_clean = (_extract_tokens(f"{chosen.video.title} {chosen.video.description or ''}") - category_tokens - GENERIC_QUERY_MODIFIERS - STOPWORDS) - _TITLE_FILLER
+            overlap_tokens = sorted(list(cand_tokens_clean & specific_hist_terms))
+            if overlap_tokens:
+                concept_desc = ", ".join(overlap_tokens[:2])
+                chosen.path_reason = f"Focused in '{category_name}': Advanced deep-dive building on '{concept_desc}' from your viewing history."
+            else:
+                chosen.path_reason = f"Focused in '{category_name}': Advanced deep-dive building on your category engagement with {chosen.video.title}."
 
         elif current_view == "connections":
             chosen.is_discovery = True
             chosen.discovery_type = "adjacent"
             chosen.path_step = "🌐 Connections"
-            connected_domain = chosen.video.source_domain or "an interdisciplinary field"
-            chosen.discovery_connection = f"Interdisciplinary bridge connecting '{category_name}' to {connected_domain}."
-            chosen.path_reason = f"Focused in '{category_name}': Interdisciplinary connection linking to {connected_domain}."
+            second_field = _detect_interdisciplinary_connection(chosen, category_name, category_tokens)
+            if second_field:
+                chosen.discovery_connection = f"Interdisciplinary bridge connecting '{category_name}' to {second_field}."
+                chosen.path_reason = f"Focused in '{category_name}': Interdisciplinary connection linking {category_name} to {second_field}."
+            else:
+                chosen.discovery_connection = f"Interdisciplinary bridge connecting '{category_name}'."
+                chosen.path_reason = f"Focused in '{category_name}': Cross-domain exploration covering {chosen.video.title}."
 
         else:
             chosen.is_discovery = False
@@ -1099,7 +1238,5 @@ def build_category_feed(
             chosen.path_reason = f"Focused in '{category_name}': Curated for your interest."
 
         selected.append(chosen)
-
-    return selected
 
     return selected

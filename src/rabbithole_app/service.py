@@ -15,6 +15,7 @@ from rabbithole_app.models import (
 from rabbithole_app.query_expander import QueryExpander
 from rabbithole_app.retriever import VideoRetriever
 from rabbithole_app.filter_engine import FilterEngine
+from rabbithole_app.relevance_gate import _extract_tokens, GENERIC_QUERY_MODIFIERS
 from rabbithole_app.journey import (
     build_path,
     build_mixed_feed,
@@ -337,19 +338,58 @@ class RabbitholeService:
             tab_name = preferences.active_category
             view = preferences.category_view or "new"
             if view == "deeper" and len(path) == 0:
-                status_msg = (
-                    f"No viewing or saved history found for '{tab_name}' yet. "
-                    "Watch or save videos in this interest tab to unlock personalized 'Go Deeper' paths building on what you've learned."
-                )
+                cat_lower = tab_name.lower().strip()
+                cat_toks = _extract_tokens(tab_name) - GENERIC_QUERY_MODIFIERS
+                has_cat_hist = False
+                for sv in (preferences.saved_videos or []):
+                    if ((sv.source_category and cat_lower in sv.source_category.lower())
+                        or (sv.source_domain and cat_lower in sv.source_domain.lower())
+                        or (sv.title and any(tok in sv.title.lower() for tok in cat_toks))):
+                        has_cat_hist = True
+                        break
+                if not has_cat_hist and preferences.living_taste_profile:
+                    for s in preferences.living_taste_profile.recent_signals:
+                        if s.action in ("substantial_watch", "completed", "watch_later"):
+                            dom_match = s.domain and (cat_lower in s.domain.lower() or s.domain.lower() in cat_lower)
+                            title_match = s.title and any(tok in s.title.lower() for tok in cat_toks)
+                            if dom_match or title_match:
+                                has_cat_hist = True
+                                break
+                if not has_cat_hist:
+                    for top in (preferences.watched_topics or []):
+                        if cat_lower in top.lower() or top.lower() in cat_lower:
+                            has_cat_hist = True
+                            break
+
+                if not has_cat_hist:
+                    status_msg = (
+                        f"No viewing or saved history found for '{tab_name}' yet. "
+                        "Watch or save videos in this interest tab to unlock personalized 'Go Deeper' paths building on what you've learned."
+                    )
+                else:
+                    status_msg = (
+                        f"No follow-up candidates found directly building on your watched or saved videos in '{tab_name}'. "
+                        "Rabbithole returned an honest sparse result rather than padding with unrelated lectures. Try exploring another angle or saving more videos in this topic."
+                    )
             elif view == "deeper":
                 status_msg = (
-                    f"Returned a focused feed of {len(path)} deeper video{'s' if len(path) > 1 else ''} for '{tab_name}' "
-                    f"(requested {target_len}). Rabbithole avoided padding with superficial or introductory filler."
+                    f"Returned a focused feed of {len(path)} deeper video{'s' if len(path) > 1 else ''} with demonstrable links to your '{tab_name}' history "
+                    f"(requested {target_len}). Rabbithole avoided padding with unrelated lectures or introductory filler."
+                )
+            elif view == "connections" and len(path) == 0:
+                status_msg = (
+                    f"No verified interdisciplinary connections found for '{tab_name}' with demonstrable evidence in both fields. "
+                    "Rabbithole returned an honest sparse result rather than padding with single-topic or disconnected videos."
                 )
             elif view == "connections":
                 status_msg = (
                     f"Returned a focused feed of {len(path)} verified interdisciplinary connection{'s' if len(path) > 1 else ''} for '{tab_name}' "
                     f"(requested {target_len}). Rabbithole avoided padding with disconnected or single-topic filler."
+                )
+            elif view == "new" and len(path) == 0:
+                status_msg = (
+                    f"No verified recent releases found for '{tab_name}' within the recent upload window. "
+                    "Rabbithole returned an honest sparse result rather than padding your New view with older videos."
                 )
             elif len(path) == 0:
                 status_msg = (

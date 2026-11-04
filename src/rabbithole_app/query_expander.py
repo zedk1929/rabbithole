@@ -2738,8 +2738,8 @@ class QueryExpander:
             queries_per_cat = max(1, (cat_target + len(categories) - 1) // len(categories))
 
             for cat in categories:
-                cat_prefs = preferences.model_copy(update={"interests": cat, "categories": [cat]})
-                cat_res = self._expand_with_heuristics(cat_prefs, avoided_terms, count=queries_per_cat)
+                cat_prefs = preferences.model_copy(update={"active_category": cat, "categories": []})
+                cat_res = self._expand_with_heuristics(cat_prefs, count=queries_per_cat)
                 for q in cat_res:
                     if q.query not in seen_query_strings:
                         seen_query_strings.add(q.query)
@@ -2755,11 +2755,11 @@ class QueryExpander:
                 if len(multi_queries) > count:
                     disc_in_multi = [q for q in multi_queries if q.discovery_type]
                     non_disc_in_multi = [q for q in multi_queries if not q.discovery_type]
-                    num_disc = min(len(disc_in_multi), 2 if count <= 5 else count // 2)
+                    num_disc = min(len(disc_in_multi), max(2, count - 2))
                     num_non = count - num_disc
                     sorted_disc = sorted(
                         disc_in_multi,
-                        key=lambda x: 0 if x.discovery_type in ("distant", "wildcard") else (1 if x.discovery_type == "adjacent" else 2)
+                        key=lambda x: 0 if x.discovery_type == "adjacent" else (1 if x.discovery_type in ("distant", "wildcard") else 2)
                     )
                     return (non_disc_in_multi[:num_non] + sorted_disc[:num_disc])[:count]
                 return multi_queries[:count]
