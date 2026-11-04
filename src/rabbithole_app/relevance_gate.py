@@ -163,6 +163,35 @@ DOMAIN_LEXICONS: Dict[str, Set[str]] = {
         "recession", "depression", "business cycle", "opportunity cost", "elasticity",
         "externality", "externalities", "behavioral economics", "liquidity", "yield curve",
         "quantitative easing", "market failure", "deadweight loss", "auction theory"
+    },
+    "gaming": {
+        # Core medium, aliases & formats
+        "videogame", "videogames", "video game", "video games", "gaming", "gameplay",
+        "playthrough", "speedrun", "speedrunning", "speedrunner", "world record",
+        "any%", "100%", "hitless", "modded", "boss fight", "walkthrough", "let's play",
+        "glitch", "sequence break", "tool-assisted", "tas",
+        # Design, systems & mechanics
+        "game design", "game mechanics", "level design", "combat design", "game dev",
+        "game development", "game developer", "game engine", "unreal engine", "unity engine",
+        "godot", "lumen", "nanite", "collision detection", "hitbox", "hurtbox", "frame data",
+        "coyote time", "jump buffering", "physics engine", "shaders", "pixel art", "bsp trees",
+        "bsp tree", "platformer", "platforming", "roguelike", "roguelite", "metroidvania", "action rpg",
+        "immersive sim", "sandbox", "open world design", "game ai", "behavior tree",
+        "procedural generation", "procedural dungeon", "game balance", "difficulty curve",
+        # Famous games, series & franchises
+        "super mario", "mario 64", "super mario 64", "zelda", "breath of the wild",
+        "tears of the kingdom", "ocarina of time", "elden ring", "dark souls", "bloodborne",
+        "sekiro", "fromsoftware", "hollow knight", "celeste", "minecraft", "redstone",
+        "doom", "doom 1993", "quake", "half-life", "half life", "portal", "metroid",
+        "super metroid", "metroid prime", "final fantasy", "cyberpunk", "skyrim",
+        "elder scrolls", "grand theft auto", "gta", "pokemon", "chrono trigger",
+        "metal gear", "metal gear solid", "resident evil", "silent hill", "castlevania",
+        "symphony of the night", "spelunky", "hades", "undertale", "bioshock",
+        "shadow of the colossus", "outer wilds", "disco elysium", "factorio",
+        # Recognizable creators & outlets
+        "summoning salt", "game maker's toolkit", "gmtk", "noclip", "digital foundry",
+        "mark brown", "ahoy", "design doc", "razbuten", "adam millard", "matthewmatosis",
+        "didyouknowgaming", "iron pineapple", "karl jobst", "lowspecgamer", "core-a gaming"
     }
 }
 
@@ -170,7 +199,8 @@ DOMAIN_RECOGNIZED_CREATORS: Dict[str, Set[str]] = {
     "mathematics": {"3blue1brown", "numberphile", "grant sanderson", "mathologer", "stand-up maths", "standupmaths", "welch labs"},
     "baseball": {"foolish baseball", "jomboy media", "baseball doesn't exist", "pitching ninja"},
     "basketball": {"thinking basketball", "kOT4Q", "mike korzemba", "jxmyhighroller", "dime drop"},
-    "economics": {"economics explained", "freakonomics", "visual economix", "marginal revolution university"}
+    "economics": {"economics explained", "freakonomics", "visual economix", "marginal revolution university"},
+    "gaming": {"summoning salt", "game maker's toolkit", "gmtk", "noclip", "digital foundry", "mark brown", "ahoy", "design doc", "razbuten", "adam millard", "matthewmatosis", "didyouknowgaming", "iron pineapple", "karl jobst", "lowspecgamer", "core-a gaming"}
 }
 
 DOMAIN_TRIGGERS: Dict[str, Set[str]] = {
@@ -183,7 +213,8 @@ DOMAIN_TRIGGERS: Dict[str, Set[str]] = {
     "music": {"music", "musical", "sound", "acoustic", "acoustics", "audio", "synth", "synthesis", "synthesizer", "timbre", "harmonic", "tuning"},
     "mathematics": {"math", "mathematics", "calculus", "geometry", "linear algebra", "topology", "3blue1brown", "algebra", "fourier"},
     "basketball": {"basketball", "nba", "wnba", "hoops", "ncaa basketball"},
-    "economics": {"economics", "economy", "macroeconomics", "microeconomics", "econometrics", "monetary policy", "fiscal policy"}
+    "economics": {"economics", "economy", "macroeconomics", "microeconomics", "econometrics", "monetary policy", "fiscal policy"},
+    "gaming": {"videogames", "videogame", "video games", "video game", "gaming", "gameplay", "game design", "game dev", "game development", "speedrun", "speedrunning"}
 }
 
 
@@ -465,6 +496,27 @@ class RelevanceGate:
                         confidence=0.90,
                     )
 
+            # Gaming / Videogames tab: reject sports, board games/tabletop, cooking, corporate business, lifestyle vlogs
+            is_gaming_tab = any(trig in active_cat_lower for trig in DOMAIN_TRIGGERS.get("gaming", set()))
+            if is_gaming_tab:
+                gaming_clash_terms = {
+                    "nba", "mlb", "premier league", "celtics", "lakers", "nfl", "touchdown", "quarterback",
+                    "board games", "board game", "game night", "catan", "monopoly", "poker tournament",
+                    "corporate strategy", "business strategy", "recipe", "pasta", "cooking", "woodworking",
+                    "skincare routine", "what i eat in a day", "room tour", "daily vlog"
+                }
+                has_gaming_clash = any(gct in content_text for gct in gaming_clash_terms)
+                has_gaming_terms = any(
+                    gt in content_text for gt in DOMAIN_LEXICONS["gaming"]
+                )
+                if has_gaming_clash and not has_gaming_terms:
+                    return RelevanceAssessment(
+                        is_relevant=False,
+                        status="rejected",
+                        reason=f"Metadata indicates off-topic content with no video game connection to '{preferences.active_category}'.",
+                        confidence=0.92,
+                    )
+
             # 2. Substantive Subject Evidence in Title, Channel, or Description
             matched_lexicon = False
             matched_lexicon_term = ""
@@ -502,6 +554,11 @@ class RelevanceGate:
             if known_domain == "baseball":
                 # For Baseball & Strategy, must specifically match baseball terms
                 direct_match = "baseball" in metadata_tokens or "mlb" in metadata_tokens
+            elif known_domain == "gaming":
+                direct_match = any(t in metadata_tokens for t in {
+                    "videogame", "videogames", "gaming", "gameplay", "speedrun", "speedrunning",
+                    "gamedev", "minecraft", "mario", "zelda", "elden", "doom", "celeste", "pokemon"
+                })
             elif category_tokens:
                 if len(category_tokens) == 1:
                     direct_match = bool(category_tokens & metadata_tokens)

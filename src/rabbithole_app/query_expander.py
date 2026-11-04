@@ -1324,6 +1324,104 @@ DOMAIN_DEFINITIONS: Dict[str, Dict[str, Any]] = {
                 "Witty musical performance and theatrical satire dissecting finance and markets."
             ),
         ]
+    },
+
+    "gaming": {
+        "match_keywords": [
+            "videogames", "videogame", "video games", "video game", "gaming", "gameplay",
+            "game design", "game dev", "game development", "speedrun", "speedrunning"
+        ],
+        "first_principles": [
+            (
+                "video game mechanics design first principles breakdown",
+                "Game Design Mechanics",
+                "Examines the fundamental mechanics, player agency feedback loops, and level geometry principles of video game design."
+            ),
+            (
+                "platformer jump mechanics coyote time input buffering physics",
+                "Platformer Physics & Mechanics",
+                "Deconstructs jump buffering, coyote time, variable jump height, and collision physics from first principles."
+            ),
+            (
+                "video game graphics rendering pipeline shaders architecture",
+                "Game Engine & Graphics Architecture",
+                "Analyzes shaders, rasterization, frame buffers, and rendering pipelines from foundational computational principles."
+            ),
+        ],
+        "archive_lecture": [
+            (
+                "gdc game design architecture mechanics talk archive",
+                "GDC Architecture & Design Archive",
+                "Surfaces foundational archival GDC masterclasses and industry talks on systemic level design and combat mechanics."
+            ),
+            (
+                "procedural world generation algorithms rogue like design lecture",
+                "Procedural Generation & Dungeon Algorithms",
+                "Unearths archival technical lectures on procedural world generation, cellular automata, and algorithmic level layout."
+            ),
+        ],
+        "cross_domain_analogy": {
+            "focused": (
+                "video game artificial intelligence behavior trees decision models",
+                "Computation & Algorithms",
+                "Connects enemy AI behavior trees and finite state machines directly to computational decision science and algorithmic models."
+            ),
+            "balanced": (
+                "game physics engines numerical integration collision detection simulation",
+                "Physics & Fluid Dynamics",
+                "Connects Euler and Verlet numerical integration and collision manifolds in game physics directly to classical mechanics."
+            ),
+            "radical": (
+                "video game adaptive music interactive soundtrack composition",
+                "Music & Acoustics",
+                "Bridges vertical remixing and interactive soundscapes in video games to algorithmic musical composition and acoustic psychoacoustics."
+            )
+        },
+        "niche_history": [
+            (
+                "evolution of immersive sim game design history documentary",
+                "Immersive Sim History",
+                "Traces the historical design lineage and creative philosophy of immersive sims from Looking Glass Studios to modern titles."
+            ),
+            (
+                "history of speedrunning world record progression documentary",
+                "Speedrun History & Optimization",
+                "Examines the community history, glitch discovery, and human optimization behind iconic video game speedruns."
+            ),
+        ],
+        "practitioner_deep_dive": [
+            (
+                "game makers toolkit level design mechanics case study",
+                "Level Design & Spatial Craft",
+                "Follows hands-on practitioner case studies breaking down player guidance, landmark geometry, and pacing in celebrated levels."
+            ),
+            (
+                "doom 1993 3d engine bsp tree rendering carmack breakdown",
+                "3D Engine Architecture",
+                "Hands-on case study deconstructing id Tech 1 BSP trees, fixed-point arithmetic, and software rendering."
+            ),
+        ],
+        "entertainment_comedy": [
+            (
+                "hilarious video game physics glitches funniest bugs moments",
+                "Game Physics Bugs & Bloopers",
+                "Lighthearted and hilarious unintended physics engine glitches, ragdoll bloopers, and funny gameplay moments."
+            ),
+        ],
+        "entertainment_creative": [
+            (
+                "creative custom video game level creations speedrun challenge",
+                "Creative Custom Levels & Craft",
+                "Showcase of ingenious community level design, creative romhacks, and inventive mechanical challenges."
+            ),
+        ],
+        "entertainment_story": [
+            (
+                "legendary video game mysteries and wild development lore",
+                "Video Game Lore & Wild Stories",
+                "Engaging narrative documentaries on mysterious Easter eggs, lost prototypes, and dramatic development history."
+            ),
+        ]
     }
 }
 

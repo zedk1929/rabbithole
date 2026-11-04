@@ -1,6 +1,19 @@
 {
   "watch_later": [
     {
+      "video_id": "LkH2r-sNjQs",
+      "title": "Why Electronic Voting Is Still A Bad Idea",
+      "channel": "Tom Scott",
+      "thumbnail": "https://i.ytimg.com/vi/LkH2r-sNjQs/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBe3392Gz1UIoInq99NJ9oEYkBGIw",
+      "duration_seconds": 720,
+      "recommendation_context": "Supported as wildcard discovery in Political Technology and Historical Engineering: 'Why Electronic Voting Is Still A Bad Idea'.",
+      "source_domain": "Political Technology and Historical Engineering",
+      "source_category": null,
+      "is_discovery": true,
+      "discovery_connection": "Independent discovery in Political Technology and Historical Engineering: Security vulnerabilities and risks of electronic voting systems \u2014 Technical and procedural breakdown of why cryptographic and digital voting systems fail security best practices.",
+      "saved_at": "2026-11-04T00:11:39.484Z"
+    },
+    {
       "video_id": "VcgJro0sTiM",
       "title": "Other math channels you'd enjoy",
       "channel": "3Blue1Brown",
@@ -433,7 +446,7 @@
   "preferences": {
     "interests": "Driven by an urge to reverse-engineer both digital systems and physical mechanics, this viewer loves dissecting the underlying rules of games, math, and code. They constantly seek out the invisible logic governing complex environments, whether through rigorous problem-solving or tactical competitive analysis.",
     "experience_type": "mix",
-    "feed_mode": "mix",
+    "feed_mode": "entertainment",
     "recency_preference": "any",
     "serendipity_level": 3,
     "familiar_topics": "",
@@ -467,9 +480,18 @@
       "RQWpF2Gb-gU",
       "tUnG8Srr_RA",
       "B-Y3-XpAdMU",
-      "lhjY5tYmr74"
+      "lhjY5tYmr74",
+      "DRO3m0Uta3Q",
+      "9_QsCLYs2mY",
+      "xAbqmeRiFow",
+      "LKrwhjOI8Nc",
+      "LkH2r-sNjQs",
+      "WUvTyaaNkzM",
+      "a8Fbmj4nIxY",
+      "lELJTRpit50",
+      "Lz-tlcitHmk"
     ],
-    "refresh_index": 0,
+    "refresh_index": 2,
     "completed_video_ids": [
       "62tIvfP9A2w",
       "d0nERTFo-Sk",
@@ -701,7 +723,7 @@
         "date": "2026-10-29T08:54:42.612Z"
       }
     ],
-    "active_category": "Videogames",
+    "active_category": null,
     "categories": [
       "Kinetic Sports Entertainment",
       "Sports Highlights",
@@ -721,9 +743,11 @@
     "dismissed_categories": [],
     "emerging_interests": [
       "Historical Navigation Science",
-      "Maker Crafts"
+      "Maker Crafts",
+      "Political Technology and Historical Engineering"
     ],
     "watch_later_video_ids": [
+      "LkH2r-sNjQs",
       "VcgJro0sTiM",
       "49WVJo61d_k",
       "2Tw0AKt91pQ",
@@ -819,7 +843,8 @@
         "Traditional Architecture": 0,
         "Music and Topology": 6.5,
         "Hawk-Dove game model in evolutionary biology": 3,
-        "Curated recommendations for mathematics and animation YouTube channels": 3
+        "Curated recommendations for mathematics and animation YouTube channels": 3,
+        "Security vulnerabilities and risks of electronic voting systems": 3
       },
       "subject_evidence_counts": {
         "Kinetic Sports Entertainment": 1,
@@ -829,15 +854,16 @@
         "Historical Navigation Science": 1,
         "Music and Topology": 1,
         "Hawk-Dove game model in evolutionary biology": 1,
-        "Curated recommendations for mathematics and animation YouTube channels": 1
+        "Curated recommendations for mathematics and animation YouTube channels": 1,
+        "Security vulnerabilities and risks of electronic voting systems": 1
       },
       "preferred_qualities": {
         "visual explanation": 3.1,
         "storytelling": 5.5,
-        "technical depth": 4.8,
+        "technical depth": 7.2,
         "artisan craft": 2.4,
         "humor": 4.8,
-        "unusual connections": 12
+        "unusual connections": 14.4
       },
       "preferred_entertainment_formats": {
         "compelling_story": 5.5,
@@ -852,6 +878,19 @@
         "Too shallow"
       ],
       "recent_signals": [
+        {
+          "video_id": "LkH2r-sNjQs",
+          "title": "Why Electronic Voting Is Still A Bad Idea",
+          "channel": "Tom Scott",
+          "domain": "Security vulnerabilities and risks of electronic voting systems",
+          "qualities": [
+            "technical depth",
+            "unusual connections"
+          ],
+          "action": "watch_later",
+          "weight": 3,
+          "timestamp": "2026-11-04T00:11:39.488Z"
+        },
         {
           "video_id": "VcgJro0sTiM",
           "title": "Other math channels you'd enjoy",
@@ -1278,7 +1317,7 @@
           "timestamp": "2026-10-30T07:32:21.753Z"
         }
       ],
-      "last_updated_at": "2026-11-03T23:44:58.120Z"
+      "last_updated_at": "2026-11-04T00:11:39.489Z"
     },
     "curiosity_archetypes": [
       "mechanist",
@@ -1297,18 +1336,45 @@
     "min_duration_minutes": 6,
     "max_duration_minutes": 180,
     "seed_topic": null,
-    "recent_queries": [],
+    "recent_queries": [
+      "reverse engineering weird video game physics",
+      "absurd historical legal loopholes exploited",
+      "building impossible mechanical puzzle boxes",
+      "chaotic engineering solutions to simple problems",
+      "speedrunning real world navigation glitches",
+      "TED-Ed popular funny entertaining",
+      "exploiting game engine physics glitches",
+      "absurd historical legal loopholes",
+      "chaotic mechanical engineering experiments",
+      "mathematical puzzles solved visually",
+      "strategic board game tournament analysis",
+      "3Blue1Brown popular funny entertaining",
+      "physics of bicycle steering geometry",
+      "building mechanical calculators gears cams",
+      "evolutionary game theory hawk dove",
+      "historical maritime navigation dead reckoning",
+      "clockmaker escapement mechanism tension tuning",
+      "3Blue1Brown best videos",
+      "physics of juggling pattern topology",
+      "restoring antique mechanical music box",
+      "game theory of animal deception",
+      "comedic history of measurement standards",
+      "lockpicking physics pin tumbler mechanics",
+      "3Blue1Brown best videos",
+      "cryptographic voting protocols verifiable mixnets",
+      "procedural generation cellular automata music",
+      "thermodynamics of biological error correction",
+      "history of postal sorting machines",
+      "restoring vintage mechanical calculating machine",
+      "3Blue1Brown best videos",
+      "mechanics of mechanical watch escapements",
+      "topology of fluid vortex rings",
+      "evolutionary game theory in bacteria",
+      "history of mechanical voting machines",
+      "restoration of antique surveying instruments",
+      "3Blue1Brown best videos"
+    ],
     "recent_shown_video_ids": [
-      "ELvedTUcjPo",
-      "PFDu9oVAE-g",
-      "aircAruvnKk",
-      "QvuQH4_05LI",
-      "Oxvz8M3szTk",
-      "mH0oCDa74tE",
-      "WX16-52bHvg",
-      "-jYsAigeULM",
-      "8pFd8DLcPIY",
-      "rB83DpBJQsE",
       "ydsIyJW-RBI",
       "p_di4Zn4wz4",
       "86F_OH4bKR8",
@@ -1318,12 +1384,19 @@
       "RQWpF2Gb-gU",
       "tUnG8Srr_RA",
       "B-Y3-XpAdMU",
-      "lhjY5tYmr74"
+      "lhjY5tYmr74",
+      "DRO3m0Uta3Q",
+      "9_QsCLYs2mY",
+      "xAbqmeRiFow",
+      "LKrwhjOI8Nc",
+      "LkH2r-sNjQs",
+      "WUvTyaaNkzM",
+      "a8Fbmj4nIxY",
+      "aircAruvnKk",
+      "lELJTRpit50",
+      "Lz-tlcitHmk"
     ],
     "recent_shown_subjects": [
-      "Strategic Game Theory & History",
-      "Game Mechanics & Code Dissection",
-      "Applied Mechanics & Comedy",
       "Topological Navigation & Strategy",
       "Precision Engineering & Craft",
       "Game Theory",
@@ -1339,14 +1412,13 @@
       "Industrial Engineering History",
       "Biophysics",
       "Applied Mathematics & Topology History & Evolution",
-      "Applied Mathematics & Topology Masterclass"
+      "Applied Mathematics & Topology Masterclass",
+      "Fluid Dynamics and Visual Physics",
+      "Horology and Precision Mechanics",
+      "Microbial Ecology and Game Theory",
+      "Political Technology and Historical Engineering"
     ],
     "recent_shown_creators": [
-      "3-Minute Explanation",
-      "B Machining",
-      "The Mariners' Museum and Park",
-      "ProfAI0055",
-      "William Spaniel",
       "The Restoration Room 01",
       "The Rest Is Science",
       "Cornell University",
@@ -1361,11 +1433,29 @@
       "Veritasium",
       "DIBEOS",
       "Abide By Reason",
-      "Mathamphetamine"
+      "Mathamphetamine",
+      "Renzo L. Ricca",
+      "Animagraffs",
+      "Tom Scott",
+      "MIT OpenCourseWare",
+      "Timebound Stories"
     ],
-    "category_view": "new",
+    "category_view": null,
     "other_view_video_ids": [],
     "saved_videos": [
+      {
+        "video_id": "LkH2r-sNjQs",
+        "title": "Why Electronic Voting Is Still A Bad Idea",
+        "channel": "Tom Scott",
+        "thumbnail": "https://i.ytimg.com/vi/LkH2r-sNjQs/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBe3392Gz1UIoInq99NJ9oEYkBGIw",
+        "duration_seconds": 720,
+        "recommendation_context": "Supported as wildcard discovery in Political Technology and Historical Engineering: 'Why Electronic Voting Is Still A Bad Idea'.",
+        "source_domain": "Political Technology and Historical Engineering",
+        "source_category": null,
+        "is_discovery": true,
+        "discovery_connection": "Independent discovery in Political Technology and Historical Engineering: Security vulnerabilities and risks of electronic voting systems \u2014 Technical and procedural breakdown of why cryptographic and digital voting systems fail security best practices.",
+        "saved_at": "2026-11-04T00:11:39.484Z"
+      },
       {
         "video_id": "VcgJro0sTiM",
         "title": "Other math channels you'd enjoy",
@@ -1813,7 +1903,8 @@
       "Traditional Architecture": 0,
       "Music and Topology": 6.5,
       "Hawk-Dove game model in evolutionary biology": 3,
-      "Curated recommendations for mathematics and animation YouTube channels": 3
+      "Curated recommendations for mathematics and animation YouTube channels": 3,
+      "Security vulnerabilities and risks of electronic voting systems": 3
     },
     "subject_evidence_counts": {
       "Kinetic Sports Entertainment": 1,
@@ -1823,15 +1914,16 @@
       "Historical Navigation Science": 1,
       "Music and Topology": 1,
       "Hawk-Dove game model in evolutionary biology": 1,
-      "Curated recommendations for mathematics and animation YouTube channels": 1
+      "Curated recommendations for mathematics and animation YouTube channels": 1,
+      "Security vulnerabilities and risks of electronic voting systems": 1
     },
     "preferred_qualities": {
       "visual explanation": 3.1,
       "storytelling": 5.5,
-      "unusual connections": 12,
+      "unusual connections": 14.4,
       "artisan craft": 2.4,
       "humor": 4.8,
-      "technical depth": 4.8
+      "technical depth": 7.2
     },
     "preferred_entertainment_formats": {
       "compelling_story": 5.5,
@@ -1846,6 +1938,19 @@
       "Too shallow"
     ],
     "recent_signals": [
+      {
+        "video_id": "LkH2r-sNjQs",
+        "title": "Why Electronic Voting Is Still A Bad Idea",
+        "channel": "Tom Scott",
+        "domain": "Security vulnerabilities and risks of electronic voting systems",
+        "qualities": [
+          "technical depth",
+          "unusual connections"
+        ],
+        "action": "watch_later",
+        "weight": 3,
+        "timestamp": "2026-11-04T00:11:39.488Z"
+      },
       {
         "video_id": "VcgJro0sTiM",
         "title": "Other math channels you'd enjoy",
@@ -2272,7 +2377,7 @@
         "timestamp": "2026-10-30T07:32:21.753Z"
       }
     ],
-    "last_updated_at": "2026-11-03T23:44:58.120Z"
+    "last_updated_at": "2026-11-04T00:11:39.489Z"
   },
   "followed_creators": [
     {

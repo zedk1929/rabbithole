@@ -578,3 +578,201 @@ class TestInterestTabViews:
         assert len(indep_in_feed) == 2
         assert len(adj_in_feed) == 3
         assert len(pers_in_feed) == 5
+
+    def test_videogames_tab_returns_realistic_results_without_literal_word_and_rejects_clashes(self):
+        """
+        Regression Test: Videogames tab returning no videos.
+        Realistic videos about named games, gameplay, game design, speedruns, and game development
+        whose titles do not literally contain 'videogames' must pass relevance gate and populate the tab.
+        Unrelated clash videos (sports games, corporate strategy, recipes) must be strictly rejected.
+        """
+        service = RabbitholeService(gemini_api_key="", youtube_api_key="")
+
+        realistic_cands = [
+            CandidateVideo(
+                id="vg_mario",
+                title="Super Mario 64 - The 120 Star World Record History",
+                channel="Summoning Salt",
+                description="A documentary on the progression of the 120 star speedrun world record in Super Mario 64.",
+                url="http://vg1",
+                duration_seconds=1200,
+                upload_date="2026-06-01"
+            ),
+            CandidateVideo(
+                id="vg_elden",
+                title="Why Elden Ring Open World Design Works",
+                channel="Game Makers Toolkit",
+                description="An analysis of Elden Ring map design, discovery loops, and gameplay systems.",
+                url="http://vg2",
+                duration_seconds=900,
+                upload_date="2026-07-01"
+            ),
+            CandidateVideo(
+                id="vg_doom",
+                title="Doom 1993 - How Carmack Built the 3D Engine",
+                channel="Fabien Sanglard",
+                description="Exploring the BSP trees, fixed-point math, and rendering pipeline algorithms of classic Doom.",
+                url="http://vg3",
+                duration_seconds=800,
+                upload_date="2026-05-15"
+            ),
+            CandidateVideo(
+                id="vg_celeste",
+                title="Celeste: The Mechanics of Jump Forgiveness",
+                channel="Mark Brown",
+                description="Deep dive into coyote time, jump buffering, and platformer kinetics physics.",
+                url="http://vg4",
+                duration_seconds=750,
+                upload_date="2026-04-10"
+            ),
+            CandidateVideo(
+                id="vg_minecraft",
+                title="Minecraft Redstone: Building a 16-Bit Computer",
+                channel="Nand2Tetris Gamer",
+                description="Engineering logic gates, ALUs, and memory inside Minecraft using redstone circuitry.",
+                url="http://vg5",
+                duration_seconds=1100,
+                upload_date="2026-08-01"
+            ),
+            CandidateVideo(
+                id="clash_nba",
+                title="NBA Game 7 Highlights: Celtics vs Lakers Final Seconds",
+                channel="NBA Highlights",
+                description="Full game 7 highlights and buzzer beater.",
+                url="http://c1",
+                duration_seconds=600,
+                upload_date="2026-06-01"
+            ),
+            CandidateVideo(
+                id="clash_corp",
+                title="Corporate Strategy: Porter Five Forces in Market Mergers",
+                channel="Business School",
+                description="Analysis of corporate executive strategy in competitive industries.",
+                url="http://c2",
+                duration_seconds=550,
+                upload_date="2026-06-01"
+            ),
+            CandidateVideo(
+                id="clash_pasta",
+                title="Homemade Pasta Recipe with Fresh Basil",
+                channel="Cooking Channel",
+                description="Family game night dinner recipe.",
+                url="http://c3",
+                duration_seconds=500,
+                upload_date="2026-06-01"
+            )
+        ]
+
+        service.retriever.retrieve_candidates = lambda queries, max_per_query=5: realistic_cands
+
+        prefs = UserPreferences(interests="videogames", active_category="Videogames", category_view="new")
+        res = service.generate_feed(prefs, top_k=5)
+
+        # Tab must not be empty!
+        assert len(res.items) == 5, f"Expected 5 videogame items, got {len(res.items)}"
+        feed_ids = [it.video.id for it in res.items]
+
+        # All 5 realistic videogame items must be eligible and present
+        for expected_id in ["vg_mario", "vg_elden", "vg_doom", "vg_celeste", "vg_minecraft"]:
+            assert expected_id in feed_ids, f"Expected {expected_id} in feed, but missing."
+
+        # Unrelated clash items must be strictly filtered out by relevance gate
+        assert "clash_nba" not in feed_ids
+        assert "clash_corp" not in feed_ids
+        assert "clash_pasta" not in feed_ids
+
+    def test_videogames_tab_all_three_views_and_cold_start(self):
+        """
+        Verify all three Videogames views:
+        1. New: accepts recent releases, rejects old video (>365d) titled 'New'.
+        2. Go deeper: cold-start (no history) returns honest sparse result with accurate message.
+           With history: returns follow-up candidate building on watched concept.
+        3. Connections: requires metadata evidence for both Videogames and a second field (e.g. Doom -> Computation).
+        """
+        service = RabbitholeService(gemini_api_key="", youtube_api_key="")
+
+        cands = [
+            CandidateVideo(
+                id="vg_doom_conn",
+                title="Doom 1993 - BSP Trees and Software Rendering Algorithms",
+                channel="Fabien Sanglard",
+                description="Detailed breakdown of binary space partitioning trees and computational algorithms in classic Doom.",
+                url="http://v1",
+                duration_seconds=800,
+                upload_date="2026-06-01"
+            ),
+            CandidateVideo(
+                id="vg_celeste_deep",
+                title="Celeste Movement Mechanics: Coyote Time and Jump Buffering",
+                channel="Mark Brown",
+                description="Deep dive into platformer jump mechanics and responsive input buffering in Celeste.",
+                url="http://v2",
+                duration_seconds=700,
+                upload_date="2026-06-15"
+            ),
+            CandidateVideo(
+                id="vg_pure_gameplay",
+                title="Super Mario 64 Any% Speedrun Route Optimization",
+                channel="Summoning Salt",
+                description="Detailed overview of speedrun glitches and movement route execution in Super Mario 64.",
+                url="http://v3",
+                duration_seconds=1200,
+                upload_date="2026-05-20"
+            ),
+            CandidateVideo(
+                id="vg_old_release",
+                title="New Next-Gen Game Engines 2026",
+                channel="Tech Channel",
+                description="Video game graphics overview.",
+                url="http://v4",
+                duration_seconds=600,
+                upload_date="2021-01-01"  # Old upload date (>365d) despite 'New' in title
+            )
+        ]
+
+        service.retriever.retrieve_candidates = lambda queries, max_per_query=5: cands
+
+        # 1. New View: rejects vg_old_release due to 2021 upload date
+        prefs_new = UserPreferences(interests="videogames", active_category="Videogames", category_view="new")
+        res_new = service.generate_feed(prefs_new, top_k=5)
+        new_ids = [it.video.id for it in res_new.items]
+        assert "vg_old_release" not in new_ids, "Old video titled 'New' must be rejected from New view based on upload date"
+        assert "vg_doom_conn" in new_ids
+        assert "vg_celeste_deep" in new_ids
+
+        # 2. Go Deeper Cold-Start (no watch history)
+        prefs_deep_cold = UserPreferences(interests="videogames", active_category="Videogames", category_view="deeper")
+        res_deep_cold = service.generate_feed(prefs_deep_cold, top_k=5)
+        assert len(res_deep_cold.items) == 0, "Go deeper without history must return honest sparse result"
+        assert "No viewing or saved history found for 'Videogames' yet" in res_deep_cold.status_message
+
+        # 3. Go Deeper with Watch History in Celeste
+        profile = LivingTasteProfile()
+        profile.record_signal(TasteSignal(
+            video_id="watched_celeste_intro",
+            title="Celeste: The Mechanics of Jump Forgiveness",
+            channel="Mark Brown",
+            domain="Gaming",
+            action="completed",
+            weight=2.5
+        ))
+        prefs_deep_hist = UserPreferences(
+            interests="videogames",
+            active_category="Videogames",
+            category_view="deeper",
+            living_taste_profile=profile
+        )
+        res_deep_hist = service.generate_feed(prefs_deep_hist, top_k=5)
+        assert len(res_deep_hist.items) >= 1
+        assert res_deep_hist.items[0].video.id == "vg_celeste_deep"
+        assert "celeste" in res_deep_hist.items[0].path_reason.lower() or "jump" in res_deep_hist.items[0].path_reason.lower()
+
+        # 4. Connections View: requires dual-field evidence
+        prefs_conn = UserPreferences(interests="videogames", active_category="Videogames", category_view="connections")
+        res_conn = service.generate_feed(prefs_conn, top_k=5)
+        conn_ids = [it.video.id for it in res_conn.items]
+        # vg_doom_conn has both Videogames ('Doom') and Computation & Algorithms ('BSP Trees', 'algorithms')
+        assert "vg_doom_conn" in conn_ids
+        assert "Computation & Algorithms" in res_conn.items[0].discovery_connection
+        # vg_pure_gameplay does NOT have a second field -> excluded from Connections
+        assert "vg_pure_gameplay" not in conn_ids

@@ -881,16 +881,18 @@ def get_candidate_age_days(upload_date_str: Optional[str]) -> Optional[int]:
 
 INTERDISCIPLINARY_DOMAINS: Dict[str, Set[str]] = {
     "Biology & Ecology": {
-        "biology", "biological", "evolution", "evolutionary", "ecology", "ecological",
+        "biology", "biological", "biological evolution", "evolutionary biology", "ecology", "ecological",
         "organism", "organisms", "genetics", "genetic", "dna", "mycelial", "mycology",
         "biomechanics", "cellular", "photosynthesis", "species", "natural selection",
-        "zoology", "marine biology", "wildlife", "animal conflicts"
+        "zoology", "marine biology", "wildlife", "animal conflicts", "speciation"
     },
     "Physics & Fluid Dynamics": {
-        "physics", "thermodynamics", "quantum", "astrophysics", "mechanics",
+        "physics", "thermodynamics", "quantum", "astrophysics", "quantum mechanics",
+        "fluid mechanics", "classical mechanics", "statistical mechanics", "newtonian mechanics",
         "magnetohydrodynamics", "gravity", "gravitational", "optics", "relativity",
         "electromagnetism", "fluid dynamics", "aerodynamics", "kinetics", "entropy",
-        "particle physics", "superconductivity", "wave propagation"
+        "particle physics", "superconductivity", "wave propagation", "numerical integration",
+        "collision detection", "verlet integration", "rigid body"
     },
     "Game Theory & Decision Science": {
         "game theory", "nash equilibrium", "replicator dynamics", "hawk dove",
@@ -900,7 +902,10 @@ INTERDISCIPLINARY_DOMAINS: Dict[str, Set[str]] = {
     "Computation & Algorithms": {
         "computation", "computational", "algorithm", "algorithms", "turing machine",
         "complexity theory", "automata", "neural network", "machine learning",
-        "information theory", "data structure", "cryptography", "error correction"
+        "information theory", "data structure", "cryptography", "error correction",
+        "bsp tree", "bsp trees", "logic gates", "logic gate", "procedural generation",
+        "cellular automata", "behavior tree", "finite state machine", "pathfinding",
+        "shaders", "rasterization", "rendering pipeline"
     },
     "Neuroscience & Cognitive Science": {
         "neuroscience", "neural", "brain", "synapse", "synaptic", "cortex",
@@ -910,7 +915,7 @@ INTERDISCIPLINARY_DOMAINS: Dict[str, Set[str]] = {
     "Music & Acoustics": {
         "music", "musical", "acoustics", "harmonics", "composition", "timbre",
         "temperament", "crab canon", "polyphony", "sound synthesis", "psychoacoustics",
-        "fugue", "counterpoint"
+        "fugue", "counterpoint", "soundtrack", "interactive audio", "adaptive music"
     },
     "Architecture & Structural Engineering": {
         "architecture", "architectural", "structural engineering", "materials science",
@@ -1009,6 +1014,15 @@ def build_category_feed(
 
     category_lower = category_name.lower().strip()
     category_tokens = _extract_tokens(category_name) - GENERIC_QUERY_MODIFIERS
+
+    # Gather category aliases and recognized terms from domain configuration
+    cat_aliases = set()
+    for dom_name, trigs in DOMAIN_TRIGGERS.items():
+        if any(trig in category_lower for trig in trigs):
+            cat_aliases.update(trigs)
+            if dom_name in DOMAIN_LEXICONS:
+                cat_aliases.update([t for t in DOMAIN_LEXICONS[dom_name] if len(t) >= 4])
+
     seen_ids = set(preferences.seen_video_ids or [])
     other_view_ids = set(preferences.other_view_video_ids or [])
     followed_names = {fc.name.lower() for fc in (preferences.followed_creators or [])}
@@ -1025,9 +1039,9 @@ def build_category_feed(
 
     for sv in (preferences.saved_videos or []):
         cat_match = (
-            (sv.source_category and category_lower in sv.source_category.lower())
-            or (sv.source_domain and category_lower in sv.source_domain.lower())
-            or (sv.title and any(tok in sv.title.lower() for tok in category_tokens))
+            (sv.source_category and (category_lower in sv.source_category.lower() or any(al in sv.source_category.lower() for al in cat_aliases if len(al) >= 4)))
+            or (sv.source_domain and (category_lower in sv.source_domain.lower() or any(al in sv.source_domain.lower() for al in cat_aliases if len(al) >= 4)))
+            or (sv.title and (any(tok in sv.title.lower() for tok in category_tokens) or any(al in sv.title.lower() for al in cat_aliases if len(al) >= 4)))
         )
         if cat_match:
             watched_or_saved_ids.add(sv.video_id)
@@ -1039,8 +1053,15 @@ def build_category_feed(
     if preferences.living_taste_profile:
         for s in preferences.living_taste_profile.recent_signals:
             if s.action in ("substantial_watch", "completed", "watch_later"):
-                dom_match = s.domain and (category_lower in s.domain.lower() or s.domain.lower() in category_lower)
-                title_match = s.title and any(tok in s.title.lower() for tok in category_tokens)
+                dom_match = s.domain and (
+                    category_lower in s.domain.lower()
+                    or s.domain.lower() in category_lower
+                    or any(al in s.domain.lower() for al in cat_aliases if len(al) >= 4)
+                )
+                title_match = s.title and (
+                    any(tok in s.title.lower() for tok in category_tokens)
+                    or any(al in s.title.lower() for al in cat_aliases if len(al) >= 4)
+                )
                 if dom_match or title_match:
                     if s.video_id:
                         watched_or_saved_ids.add(s.video_id)
@@ -1050,7 +1071,7 @@ def build_category_feed(
                         watched_or_saved_domains.append(s.domain)
 
     for top in (preferences.watched_topics or []):
-        if category_lower in top.lower() or top.lower() in category_lower:
+        if category_lower in top.lower() or top.lower() in category_lower or any(al in top.lower() for al in cat_aliases if len(al) >= 4):
             watched_or_saved_domains.append(top)
 
     has_category_history = bool(watched_or_saved_ids or watched_or_saved_titles or watched_or_saved_domains)
@@ -1079,6 +1100,7 @@ def build_category_feed(
             bool(category_tokens & cand_tokens)
             or (category_lower in full_text)
             or (it.category and category_lower in it.category.lower())
+            or any(al in full_text for al in cat_aliases if len(al) >= 4)
             or is_rel_supported
         )
         if not has_cat_connection:

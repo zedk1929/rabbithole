@@ -15,7 +15,12 @@ from rabbithole_app.models import (
 from rabbithole_app.query_expander import QueryExpander
 from rabbithole_app.retriever import VideoRetriever
 from rabbithole_app.filter_engine import FilterEngine
-from rabbithole_app.relevance_gate import _extract_tokens, GENERIC_QUERY_MODIFIERS
+from rabbithole_app.relevance_gate import (
+    _extract_tokens,
+    GENERIC_QUERY_MODIFIERS,
+    DOMAIN_TRIGGERS,
+    DOMAIN_LEXICONS,
+)
 from rabbithole_app.journey import (
     build_path,
     build_mixed_feed,
@@ -340,24 +345,31 @@ class RabbitholeService:
             if view == "deeper" and len(path) == 0:
                 cat_lower = tab_name.lower().strip()
                 cat_toks = _extract_tokens(tab_name) - GENERIC_QUERY_MODIFIERS
+                cat_aliases = set()
+                for dom_name, trigs in DOMAIN_TRIGGERS.items():
+                    if any(trig in cat_lower for trig in trigs):
+                        cat_aliases.update(trigs)
+                        if dom_name in DOMAIN_LEXICONS:
+                            cat_aliases.update([t for t in DOMAIN_LEXICONS[dom_name] if len(t) >= 4])
+
                 has_cat_hist = False
                 for sv in (preferences.saved_videos or []):
-                    if ((sv.source_category and cat_lower in sv.source_category.lower())
-                        or (sv.source_domain and cat_lower in sv.source_domain.lower())
-                        or (sv.title and any(tok in sv.title.lower() for tok in cat_toks))):
+                    if ((sv.source_category and (cat_lower in sv.source_category.lower() or any(al in sv.source_category.lower() for al in cat_aliases if len(al) >= 4)))
+                        or (sv.source_domain and (cat_lower in sv.source_domain.lower() or any(al in sv.source_domain.lower() for al in cat_aliases if len(al) >= 4)))
+                        or (sv.title and (any(tok in sv.title.lower() for tok in cat_toks) or any(al in sv.title.lower() for al in cat_aliases if len(al) >= 4)))):
                         has_cat_hist = True
                         break
                 if not has_cat_hist and preferences.living_taste_profile:
                     for s in preferences.living_taste_profile.recent_signals:
                         if s.action in ("substantial_watch", "completed", "watch_later"):
-                            dom_match = s.domain and (cat_lower in s.domain.lower() or s.domain.lower() in cat_lower)
-                            title_match = s.title and any(tok in s.title.lower() for tok in cat_toks)
+                            dom_match = s.domain and (cat_lower in s.domain.lower() or s.domain.lower() in cat_lower or any(al in s.domain.lower() for al in cat_aliases if len(al) >= 4))
+                            title_match = s.title and (any(tok in s.title.lower() for tok in cat_toks) or any(al in s.title.lower() for al in cat_aliases if len(al) >= 4))
                             if dom_match or title_match:
                                 has_cat_hist = True
                                 break
                 if not has_cat_hist:
                     for top in (preferences.watched_topics or []):
-                        if cat_lower in top.lower() or top.lower() in cat_lower:
+                        if cat_lower in top.lower() or top.lower() in cat_lower or any(al in top.lower() for al in cat_aliases if len(al) >= 4):
                             has_cat_hist = True
                             break
 
